@@ -138,8 +138,10 @@ async function Dashboard({ staff }: { staff: StaffSession }) {
         {binnenkort.map(({ titel, wanneer, Icon }) => (
           <li key={titel} className="flex items-center gap-3 rounded-[18px] border-2 border-studio-licht px-4 py-3 text-zand">
             <Icon size={22} className="flex-none" />
-            <span className="flex-1 text-[16px] font-bold">{titel}</span>
-            <span className="text-label">vanaf {wanneer}</span>
+            <span className="flex min-w-0 flex-col">
+              <span className="text-[16px] leading-tight font-bold">{titel}</span>
+              <span className="text-label">vanaf {wanneer}</span>
+            </span>
           </li>
         ))}
       </ul>

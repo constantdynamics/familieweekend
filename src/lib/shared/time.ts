@@ -99,10 +99,15 @@ export function formatTime(date: Date): string {
   return timeShort.format(date);
 }
 
-/** "donderdag 6 mei, 14:00" */
+/*
+ * The short date formats below use non-breaking spaces, so a date or time
+ * never falls apart over two lines ("6 / mei", "mei, / 14:00").
+ */
+
+/** "donderdag 6 mei, 14:00", always on one line. */
 export function formatDayAndTime(date: Date): string {
   const p = amsterdamParts(date);
-  return `${weekdayLong.format(date)} ${p.day}\u00a0${monthLong.format(date)}, ${formatTime(date)}`;
+  return `${weekdayLong.format(date)}\u00a0${p.day}\u00a0${monthLong.format(date)},\u00a0${formatTime(date)}`;
 }
 
 /** "donderdag 6 mei 2027 om 14:00", for the admin. */
@@ -114,21 +119,24 @@ export function formatFull(date: Date): string {
 /** "1 april" */
 export function formatDayMonth(date: Date): string {
   const p = amsterdamParts(date);
-  return `${p.day} ${monthLong.format(date)}`;
+  return `${p.day} ${monthLong.format(date)}`;
 }
 
-/** "do 6 t/m zo 9 mei", or "do 30 apr t/m zo 3 mei" across months. */
+/**
+ * "do 6 t/m zo 9 mei", or "do 30 apr t/m zo 3 mei" across months. If it
+ * does not fit, it only breaks around "t/m".
+ */
 export function formatDateRange(start: Date, end: Date): string {
   const a = amsterdamParts(start);
   const b = amsterdamParts(end);
-  const startText = `${shortWeekday(start)} ${a.day}`;
-  const endText = `${shortWeekday(end)} ${b.day} ${monthLong.format(end)}`;
+  const startText = `${shortWeekday(start)} ${a.day}`;
+  const endText = `${shortWeekday(end)} ${b.day} ${monthLong.format(end)}`;
   if (a.year === b.year && a.month === b.month) {
     if (a.day === b.day) return endText;
     return `${startText} t/m ${endText}`;
   }
   const shortMonth = monthLong.format(start).slice(0, 3);
-  return `${startText} ${shortMonth} t/m ${endText}`;
+  return `${startText} ${shortMonth} t/m ${endText}`;
 }
 
 /** "6 t/m 9 mei 2027" */

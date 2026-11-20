@@ -56,7 +56,7 @@ test("de service worker neemt de app over en vangt offline af", async ({ page, c
   await expect(page.getByText(/Je bent offline/)).toBeVisible();
   // A page never seen shows the offline page.
   await page.goto("/privacy");
-  await expect(page.getByRole("heading", { name: "Even geen verbinding" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Geen verbinding" })).toBeVisible();
   await context.setOffline(false);
 });
 

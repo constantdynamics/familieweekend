@@ -130,6 +130,25 @@
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
     overscroll-behavior-y: none;
+    /* Never one lonely word on the last line of a sentence. */
+    text-wrap: pretty;
+  }
+
+  /* Headings break into lines of about equal length. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Browsers without "pretty" (older iPhones): balanced lines instead. */
+  @supports not (text-wrap: pretty) {
+    p,
+    li,
+    label,
+    a {
+      text-wrap: balance;
+    }
   }
 
   a {
@@ -196,7 +215,7 @@
 }
 
 /*
- * Studio lamps: soft light spots that breathe in and out.
+ * Studio spotlights: soft light spots that breathe in and out.
  */
 .studio-lamp {
   position: absolute;
@@ -316,16 +335,6 @@
     animation-timing-function: linear !important;
     animation-iteration-count: infinite !important;
   }
-}
-
-/* Glossy tv-studio decor: a glass reflection on the light cards. */
-.decor-glans .kaart-glans {
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.1) 36%,
-    rgba(255, 255, 255, 0) 58%
-  );
 }
 
 /* Install hints disappear once the app runs from the home screen. */

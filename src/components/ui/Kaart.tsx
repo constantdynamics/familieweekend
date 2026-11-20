@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from "react";
 export function Kaart({ className, ...rest }: ComponentProps<"section">) {
   return (
     <section
-      className={`op-licht kaart-glans rounded-kaart bg-beeldbuis p-[18px] text-studio shadow-kaart ${className ?? ""}`}
+      className={`op-licht rounded-kaart bg-beeldbuis p-[18px] text-studio shadow-kaart ${className ?? ""}`}
       {...rest}
     />
   );

@@ -54,3 +54,62 @@ export async function loginAdmin(page: Page, pin = E2E.adminPin) {
   await tryAdminPin(page, pin);
   await expect(page.getByText(/^Ingelogd als /)).toBeVisible();
 }
+
+/**
+ * Texts whose last line holds one lonely word, such as "Schaft" under
+ * "De Dommelvallei, Borkel en". A forced line break (<br>) is fine.
+ * Returns "text … → word" per problem.
+ */
+export async function losseWoorden(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    type Woord = { tekst: string; top: number; hoogte: number };
+    const verborgen = ".sr-only, [aria-hidden='true'], script, style, noscript, svg, input, textarea, select";
+
+    /** The words of one container, split into segments at <br>. */
+    function segmenten(container: Element): Woord[][] {
+      const lijst: Woord[][] = [[]];
+      const loop = (node: Node) => {
+        for (const kind of node.childNodes) {
+          if (kind.nodeType === Node.TEXT_NODE) {
+            const tekst = kind.textContent ?? "";
+            for (const match of tekst.matchAll(/\S+/g)) {
+              const range = document.createRange();
+              range.setStart(kind, match.index);
+              range.setEnd(kind, match.index + match[0].length);
+              const rect = [...range.getClientRects()].find((r) => r.width > 0 && r.height > 0);
+              if (rect) lijst.at(-1)!.push({ tekst: match[0], top: rect.top, hoogte: rect.height });
+            }
+          } else if (kind instanceof Element) {
+            if (kind.tagName === "BR") {
+              lijst.push([]);
+              continue;
+            }
+            if (kind.matches(verborgen) || getComputedStyle(kind).display !== "inline") continue;
+            loop(kind);
+          }
+        }
+      };
+      loop(container);
+      return lijst;
+    }
+
+    const problemen: string[] = [];
+    for (const element of document.body.querySelectorAll("*")) {
+      const display = getComputedStyle(element).display;
+      if (display === "inline" || display === "none" || element.closest(verborgen)) continue;
+      for (const woorden of segmenten(element)) {
+        const regels: Woord[][] = [];
+        for (const woord of woorden) {
+          const regel = regels.at(-1);
+          if (regel && Math.abs(woord.top - regel[0].top) < regel[0].hoogte / 2) regel.push(woord);
+          else regels.push([woord]);
+        }
+        if (regels.length >= 2 && regels.at(-1)!.length === 1) {
+          const zin = woorden.map((w) => w.tekst).join(" ");
+          problemen.push(`${zin.slice(0, 70)} → ${regels.at(-1)![0].tekst}`);
+        }
+      }
+    }
+    return problemen;
+  });
+}

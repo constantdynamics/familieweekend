@@ -46,16 +46,23 @@ describe("Amsterdamse tijd", () => {
   it("schrijft datums zoals in het ontwerp", () => {
     const start = new Date("2027-05-06T12:00:00Z");
     const end = new Date("2027-05-09T13:00:00Z");
-    expect(formatDateRange(start, end)).toBe("do 6 t/m zo 9 mei");
+    expect(formatDateRange(start, end)).toBe("do\u00a06 t/m zo\u00a09\u00a0mei");
     expect(formatDateRangePlain(start, end)).toBe("6 t/m 9 mei 2027");
-    expect(formatDayAndTime(start)).toBe("donderdag 6\u00a0mei, 14:00");
+    expect(formatDayAndTime(start)).toBe("donderdag\u00a06\u00a0mei,\u00a014:00");
     expect(formatTime(new Date("2027-05-08T09:42:00Z"))).toBe("11:42");
-    expect(formatDayMonth(new Date("2027-04-01T21:59:00Z"))).toBe("1 april");
+    expect(formatDayMonth(new Date("2027-04-01T21:59:00Z"))).toBe("1\u00a0april");
+  });
+
+  it("houdt een datum en tijd bij elkaar op één regel", () => {
+    const start = new Date("2027-05-06T12:00:00Z");
+    // Only "t/m" may start a new line; a date never falls apart.
+    expect(formatDateRange(start, new Date("2027-05-09T13:00:00Z")).split(" ")).toEqual(["do\u00a06", "t/m", "zo\u00a09\u00a0mei"]);
+    expect(formatDayAndTime(start)).not.toContain(" ");
   });
 
   it("noemt de maand twee keer als het weekend over een maandgrens gaat", () => {
     expect(formatDateRange(new Date("2027-04-29T12:00:00Z"), new Date("2027-05-02T12:00:00Z"))).toBe(
-      "do 29 apr t/m zo 2 mei",
+      "do\u00a029\u00a0apr t/m zo\u00a02\u00a0mei",
     );
   });
 });

@@ -1,10 +1,11 @@
 /**
- * Every screen of this phase: an accessibility check (axe, WCAG 2.2 AA) and a
- * screenshot per viewport in docs/screenshots/fase-1/<viewport>/ for review.
+ * Every screen of this phase: an accessibility check (axe, WCAG 2.2 AA), no
+ * lonely words on a line of their own, and a screenshot per viewport in
+ * docs/screenshots/fase-1/<viewport>/ for review.
  */
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
-import { enterFamilyCode, loggedIn, loginAdmin, resetState, VASTE_TIJD } from "./helpers";
+import { enterFamilyCode, loggedIn, loginAdmin, losseWoorden, resetState, VASTE_TIJD } from "./helpers";
 
 test.use({ reducedMotion: "reduce" });
 
@@ -19,6 +20,9 @@ async function check(page: Page, info: TestInfo, name: string) {
     .analyze();
   const problems = results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`);
   expect(problems, `toegankelijkheid op ${name}`).toEqual([]);
+
+  // No sentence ends with one lonely word on its own line.
+  expect(await losseWoorden(page), `losse woorden op ${name}`).toEqual([]);
 
   // No horizontal scrolling at this width.
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

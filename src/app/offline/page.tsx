@@ -13,7 +13,7 @@ export default function OfflinePage() {
     <Scherm stralen metTabBalk={false} boven={58}>
       <div className="flex flex-col items-center text-center">
         <Embleem size={120} />
-        <h1 className="mt-3 mb-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">Even geen verbinding</h1>
+        <h1 className="mt-3 mb-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">Geen verbinding</h1>
       </div>
       <Kaart className="mt-6 flex flex-col gap-3">
         <div className="flex items-center gap-3">

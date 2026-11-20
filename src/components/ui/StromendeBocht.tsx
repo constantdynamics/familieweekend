@@ -23,11 +23,9 @@ const BANEN = [
 type Props = {
   /** How far the lanes run down along the right edge. */
   drop?: number;
-  /** Subtle highlight on the lanes, like glossy studio decor. */
-  glans?: boolean;
 };
 
-export function StromendeBocht({ drop = 140, glans = false }: Props) {
+export function StromendeBocht({ drop = 140 }: Props) {
   const ref = useRef<SVGSVGElement>(null);
   // Distance from the left edge of the screen to the right edge of the bocht.
   const [breedte, setBreedte] = useState<number | null>(null);
@@ -81,16 +79,6 @@ export function StromendeBocht({ drop = 140, glans = false }: Props) {
                   />
                 ))
               : null}
-            {glans ? (
-              <path
-                d={`M-3000 ${y - 1.6} H${right - r} A${r + 1.6} ${r + 1.6} 0 0 1 ${right + 1.6} ${y + r} V${drop}`}
-                fill="none"
-                stroke="#FFF6E6"
-                strokeOpacity="0.28"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-              />
-            ) : null}
           </g>
         );
       })}
