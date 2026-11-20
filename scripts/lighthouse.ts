@@ -20,7 +20,11 @@ async function main() {
     APP_SECRET: E2E.appSecret,
     CRON_SECRET: E2E.cronSecret,
   };
-  const server = spawn("npx", ["next", "start", "-p", port], { env: serverEnv, stdio: "ignore" });
+  // A server left on this port would be measured instead of this build.
+  const taken = await fetch(`http://localhost:${port}/api/health`).then(() => true, () => false);
+  if (taken) throw new Error(`Poort ${port} is al in gebruik; stop die server eerst.`);
+  // Own process group: npx starts next-server as a child, and both must stop.
+  const server = spawn("npx", ["next", "start", "-p", port], { env: serverEnv, stdio: "ignore", detached: true });
   try {
     for (let i = 0; i < 60; i += 1) {
       const ok = await fetch(`http://localhost:${port}/api/health`).then((r) => r.ok, () => false);
@@ -43,7 +47,7 @@ async function main() {
     }
     process.exitCode = failed ? 1 : 0;
   } finally {
-    server.kill();
+    if (server.pid) process.kill(-server.pid, "SIGTERM");
   }
 }
 
