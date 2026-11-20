@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Programma</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&amp;family=Shrikhand&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#2B1810}
+a{color:#F5AE1B}a:hover{color:#FCEBD0}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:3px solid #F5AE1B;outline-offset:3px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #2B1810; color: #FCEBD0; font-family: Rubik, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <svg aria-hidden="true" width="390" height="150" viewBox="0 0 390 150" style="position: absolute; top: 0; left: 0; pointer-events: none">
+    <path d="M-10 10 H318 A62 62 0 0 1 380 72 V140" fill="none" stroke="#F5AE1B" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-10 20 H318 A52 52 0 0 1 370 72 V140" fill="none" stroke="#F06A1F" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-10 30 H318 A42 42 0 0 1 360 72 V140" fill="none" stroke="#B4441A" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+
+  <div style="position: relative; padding: 52px 22px 0 22px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; flex-direction: column; gap: 2px; padding-right: 40px">
+      <h1 style="margin: 0; font-family: Shrikhand, 'Arial Black', serif; font-weight: 400; font-size: 30px; line-height: 1.1; text-shadow: 3px 3px 0 #F06A1F">Programma</h1>
+      <span style="font-size: 15px; color: #E9C9A0">Hemelvaart, 6 t/m 9 mei 2027</span>
+    </div>
+
+    <div role="tablist" aria-label="Kies een dag" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-right: 30px">
+      <sc-for list="{{dagen}}" as="d" hint-placeholder-count="4">
+        <button type="button" role="tab" aria-selected="{{d.gekozen}}" onClick="{{d.kies}}" style="min-height: 56px; border-radius: 16px; border: 0; background: {{d.bg}}; color: {{d.fg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px">
+          <span style="font-size: 16px; font-weight: 800">{{d.kort}}</span>
+          <span style="font-size: 13px">{{d.datum}}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <ol style="list-style: none; margin: 4px 0 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="5">
+        <li style="display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 12px 14px; border-radius: 18px; background: {{it.bg}}; color: {{it.fg}}; opacity: {{it.op}}">
+          <span style="font-family: Shrikhand, 'Arial Black', serif; font-size: 22px; line-height: 1.1; color: {{it.tijdKleur}}">{{it.tijd}}</span>
+          <div style="display: flex; flex-direction: column; gap: 3px">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+              <sc-if value="{{it.isMoeder}}" hint-placeholder-val="{{ false }}">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><g fill="#F5AE1B"><circle cx="12" cy="6.6" r="3.6"/><circle cx="16.7" cy="9.3" r="3.6"/><circle cx="16.7" cy="14.7" r="3.6"/><circle cx="12" cy="17.4" r="3.6"/><circle cx="7.3" cy="14.7" r="3.6"/><circle cx="7.3" cy="9.3" r="3.6"/></g><circle cx="12" cy="12" r="2.8" fill="#3B2417"/></svg>
+              </sc-if>
+              <span style="font-size: 17px; font-weight: 700; line-height: 1.25">{{it.titel}}</span>
+              <sc-if value="{{it.isNu}}" hint-placeholder-val="{{ false }}">
+                <span style="background: #2B1810; color: #FCEBD0; font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 999px">Nu</span>
+              </sc-if>
+            </div>
+            <span style="font-size: 14px; line-height: 1.35; color: {{it.subKleur}}">{{it.sub}}</span>
+          </div>
+        </li>
+      </sc-for>
+    </ol>
+    <span style="font-size: 13px; color: #E9C9A0; line-height: 1.4">Voorbeeldprogramma. Jij past het aan in het beheerscherm, ook tijdens het weekend.</span>
+  </div>
+
+  <nav aria-label="Hoofdmenu" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; box-sizing: border-box; background: #1E110B; border-top: 2px solid #3B2417; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 6px 12px 6px">
+    <a href="Thuis-tijdens.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></svg></span>Thuis</a>
+    <a href="Programma.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #F5AE1B; font-size: 13px; font-weight: 700">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px; border-radius: 999px; background: #F5AE1B"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B1810" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8 14h3M8 17h6"/></svg></span>Programma</a>
+    <a href="Quiz-captain.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M10 9.2a2 2 0 1 1 2.8 1.8c-.6.3-.8.7-.8 1.3"/><path d="M12 14.3h.01"/></svg></span>Quiz</a>
+    <a href="Zeskamp.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7"/><path d="M12 10v3.5l2.5 2M10 3h4M12 3v3.5"/></svg></span>Zeskamp</a>
+    <a href="Scorebord.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20v-6h4v6M10 20V9h4v11M15 20v-4h4v4"/></svg></span>Score</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const dag = S.dag || 'za';
+    const programma = {
+      do: [
+        ['14:00', 'Aankomst en kamers verdelen', 'Sleutels liggen bij de ingang'],
+        ['17:30', 'Barbecue', 'Op het terras'],
+        ['20:00', 'De Grote Valkenburger Quiz', 'Vijf rondes met een intermezzo, neem je telefoon mee'],
+        ['22:30', 'Uitslag van de quiz', 'Daarna borrel']
+      ],
+      vr: [
+        ['09:30', 'Ontbijt', 'Uitslapen mag'],
+        ['11:00', 'Wandelen langs de Dommel', 'Vrij, start bij de brug'],
+        ['14:00', 'Spelletjesmiddag', 'Omgekeerd uitbeelden en meer, telt mee voor de Spelen'],
+        ['18:30', 'Pizza-avond', 'Iedereen belegt zijn eigen pizza']
+      ],
+      za: [
+        ['09:00', 'Ontbijt', 'In de grote tent', 'verleden'],
+        ['10:30', 'Zeskamp, spel 1 t/m 3', 'Op het grasveld, het scorebord gaat op slot', 'nu'],
+        ['12:30', 'Lunch', 'In de grote tent'],
+        ['14:00', 'Zeskamp, spel 4 t/m 6', 'Neem droge sokken mee'],
+        ['18:00', 'Feestdiner', 'Netjes aan, als je wilt'],
+        ['20:30', 'Prijsuitreiking', 'Wie wint De Valkenburger Spelen?']
+      ],
+      zo: [
+        ['09:00', 'Moederdagontbijt', 'Alle moeders blijven lekker zitten', 'moeder'],
+        ['11:00', 'Opruimen', 'Vele handen maken licht werk'],
+        ['13:00', 'Vertrek', 'Tot de volgende Spelen']
+      ]
+    };
+    const lijst = [['do', 'Do', '6 mei'], ['vr', 'Vr', '7 mei'], ['za', 'Za', '8 mei'], ['zo', 'Zo', '9 mei']];
+    const dagen = lijst.map((d) => ({
+      kort: d[1], datum: d[2],
+      gekozen: d[0] === dag ? 'true' : 'false',
+      bg: d[0] === dag ? '#F5AE1B' : '#3B2417',
+      fg: d[0] === dag ? '#2B1810' : '#FCEBD0',
+      kies: () => this.setState({ dag: d[0] })
+    }));
+    const items = programma[dag].map((r) => {
+      const status = r[3] || '';
+      const nu = status === 'nu';
+      const moeder = status === 'moeder';
+      return {
+        tijd: r[0], titel: r[1], sub: r[2],
+        isNu: nu, isMoeder: moeder,
+        bg: nu ? '#FCEBD0' : (moeder ? '#3B2417' : 'transparent'),
+        fg: nu ? '#2B1810' : '#FCEBD0',
+        tijdKleur: nu ? '#B4441A' : '#F5AE1B',
+        subKleur: nu ? '#2B1810' : '#E9C9A0',
+        op: status === 'verleden' ? '0.5' : '1'
+      };
+    });
+    return { dagen: dagen, items: items };
+  }
+}
+</script>
+</body>
+</html>

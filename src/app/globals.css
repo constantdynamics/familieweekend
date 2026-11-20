@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens from SPEC §6 (De Valkenburger Spelen 2027).
+ * One fixed palette: the app has a single 1970s studio mood, so the
+ * system dark mode is ignored on purpose.
+ */
+@theme {
+  --color-*: initial;
+  --color-studio: #2b1810;
+  --color-studio-diep: #1a0e08;
+  --color-studio-tab: #1e110b;
+  --color-studio-licht: #3b2417;
+  --color-studio-rand: #4a2d1c;
+  --color-stralen: #35200f;
+  --color-schaduw: #140b06;
+  --color-beeldbuis: #fcebd0;
+  --color-papier: #fff6e6;
+  --color-papier-streep: #f3ddb8;
+  --color-zand: #e9c9a0;
+  --color-oranje: #f06a1f;
+  --color-oranje-rand: #9e3e0b;
+  --color-oranje-diep: #c9551a;
+  --color-mosterd: #f5ae1b;
+  --color-mosterd-rand: #9e6a0b;
+  --color-roest: #b4441a;
+  --color-goud: #f2c14e;
+  --color-zilver: #c9c3b8;
+  --color-brons: #c27a3e;
+  --color-avocado: #6f7f1f;
+  --color-avocado-licht: #a7b43a;
+  --color-petrol: #17565e;
+  --color-petrol-licht: #4fa3a5;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-display: var(--font-shrikhand), "Arial Black", serif;
+  --font-sans: var(--font-rubik), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --text-label: 14px;
+  --text-label--line-height: 1.35;
+  --text-klein: 13px;
+  --text-klein--line-height: 1.35;
+  --text-body: 17px;
+  --text-body--line-height: 1.45;
+
+  --radius-kaart: 22px;
+  --radius-kaart-groot: 24px;
+  --radius-tegel: 14px;
+  --radius-pil: 999px;
+
+  --shadow-kaart: 0 6px 0 #140b06;
+  --shadow-tegel: 0 4px 0 #140b06;
+  --shadow-knop: 0 4px 0 #9e3e0b;
+  --shadow-knop-in: 0 1px 0 #9e3e0b;
+  --shadow-inzet: inset 0 0 0 2px #3b2417;
+
+  --ease-uit: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-kantel: kantel 260ms var(--ease-uit);
+  --animate-pop: pop 320ms var(--ease-uit);
+  --animate-kaart-in: kaart-in 300ms var(--ease-uit);
+  --animate-puls: puls 1.6s ease-out infinite;
+}
+
+@keyframes kantel {
+  0% {
+    transform: perspective(240px) rotateX(-62deg) scaleY(0.92);
+    opacity: 0.55;
+  }
+  100% {
+    transform: perspective(240px) rotateX(0deg) scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes kaart-in {
+  0% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes puls {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    background: var(--color-studio);
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-studio);
+    color: var(--color-beeldbuis);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    overscroll-behavior-y: none;
+  }
+
+  a {
+    color: var(--color-mosterd);
+  }
+
+  a:hover {
+    color: var(--color-beeldbuis);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-mosterd);
+    outline-offset: 3px;
+  }
+
+  /* On light surfaces the mustard ring is too faint: use studio brown. */
+  .op-licht :focus-visible {
+    outline-color: var(--color-studio);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+
+  ::selection {
+    background: var(--color-mosterd);
+    color: var(--color-studio);
+  }
+}
+
+@utility schaduw-oranje {
+  text-shadow: 3px 3px 0 var(--color-oranje);
+}
+
+@utility schaduw-roest {
+  text-shadow: 3px 3px 0 var(--color-roest);
+}
+
+@utility cijfers {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility veilig-boven {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@utility zonnestralen {
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--color-stralen) 0deg 7deg,
+    var(--color-studio) 7deg 14deg
+  );
+}
+
+/* Install hints disappear once the app runs from the home screen. */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  .alleen-in-browser {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

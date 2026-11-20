@@ -1,0 +1,55 @@
+# Lint, typecheck, unit- en integratietests, build en de end-to-end-tests op
+# een Postgres-service. Draait bij elke push en pull request.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: valk_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_ADMIN_DATABASE_URL: postgres://postgres:postgres@localhost:5432/valk_test
+      VALK_APP_PASSWORD: ci-valk-app-wachtwoord
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Supabase-rollen nabootsen
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d valk_test -c \
+            "create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;"
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npx tsx tests/e2e/prepare.ts
+      - run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: postgres://valk_app:ci-valk-app-wachtwoord@localhost:5432/valk_test
+          DATABASE_SSL: disable
+          APP_SECRET: ci-geheim-voor-de-build-0123456789-abcdefghij
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

@@ -1,0 +1,43 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-20T13:00:00Z"},
+  "title": "De Valkenburger Spelen 2027",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "Thuis, vóór het weekend", "is_interactive": true},
+    "Funfacts.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "Fun facts invullen", "is_interactive": true},
+    "Stijlgids.dc.html": {"x": 940, "y": 0, "w": 1280, "h": 844, "title": "Stijlgids"},
+    "Thuis-tijdens.dc.html": {"x": 0, "y": 1240, "w": 390, "h": 844, "title": "Thuis, tijdens het weekend", "is_interactive": true},
+    "Programma.dc.html": {"x": 470, "y": 1240, "w": 390, "h": 844, "title": "Programma", "is_interactive": true},
+    "Scorebord.dc.html": {"x": 940, "y": 1240, "w": 390, "h": 844, "title": "Scorebord en medaillespiegel", "is_interactive": true},
+    "Quiz-captain.dc.html": {"x": 0, "y": 2480, "w": 390, "h": 844, "title": "Quiz: captain", "is_interactive": true},
+    "Quiz-meekijker.dc.html": {"x": 470, "y": 2480, "w": 390, "h": 844, "title": "Quiz: meekijker bij Echt of AI"},
+    "Quizmaster.dc.html": {"x": 940, "y": 2480, "w": 390, "h": 844, "title": "Quiz: quizmaster", "is_interactive": true},
+    "Intermezzo.dc.html": {"x": 1410, "y": 2480, "w": 390, "h": 844, "title": "Intermezzo: steen, papier, schaar", "is_interactive": true},
+    "Zeskamp.dc.html": {"x": 0, "y": 3720, "w": 390, "h": 844, "title": "Zeskamp: spelleider", "is_interactive": true},
+    "Prijsuitreiking.dc.html": {"x": 470, "y": 3720, "w": 390, "h": 844, "title": "Prijsuitreiking", "is_interactive": true}
+  },
+  "order": [
+    "Main.dc.html",
+    "Funfacts.dc.html",
+    "Stijlgids.dc.html",
+    "Thuis-tijdens.dc.html",
+    "Programma.dc.html",
+    "Scorebord.dc.html",
+    "Quiz-captain.dc.html",
+    "Quiz-meekijker.dc.html",
+    "Quizmaster.dc.html",
+    "Intermezzo.dc.html",
+    "Zeskamp.dc.html",
+    "Prijsuitreiking.dc.html"
+  ],
+  "notes": {
+    "rij1": {"x": 0, "y": -290, "text": "Vóór het weekend", "kind": "title1", "maxW": 860},
+    "rij2": {"x": 0, "y": 950, "text": "Tijdens het weekend", "kind": "title1", "maxW": 1330},
+    "rij3": {"x": 0, "y": 2190, "text": "Donderdagavond: de quiz", "kind": "title1", "maxW": 1800},
+    "rij4": {"x": 0, "y": 3430, "text": "Zaterdag: zeskamp en prijsuitreiking", "kind": "title1", "maxW": 860},
+    "uitleg": {"x": 2300, "y": 0, "w": 340, "fill": "orange", "size": "m", "text": "Alle namen, scores, het weer en het programma zijn voorbeelden. Het embleem is voorlopig: het echte logo maak je met de logo-prompt. Tik op Play bij een scherm om het uit te proberen."}
+  },
+  "designSystems": []
+}

@@ -1,0 +1,33 @@
+# Reserve voor de dagelijkse Vercel Cron: houdt het gratis Supabase-project
+# wakker, ook als de cron een keer niet draait. Zet in de repo-instellingen
+# (Settings > Secrets and variables > Actions) de geheimen KEEPALIVE_URL
+# (bijv. https://valkenburger-spelen.vercel.app/api/keepalive) en CRON_SECRET.
+# Zonder die geheimen slaat de taak zichzelf netjes over.
+name: Keepalive (reserve)
+
+on:
+  schedule:
+    - cron: "43 17 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping de keepalive
+        env:
+          KEEPALIVE_URL: ${{ secrets.KEEPALIVE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$KEEPALIVE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::notice::KEEPALIVE_URL of CRON_SECRET ontbreekt, overgeslagen."
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 30 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -A "github-actions-keepalive" \
+            "$KEEPALIVE_URL"

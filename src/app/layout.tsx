@@ -1,0 +1,83 @@
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { AppSignalen } from "@/components/pwa/AppSignalen";
+import { INSTALL_CAPTURE_SCRIPT } from "@/lib/shared/platform";
+import { siteUrl } from "@/lib/shared/site";
+import { iosStartupImages } from "@/lib/shared/splash";
+import "./globals.css";
+
+const shrikhand = localFont({
+  src: "./fonts/shrikhand-latin.woff2",
+  weight: "400",
+  display: "swap",
+  variable: "--font-shrikhand",
+  fallback: ["Arial Black", "serif"],
+});
+
+const rubik = localFont({
+  src: "./fonts/rubik-latin-variable.woff2",
+  weight: "300 900",
+  display: "swap",
+  variable: "--font-rubik",
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+});
+
+const NAME = "De Valkenburger Spelen 2027";
+const DESCRIPTION = "Het familieweekend vol spelletjes: quiz, zeskamp en prijsuitreiking. Hemelvaart 2027.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
+  title: { default: NAME, template: `%s · ${NAME}` },
+  description: DESCRIPTION,
+  applicationName: "Valk Spelen",
+  robots: { index: false, follow: false },
+  formatDetection: { telephone: false, email: false, address: false },
+  appleWebApp: {
+    capable: true,
+    title: "Valk Spelen",
+    statusBarStyle: "black-translucent",
+    startupImage: iosStartupImages(),
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "nl_NL",
+    title: NAME,
+    description: "Hemelvaart, do 6 t/m zo 9 mei 2027. Open de link en vul de familiecode in.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Het embleem van De Valkenburger Spelen: een valk in een lauwerkrans" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2B1810",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="nl" className={`${shrikhand.variable} ${rubik.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: INSTALL_CAPTURE_SCRIPT }} />
+      </head>
+      <body>
+        <a
+          href="#inhoud"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-pil focus:bg-mosterd focus:px-4 focus:py-2 focus:font-bold focus:text-studio"
+        >
+          Naar de inhoud
+        </a>
+        {children}
+        <AppSignalen swEnabled={process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SW !== "off"} />
+      </body>
+    </html>
+  );
+}

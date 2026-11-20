@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Scorebord</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&amp;family=Shrikhand&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#2B1810}
+a{color:#F5AE1B}a:hover{color:#FCEBD0}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:3px solid #F5AE1B;outline-offset:3px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: #2B1810; color: #FCEBD0; font-family: Rubik, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <svg aria-hidden="true" width="390" height="150" viewBox="0 0 390 150" style="position: absolute; top: 0; left: 0; pointer-events: none">
+    <path d="M-10 10 H318 A62 62 0 0 1 380 72 V140" fill="none" stroke="#F5AE1B" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-10 20 H318 A52 52 0 0 1 370 72 V140" fill="none" stroke="#F06A1F" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-10 30 H318 A42 42 0 0 1 360 72 V140" fill="none" stroke="#B4441A" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+
+  <div style="position: relative; padding: 52px 22px 0 22px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; flex-direction: column; gap: 2px; padding-right: 40px">
+      <h1 style="margin: 0; font-family: Shrikhand, 'Arial Black', serif; font-weight: 400; font-size: 30px; line-height: 1.1; text-shadow: 3px 3px 0 #F06A1F">Scorebord</h1>
+      <span style="font-size: 15px; color: #E9C9A0">{{ondertitel}}</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-right: 30px">
+      <span style="font-size: 13px; color: #E9C9A0">Demo, bekijk het op</span>
+      <button type="button" onClick="{{naarVr}}" style="min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid #E9C9A0; background: {{vrBg}}; color: {{vrFg}}; font-size: 14px; font-weight: 700">vrijdagavond</button>
+      <button type="button" onClick="{{naarZa}}" style="min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid #E9C9A0; background: {{zaBg}}; color: {{zaFg}}; font-size: 14px; font-weight: 700">zaterdagmiddag</button>
+    </div>
+
+    <div role="tablist" aria-label="Weergave" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 5px; border-radius: 18px; background: #1A0E08">
+      <button type="button" role="tab" aria-selected="{{standSel}}" onClick="{{naarStand}}" style="min-height: 44px; border-radius: 14px; border: 0; background: {{standBg}}; color: {{standFg}}; font-size: 16px; font-weight: 800">Klassement</button>
+      <button type="button" role="tab" aria-selected="{{medSel}}" onClick="{{naarMed}}" style="min-height: 44px; border-radius: 14px; border: 0; background: {{medBg}}; color: {{medFg}}; font-size: 16px; font-weight: 800">Medaillespiegel</button>
+    </div>
+
+    <sc-if value="{{opSlot}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; background: #F5AE1B; color: #2B1810">
+        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2B1810" stroke-width="2.4" stroke-linecap="round" style="flex: none"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <span style="font-size: 15px; line-height: 1.35; font-weight: 500">Op slot tot de prijsuitreiking. Je ziet de stand van zaterdag 10:30.</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{toonStand}}" hint-placeholder-val="{{ true }}">
+      <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+        <sc-for list="{{stand}}" as="r" hint-placeholder-count="4">
+          <li style="display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-radius: 18px; background: #FCEBD0; color: #2B1810; box-shadow: 0 4px 0 #140B06">
+            <div style="width: 52px; flex: none; display: flex; flex-direction: column; align-items: center">
+              <span style="font-family: Shrikhand, 'Arial Black', serif; font-size: 26px; line-height: 1.05">{{r.plaats}}</span>
+              <sc-if value="{{r.gedeeld}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; font-weight: 700">gedeeld</span></sc-if>
+            </div>
+            <span aria-hidden="true" style="width: 14px; height: 38px; flex: none; border-radius: 7px; background: {{r.kleur}}"></span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 17px; font-weight: 800">{{r.team}}</span>
+              <span style="font-size: 14px">{{r.detail}}</span>
+            </div>
+            <span style="font-family: Shrikhand, 'Arial Black', serif; font-size: 30px; line-height: 1">{{r.punten}}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </sc-if>
+
+    <sc-if value="{{toonMed}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 40px 40px 40px; gap: 8px; padding: 0 14px; font-size: 13px; color: #E9C9A0; text-align: center">
+          <span style="text-align: left">Per onderdeel goud, zilver en brons</span><span>goud</span><span>zilver</span><span>brons</span>
+        </div>
+        <sc-for list="{{medailles}}" as="m" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) 40px 40px 40px; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 18px; background: #FCEBD0; color: #2B1810; box-shadow: 0 4px 0 #140B06">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <span aria-hidden="true" style="width: 14px; height: 36px; flex: none; border-radius: 7px; background: {{m.kleur}}"></span>
+              <span style="font-size: 17px; font-weight: 800">{{m.team}}</span>
+            </div>
+            <span style="justify-self: center; width: 36px; height: 36px; border-radius: 999px; background: #F2C14E; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px">{{m.goud}}</span>
+            <span style="justify-self: center; width: 36px; height: 36px; border-radius: 999px; background: #C9C3B8; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px">{{m.zilver}}</span>
+            <span style="justify-self: center; width: 36px; height: 36px; border-radius: 999px; background: #C27A3E; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px">{{m.brons}}</span>
+          </div>
+        </sc-for>
+        <span style="font-size: 14px; color: #E9C9A0; line-height: 1.4">Gedeelde plaats betekent gedeeld metaal: allebei goud, en dan geen zilver.</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{toonOnderdelen}}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 15px; font-weight: 700; color: #E9C9A0">Gespeeld, punten volgen bij de onthulling</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{onderdelen}}" as="o" hint-placeholder-count="8">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: {{o.bg}}; color: {{o.fg}}; font-size: 14px; font-weight: 700">
+              <sc-if value="{{o.klaar}}" hint-placeholder-val="{{ true }}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></sc-if>
+              {{o.naam}}
+            </span>
+          </sc-for>
+        </div>
+        <span style="font-size: 14px; color: #E9C9A0; line-height: 1.4">Joker al gebruikt: Team Petrol bij spel 1, Team Oranje bij spel 2.</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <nav aria-label="Hoofdmenu" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80px; box-sizing: border-box; background: #1E110B; border-top: 2px solid #3B2417; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 6px 6px 12px 6px">
+    <a href="Thuis-tijdens.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></svg></span>Thuis</a>
+    <a href="Programma.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8 14h3M8 17h6"/></svg></span>Programma</a>
+    <a href="Quiz-captain.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M10 9.2a2 2 0 1 1 2.8 1.8c-.6.3-.8.7-.8 1.3"/><path d="M12 14.3h.01"/></svg></span>Quiz</a>
+    <a href="Zeskamp.dc.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #E9C9A0; font-size: 13px; font-weight: 500">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9C9A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7"/><path d="M12 10v3.5l2.5 2M10 3h4M12 3v3.5"/></svg></span>Zeskamp</a>
+    <a href="Scorebord.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #F5AE1B; font-size: 13px; font-weight: 700">
+      <span style="display: flex; align-items: center; justify-content: center; width: 52px; height: 30px; border-radius: 999px; background: #F5AE1B"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B1810" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20v-6h4v6M10 20V9h4v11M15 20v-4h4v4"/></svg></span>Score</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const moment = S.moment || 'vr';
+    const tab = S.tab || 'stand';
+    const za = moment === 'za';
+    const stand = [
+      { plaats: '1', gedeeld: true, team: 'Team Oranje', kleur: '#F06A1F', punten: '46', detail: 'Quiz 38, vrijdag 8' },
+      { plaats: '1', gedeeld: true, team: 'Team Mosterd', kleur: '#F5AE1B', punten: '46', detail: 'Quiz 41 met joker, vrijdag 5' },
+      { plaats: '3', gedeeld: false, team: 'Team Avocado', kleur: '#6F7F1F', punten: '43', detail: 'Quiz 33, vrijdag 10' },
+      { plaats: '4', gedeeld: false, team: 'Team Petrol', kleur: '#17565E', punten: '42', detail: 'Quiz 36, vrijdag 6' }
+    ];
+    const medailles = [
+      { team: 'Team Mosterd', kleur: '#F5AE1B', goud: '1', zilver: '0', brons: '0' },
+      { team: 'Team Avocado', kleur: '#6F7F1F', goud: '1', zilver: '0', brons: '0' },
+      { team: 'Team Oranje', kleur: '#F06A1F', goud: '0', zilver: '2', brons: '0' },
+      { team: 'Team Petrol', kleur: '#17565E', goud: '0', zilver: '0', brons: '2' }
+    ];
+    const ond = [['Quiz', 'k'], ['Vrijdag', 'k'], ['Spel 1', 'k'], ['Spel 2', 'k'], ['Spel 3', 'k'], ['Spel 4 bezig', 'b'], ['Spel 5', 'g'], ['Spel 6', 'g']];
+    const onderdelen = ond.map((o) => ({
+      naam: o[0], klaar: o[1] === 'k',
+      bg: o[1] === 'k' ? '#FCEBD0' : (o[1] === 'b' ? '#F06A1F' : '#3B2417'),
+      fg: o[1] === 'g' ? '#E9C9A0' : '#2B1810'
+    }));
+    const aan = (x) => (x ? '#F5AE1B' : 'transparent');
+    const tekst = (x) => (x ? '#2B1810' : '#FCEBD0');
+    return {
+      ondertitel: za ? 'Op slot sinds de start van de zeskamp' : 'Stand na de quiz en vrijdag',
+      vrBg: aan(!za), vrFg: tekst(!za), zaBg: aan(za), zaFg: tekst(za),
+      naarVr: () => this.setState({ moment: 'vr' }),
+      naarZa: () => this.setState({ moment: 'za' }),
+      standBg: tab === 'stand' ? '#FCEBD0' : 'transparent', standFg: tab === 'stand' ? '#2B1810' : '#FCEBD0',
+      medBg: tab === 'med' ? '#FCEBD0' : 'transparent', medFg: tab === 'med' ? '#2B1810' : '#FCEBD0',
+      standSel: tab === 'stand' ? 'true' : 'false', medSel: tab === 'med' ? 'true' : 'false',
+      naarStand: () => this.setState({ tab: 'stand' }),
+      naarMed: () => this.setState({ tab: 'med' }),
+      opSlot: za, toonStand: tab === 'stand', toonMed: tab === 'med', toonOnderdelen: za && tab === 'stand',
+      stand: stand, medailles: medailles, onderdelen: onderdelen
+    };
+  }
+}
+</script>
+</body>
+</html>
