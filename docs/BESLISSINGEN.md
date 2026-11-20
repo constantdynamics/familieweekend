@@ -2,6 +2,55 @@
 
 Keuzes die de SPEC openliet of waarvan ik bewust afweek, met de reden. Nieuwste fase bovenaan.
 
+## Fase 2 t/m 4: de rest van de app (21 november 2026)
+
+De eigenaar wilde alles wat in beheer als "Binnenkort" stond nu al, in één oplevering, en alles meteen kunnen uitproberen (zie `docs/PLAN-fase-2-4.md` voor zijn keuzes).
+
+### Techniek
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Oplevering zonder halve dingen | Een schakelaar "Nieuwe app voor de familie" (`settings.fase2_live`). Staat hij uit, dan ziet de familie de app van fase 1 (aftelklok, oud menu). De beheerder ziet altijd alles. | Elke push gaat meteen live, en de eigenaar wilde één oplevering. Zo kan er tussendoor veilig gedeployed worden. |
+| Proef en echt | Teams, deelnemers, onderdelen, uitslagen, jokers, losse punten, quizantwoorden, duels, momentopnames, live-status en het logboek hebben een kolom `env` (`live` of `test`). Programma, fun facts, prikbord en quizinhoud zijn gedeeld. | SPEC §3 vraagt om een aparte proefomgeving. Een kolom is eenvoudiger dan een tweede schema, en zo kan de echte quiz ook in de proef geoefend worden. |
+| In de proef komen | Alleen via de beheerder: op het eigen toestel, of met een uitnodigingslink (een dag geldig) voor een ander toestel. Beide zijn ondertekende cookies. Bovenaan elk scherm staat dan een balk "Proef". | Dan kan niemand per ongeluk in de proef belanden of de echte quizvragen in een oefenronde zien. |
+| "Bekijk als…" | Alleen voor de beheerder en alleen in de proef: als familielid, captain, meekijker of spelleider. Als captain kun je ook echt antwoorden, maar alleen in de proef. | Echte gegevens kunnen zo nooit per ongeluk geraakt worden. |
+| Seintjes (Realtime) | Supabase Realtime, één publiek kanaal per omgeving (`valk-live`, `valk-test`), alleen met een versienummer. Het adres en de publieke sleutel staan in de database (`settings.realtime_*`), niet in de repo en niet als Vercel-variabele. Zonder Realtime vragen telefoons zelf: om de 2,5 seconde als er iets live loopt, anders om de 15 seconden. Met Realtime is het om de 30 seconden. | SPEC §7.2. Vercel-variabelen kon Claude niet zelf zetten. De publieke sleutel is geen geheim (hij staat in elke browser), maar hoort ook niet in de repo. Rustig vragen houdt de gratis limieten van Vercel ruim. |
+| Foto's | In een eigen tabel in het `valk`-schema, niet in Supabase Storage. Opvragen kan alleen met een ondertekende link die kort geldig is, en met de familiesessie. In de browser verkleind (fun facts tot 1600 px, prikbord tot 1280 px). Ongebruikte uploads ruimt de dagelijkse keepalive op. | Supabase Storage vraagt de servicesleutel van het gedeelde project, en die geeft toegang tot de andere apps. De database heeft ruim plek (39 van 500 MB in gebruik). |
+| Context per verzoek | Pagina's gebruiken het context dat per verzoek onthouden wordt, serveracties krijgen een vers context, en na een actie op dezelfde pagina volgt `refresh()`. | Next.js 16 ververst de pagina niet vanzelf na een serveractie. |
+| Scherm overnemen | Start de quiz, het intermezzo of de prijsuitreiking, dan gaat elke telefoon in de app er meteen heen. Dat gebeurt alleen op het moment van wisselen: wie daarna wegtikt, wordt niet teruggetrokken. | SPEC §4: deze onderdelen nemen tijdelijk het hele scherm over. |
+
+### Familie en rollen
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Menu | Thuis, Programma en Prikbord. Quiz en Zeskamp worden een tegel op Thuis op de dag zelf, Score zodra de Spelen begonnen zijn. | De keuze van de eigenaar. Dit wijkt af van SPEC §4 (vijf tabs). |
+| Beheer | Bovenin het embleem en onderin "Terug naar Thuis", op elk beheerscherm. | De wens van de eigenaar. |
+| Wie ben jij? | Na de familiecode, zodra er namen in de lijst staan. Elke naam hoort bij één telefoon, en een telefoon mag meer namen hebben ("Ik vul ook in voor…"). Overslaan kan ("Ik kijk eerst even rond"). De beheerder kan een naam vrijgeven. | SPEC §3. Elke naam maar één keer, zoals de eigenaar wilde, zodat niemand andermans naam gebruikt. |
+| Inloggen voor de spelleiding | Op Thuis staat "Inloggen voor de spelleiding", met daarachter drie deuren: captain (team-PIN), spelleider (eigen PIN) en beheerder. | Eén ingang houdt Thuis rustig. |
+| PIN's | De app maakt team-PIN's en PIN's voor spelleiders zelf aan, en de beheerder ziet ze precies één keer. Een nieuwe team-PIN logt het oude captaintoestel uit. | SPEC §3. |
+| Teamtoestel | Logt een tweede toestel in met dezelfde team-PIN, dan neemt dat het over. Het oude toestel ziet "Je teamtoestel is overgenomen door een ander toestel." | SPEC §3. |
+| Programma vrijgeven | Het voorbeeldprogramma (SPEC §9.3) staat erin, maar de familie ziet het pas als de beheerder het vrijgeeft. | De keuze van de eigenaar: "zodra jij het hebt ingevuld". |
+
+### Rekenen (pure modules met unittests)
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Medailles | Bij de zeskamp volgen medailles de plaats, niet de punten. Een team met joker dat 3e wordt, krijgt brons. Bij de quiz en de vrijdag gaan medailles op punten. | Volgt uit SPEC §5.5, spel 6. |
+| Plaatsen | Bij `plaatsen` geven gelijke tikken een gedeelde plaats (1, 2, 2, 4). | SPEC §5.2. |
+| Schatting | Afstanden worden vergeleken op het aantal decimalen dat getypt is, zodat 7,4 en 7,6 even ver van 7,5 liggen. Antwoordt maar één team, dan scoort dat team. | Rekenen met kommagetallen gaf anders een verkeerde winnaar. |
+| Kaartvragen | Een speld met een lengtegraad buiten ±180 (de kaart is rondgedraaid) wordt goed gerekend. Een vraag zonder geldige plek geeft niemand punten. | Robuust voor duimen en scrollende kaarten. |
+| Weergave | Hoogstens 1 decimaal met een Nederlandse komma, afgerond van nul af (6,25 → "6,3"). Een ASCII-min ("-2"). | SPEC §5.2. |
+| Eerlijkheidscheck | Een vraag telt één keer per team met voorkennis. Bij `wie_van_ons` en `echt_of_ai` vult de app het onderwerp zelf aan, en handmatige onderwerpen tellen mee. | SPEC §4.6. |
+
+### Intermezzo, afvinklijst en opruimen
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Intermezzo | De quizmaster loot. De gelote spelers kiezen in het geheim op hun eigen telefoon. Zijn beide keuzes binnen, dan telt iedereen 3 seconden af en gaan pas daarna de keuzes naar de telefoons. Bij gelijkspel kiezen ze na 2,5 seconden opnieuw. De winnaar blijft staan, en wie al gespeeld heeft komt pas terug als iedereen geweest is. "Loot opnieuw" en "In het echt spelen" zijn er voor wie er niet is of geen telefoon heeft. | SPEC §4.7. Zo kan niemand de keuze van de ander vooraf zien, ook niet in het netwerkverkeer. |
+| Afvinklijst | 26 punten. Wat de app zelf kan zien, vinkt hij af en laat hij zien ("32 van de 45 klaar"); de rest vink je met je naam af. Spelleiders zien de lijst en plaatsen notities, de beheerder voegt punten toe en haalt ze weg. Ook als document: `docs/AFVINKLIJST.md`. | De wens van de eigenaar: alleen voor de beheerder en de spelleiders, met notities op naam. |
+| Alles opruimen | Verwijdert de antwoorden en foto's van de fun facts (met de AI-versies) en welke naam bij welke telefoon hoort. Het prikbord, de deelnemers, de teams, de uitslagen en het logboek blijven staan. Eerst "Ik wil alles opruimen", daarna OPRUIMEN typen. | SPEC §4.11 en §8, plus de wens van de eigenaar om het prikbord te bewaren voor volgend jaar. |
+| Geen losse woorden | Chrome's `text-wrap: pretty` lost twee regels met één los woord niet op. Teksten uit de database krijgen daarom `bijElkaar()`, en de controle per scherm telt een woord dat bij een koppelteken afbreekt, mee op de regel waar het eindigt. | De wens van de eigenaar uit de ontwerpronde. |
+
 ## Ontwerp met meer ademruimte (20 november 2026)
 
 De eigenaar wilde een mooier ontwerp dat meer ademt. Uit vier statische varianten koos de eigenaar **B · Spotlights**.

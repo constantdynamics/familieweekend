@@ -61,6 +61,7 @@ async function autoChecks(): Promise<Record<string, AutoResult>> {
   const open = Date.parse(settings.funfactsOpenAt);
   return {
     familiecode: { done: counts.code, status: null },
+    nieuwe_app: { done: settings.fase2Live, status: settings.fase2Live ? "staat aan" : "staat nog uit" },
     eigen_pin: { done: counts.pin_changed, status: null },
     deelnemers: { done: counts.names >= 10, status: counts.names === 1 ? "1 naam" : `${counts.names} namen` },
     teams_ingedeeld: {
