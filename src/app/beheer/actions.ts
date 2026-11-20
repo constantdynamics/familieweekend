@@ -1,6 +1,6 @@
 "use server";
 
-import { updateTag } from "next/cache";
+import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { changeStaffPin, findStaffByPin, setFamilyCode, verifyStaffPin } from "@/lib/server/access";
 import { logAudit, type Actor } from "@/lib/server/audit";
@@ -13,7 +13,8 @@ import {
   startStaffSession,
   type StaffSession,
 } from "@/lib/server/session";
-import { SETTINGS_TAG, updateSettings } from "@/lib/server/settings";
+import { ring } from "@/lib/server/live";
+import { SETTINGS_TAG, setSettingsFlag, updateSettings } from "@/lib/server/settings";
 import { familyCodeProblem, normalizeFamilyCode, normalizePin, pinProblem } from "@/lib/shared/codes";
 import { formatTime, parseAmsterdamInput } from "@/lib/shared/time";
 
@@ -192,4 +193,17 @@ export async function wijzigPin(_previous: FormState, formData: FormData): Promi
     return { fout: ONZE_KANT };
   }
   return { gelukt: "PIN gewijzigd. Op andere telefoons log je opnieuw in met je nieuwe PIN." };
+}
+
+/* De nieuwe app (menu met Prikbord, fun facts, …) aan of uit voor de familie. */
+export async function zetNieuweApp(formData: FormData): Promise<void> {
+  const staff = await requireAdmin();
+  try {
+    await setSettingsFlag("fase2Live", formData.get("waarde") === "1", actorFrom(staff));
+    updateTag(SETTINGS_TAG);
+    await ring("live");
+    refresh();
+  } catch (error) {
+    logError("beheer.nieuwe-app", error);
+  }
 }

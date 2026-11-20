@@ -266,3 +266,39 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Intermezzo: the quick name roll when a duel is drawn (SPEC §4.7), and the
+ * 3-2-1 before the reveal.
+ */
+@keyframes namenrol {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% + 1lh));
+  }
+}
+
+.namenrol {
+  animation: namenrol 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes tel {
+  0% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.92);
+    opacity: 1;
+  }
+}
+
+.tel {
+  animation: tel 0.9s var(--ease-uit) both;
+}

@@ -99,3 +99,23 @@ export async function testEnvironmentSummary(): Promise<{ teams: number; names: 
   `;
   return row ?? { teams: 0, names: 0, events: 0 };
 }
+
+/**
+ * "Alles opruimen" after the weekend (SPEC §4.11, §8): fun facts, their
+ * photos (and AI versions) and the name links go. The board stays: the
+ * owner wants the memories for next year.
+ */
+export async function cleanUpAfterWeekend(actor: Actor): Promise<{ answers: number; photos: number; links: number }> {
+  return db().begin(async (sql) => {
+    const answers = await sql`delete from valk.funfact_answers returning participant_id`;
+    const photos = await sql`delete from valk.uploads where kind in ('funfact', 'ai') returning id`;
+    const links = await sql`
+      update valk.participants set claimed_device_id = null, claimed_at = null, funfacts_done_at = null, updated_at = now()
+      where claimed_device_id is not null or funfacts_done_at is not null
+      returning id
+    `;
+    const result = { answers: answers.length, photos: photos.length, links: links.length };
+    await logAudit(actor, { action: "alles.opgeruimd", entity: "privacy", newValue: result }, sql);
+    return result;
+  });
+}

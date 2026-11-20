@@ -12,6 +12,7 @@ import {
   IconPin,
   IconPrikbord,
   IconProef,
+  IconPrullenbak,
   IconProgramma,
   IconQuiz,
   IconScore,
@@ -127,6 +128,7 @@ async function Dashboard({ staff }: { staff: StaffSession }) {
           tekst: ctx.env === "test" ? "Je zit nu in de proef" : "Probeer alles uit",
           Icon: IconProef,
         },
+        { href: "/beheer/opruimen", titel: "Na afloop", tekst: "Alles opruimen", Icon: IconPrullenbak },
         {
           href: "/beheer/logboek",
           titel: "Logboek",

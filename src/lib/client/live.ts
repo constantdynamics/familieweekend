@@ -11,10 +11,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 
 type Realtime = { url: string; key: string } | null;
-type Versie = { env: "live" | "test"; v: number; realtime: Realtime };
+type Versie = { env: "live" | "test"; v: number; live: boolean; realtime: Realtime };
 type Listener = (version: number) => void;
 
+/* Without Realtime: fast while something runs live, calm otherwise. */
 const FAST_MS = Number(process.env.NEXT_PUBLIC_VALK_POLL_MS) || 2500;
+const CALM_MS = 15_000;
+/* With Realtime the ring does the work; asking is only a safety net. */
 const SLOW_MS = 30_000;
 
 class Doorbell {
@@ -23,6 +26,7 @@ class Doorbell {
   private env: "live" | "test" | null = null;
   private realtimeKey = "";
   private connected = false;
+  private liveNow = false;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private disconnect: (() => void) | null = null;
   private polling = false;
@@ -67,7 +71,7 @@ class Doorbell {
   private schedule() {
     if (this.timer) clearTimeout(this.timer);
     if (this.listeners.size === 0) return;
-    this.timer = setTimeout(() => void this.poll(), this.connected ? SLOW_MS : FAST_MS);
+    this.timer = setTimeout(() => void this.poll(), this.connected ? SLOW_MS : this.liveNow ? FAST_MS : CALM_MS);
   }
 
   private async poll() {
@@ -86,6 +90,7 @@ class Doorbell {
           this.realtimeKey = "";
           this.connected = false;
         }
+        this.liveNow = data.live;
         this.connect(data.realtime);
         this.update(data.v);
       }
@@ -191,5 +196,6 @@ export function useLive<T>(url: string | null, initial: T | null = null): LiveRe
     return getDoorbell().subscribe(() => void load());
   }, [url, load]);
 
-  return { data, error, updatedAt, refresh: () => void load() };
+  const refresh = useCallback(() => void load(), [load]);
+  return { data, error, updatedAt, refresh };
 }

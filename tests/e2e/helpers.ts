@@ -76,7 +76,8 @@ export async function losseWoorden(page: Page): Promise<string[]> {
               const range = document.createRange();
               range.setStart(kind, match.index);
               range.setEnd(kind, match.index + match[0].length);
-              const rect = [...range.getClientRects()].find((r) => r.width > 0 && r.height > 0);
+              // A word broken over two lines (at a hyphen) counts on the line where it ends.
+              const rect = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0).at(-1);
               if (rect) lijst.at(-1)!.push({ tekst: match[0], top: rect.top, hoogte: rect.height });
             }
           } else if (kind instanceof Element) {

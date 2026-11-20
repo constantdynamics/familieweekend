@@ -56,6 +56,8 @@ async function main() {
       $$
     `;
     await sql`delete from valk.staff where role <> 'beheerder'`;
+    // live_state refers to the quiz tables, so the cascade above empties it too.
+    await sql`insert into valk.live_state (env) values ('live'), ('test') on conflict (env) do nothing`;
     await sql`
       update valk.live_state set
         mode = 'rust', quiz_id = null, round_no = null, question_id = null, phase = null,
