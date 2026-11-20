@@ -28,9 +28,11 @@ type Props = {
   aftrap: string;
   /** When the server rendered this page; used for the first paint only. */
   renderedAt: number;
+  /** Override the top margin (default 18 px, as in the design). */
+  className?: string;
 };
 
-export function Aftelklok({ aftrap, renderedAt }: Props) {
+export function Aftelklok({ aftrap, renderedAt, className = "mt-[18px]" }: Props) {
   const target = Date.parse(aftrap);
   const now = useSyncExternalStore(subscribe, nowSeconds, () => Math.floor(renderedAt / 1000));
   const parts = countdownParts(target, now * 1000);
@@ -38,7 +40,7 @@ export function Aftelklok({ aftrap, renderedAt }: Props) {
 
   if (parts.done) {
     return (
-      <section aria-label="Aftelklok" className="mt-[18px] rounded-kaart bg-studio-diep p-4 shadow-inzet">
+      <section aria-label="Aftelklok" className={`${className} rounded-kaart bg-studio-diep p-4 shadow-inzet`}>
         <p className="m-0 font-display text-[30px] leading-[1.1] schaduw-oranje">Het is zover!</p>
         <p className="mt-2 mb-0 text-[15px] text-zand">De Spelen zijn begonnen. Kijk in het programma wat er nu gebeurt.</p>
       </section>
@@ -53,7 +55,7 @@ export function Aftelklok({ aftrap, renderedAt }: Props) {
   ];
 
   return (
-    <section aria-label="Aftelklok" className="mt-[18px] rounded-kaart bg-studio-diep p-4 shadow-inzet">
+    <section aria-label="Aftelklok" className={`${className} rounded-kaart bg-studio-diep p-4 shadow-inzet`}>
       <p className="m-0 mb-2.5 text-label font-medium text-zand">Nog te gaan tot de aftrap op {kickOff}</p>
       <p className="sr-only" role="timer">
         {countdownSentence({ ...parts, seconds: 0 })} tot de aftrap.
@@ -62,7 +64,7 @@ export function Aftelklok({ aftrap, renderedAt }: Props) {
         {units.map((unit) => (
           <div key={unit.label} className="flex flex-col items-stretch gap-1.5">
             <div
-              className={`relative flex h-[76px] items-center justify-center overflow-hidden rounded-tegel shadow-tegel ${
+              className={`kaart-glans relative flex h-[76px] items-center justify-center overflow-hidden rounded-tegel shadow-tegel ${
                 unit.accent ? "bg-mosterd" : "bg-beeldbuis"
               }`}
             >

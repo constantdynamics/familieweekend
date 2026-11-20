@@ -2,6 +2,18 @@
 
 Keuzes die de SPEC openliet of waarvan ik bewust afweek, met de reden. Nieuwste fase bovenaan.
 
+## Ontwerp met meer ademruimte (20 november 2026)
+
+De eigenaar wil een mooier ontwerp dat meer ademt. Er staan vier varianten (A–D) klaar om uit te kiezen. Tot die keuze blijft live het huidige ontwerp staan.
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Rustige achtergrondbeweging | Op welkom, Thuis en later de prijsuitreiking beweegt de achtergrond heel rustig: ademende studiolampen en banen die elkaars kleur overnemen. Dit telt niet als een van de momenten uit §2. | Bewuste afwijking van §2 en §6.5, gekozen door de eigenaar, op voorwaarde dat het heel rustig blijft. |
+| Banen bovenin | Om de 10 seconden neemt elke baan de kleur van de baan ernaast over (mosterd → oranje → roest → mosterd). De nieuwe kleur stroomt in 4 seconden van links door de bocht naar beneden. | De eigenaar koos één wissel per 8 à 12 seconden. Er beweegt alleen `stroke-dashoffset`, dus het is licht voor de telefoon. |
+| Studiolampen | Zachte, wazige lichtvlekken in de kleuren van het palet. Ze worden groter en feller en daarna kleiner en zachter, één keer per 10 à 13 seconden, en niet allemaal tegelijk. | De sfeer van een tv-studio uit de jaren zeventig. Ze gebruiken alleen `transform` en `opacity`, geen filters (§6.5). |
+| Beweging beperken | Niets stroomt of ademt meer. De banen wisselen alleen heel langzaam van kleur (één ronde per 90 seconden). | Keuze van de eigenaar. Zo blijft er iets leven zonder beweging. |
+| Proefpagina's | `/ontwerp/<a–d>-<thuis of welkom>` zijn alleen zichtbaar in een build met `VALK_ONTWERP=1`; live geven ze een 404. Ze verdwijnen zodra er gekozen is. | Eerst statische ontwerpen om uit te kiezen, zoals de eigenaar vroeg. |
+
 ## Fase 1 (20 november 2026)
 
 ### Hosting en kosten

@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { Bocht, Stralen } from "./Decor";
+import { HUIDIG, type Ontwerp } from "./ontwerp";
+import { StromendeBocht } from "./StromendeBocht";
+import { StudioLicht } from "./StudioLicht";
 
 type Props = {
   children: ReactNode;
@@ -12,22 +15,34 @@ type Props = {
   /** Top padding before the content; the prototype uses 48–52 px. */
   boven?: number;
   className?: string;
+  /** The look of the start screens: lamps, flowing lanes, gloss. */
+  ontwerp?: Ontwerp;
 };
 
 /**
  * A full screen on the studio set: brown floor, the three lanes bending down
  * at the top right, and room for the status bar and the tab bar.
  */
-export function Scherm({ children, stralen = false, bocht = 140, metTabBalk = true, boven = 50, className }: Props) {
+export function Scherm({
+  children,
+  stralen = false,
+  bocht = 140,
+  metTabBalk = true,
+  boven = 50,
+  className,
+  ontwerp = HUIDIG,
+}: Props) {
+  const metStralen = stralen && (ontwerp === HUIDIG || ontwerp.stralen);
   return (
-    <div className="relative min-h-dvh overflow-x-clip veilig-boven">
-      {stralen ? (
+    <div className={`relative min-h-dvh overflow-x-clip veilig-boven ${ontwerp.glans ? "decor-glans" : ""}`}>
+      {metStralen ? (
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[520px] overflow-hidden">
           <Stralen top={stralen === "feest" ? -300 : -420} tint={stralen === "feest" ? "feest" : "zacht"} />
         </div>
       ) : null}
+      {ontwerp.licht ? <StudioLicht variant={ontwerp.licht} /> : null}
       <div className="relative mx-auto max-w-[560px]">
-        <Bocht drop={bocht} />
+        {ontwerp.stroom ? <StromendeBocht drop={bocht} glans={ontwerp.glans} /> : <Bocht drop={bocht} />}
         <main
           id="inhoud"
           className={`relative flex flex-col px-[22px] ${className ?? ""}`}

@@ -195,6 +195,139 @@
   );
 }
 
+/*
+ * Studio lamps: soft light spots that breathe in and out.
+ */
+.studio-lamp {
+  position: absolute;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%) scale(0.88);
+  animation-name: adem;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes adem {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.86);
+    opacity: 0.62;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.14);
+    opacity: 1;
+  }
+}
+
+/*
+ * The flowing zeskampbocht: a 30-second cycle with three hand-overs. Each
+ * new colour flows into the lane in 4 seconds, then stays for 6.
+ */
+.bocht-stroom {
+  /* The gap is longer than the lane, so a hidden layer never leaves a dot. */
+  stroke-dasharray: 100 120;
+  stroke-dashoffset: 101;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.bocht-stroom-0 {
+  animation-name: bocht-stroom-0;
+}
+.bocht-stroom-1 {
+  animation-name: bocht-stroom-1;
+}
+.bocht-stroom-2 {
+  animation-name: bocht-stroom-2;
+}
+
+@keyframes bocht-stroom-0 {
+  0% {
+    stroke-dashoffset: 101;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  13.333%,
+  99.99% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 101;
+  }
+}
+
+@keyframes bocht-stroom-1 {
+  0%,
+  33.333% {
+    stroke-dashoffset: 101;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  46.667%,
+  99.99% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 101;
+  }
+}
+
+@keyframes bocht-stroom-2 {
+  0%,
+  66.667% {
+    stroke-dashoffset: 101;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  80%,
+  99.99% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 101;
+  }
+}
+
+/* Reduce motion: nothing flows, the lanes only change colour very slowly. */
+@keyframes bocht-kleur {
+  0%,
+  28% {
+    stroke: var(--k0);
+  }
+  33%,
+  61% {
+    stroke: var(--k1);
+  }
+  66%,
+  94% {
+    stroke: var(--k2);
+  }
+  100% {
+    stroke: var(--k0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bocht-stroom {
+    display: none;
+  }
+  .bocht-basis {
+    animation-name: bocht-kleur !important;
+    animation-duration: 90s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+/* Glossy tv-studio decor: a glass reflection on the light cards. */
+.decor-glans .kaart-glans {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.1) 36%,
+    rgba(255, 255, 255, 0) 58%
+  );
+}
+
 /* Install hints disappear once the app runs from the home screen. */
 @media (display-mode: standalone), (display-mode: fullscreen) {
   .alleen-in-browser {
