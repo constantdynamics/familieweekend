@@ -6,19 +6,24 @@ import { siteUrl } from "@/lib/shared/site";
 import { iosStartupImages } from "@/lib/shared/splash";
 import "./globals.css";
 
-const shrikhand = localFont({
-  src: "./fonts/shrikhand-latin.woff2",
-  weight: "400",
+/*
+ * Display letter: Sansita Swashed ExtraBold, the only cut we use. It is
+ * declared for every weight, so the browser never fakes a bolder version.
+ */
+const sansitaSwashed = localFont({
+  src: "./fonts/sansita-swashed-latin-800.woff2",
+  weight: "100 900",
   display: "swap",
-  variable: "--font-shrikhand",
+  variable: "--font-sansita",
   fallback: ["Arial Black", "serif"],
 });
 
-const rubik = localFont({
-  src: "./fonts/rubik-latin-variable.woff2",
-  weight: "300 900",
+/** Text letter: Nunito, variable from 200 to 1000. */
+const nunito = localFont({
+  src: "./fonts/nunito-latin-variable.woff2",
+  weight: "200 1000",
   display: "swap",
-  variable: "--font-rubik",
+  variable: "--font-nunito",
   fallback: ["system-ui", "-apple-system", "Segoe UI", "sans-serif"],
 });
 
@@ -64,7 +69,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl" className={`${shrikhand.variable} ${rubik.variable}`}>
+    <html lang="nl" className={`${sansitaSwashed.variable} ${nunito.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: INSTALL_CAPTURE_SCRIPT }} />
       </head>

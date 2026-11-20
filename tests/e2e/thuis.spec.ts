@@ -10,7 +10,8 @@ test("Thuis toont embleem, data, locatie en de aftelklok tot de aftrap", async (
   await loggedIn(page);
 
   await expect(page.getByRole("img", { name: /valk in een lauwerkrans/ })).toBeVisible();
-  await expect(page.getByText("Hemelvaart 2027")).toBeVisible();
+  await expect(page.getByText("Hemelvaart", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/De Valkenburger\s*Spelen\s*2027/);
   await expect(page.getByText("do 6 t/m zo 9 mei")).toBeVisible();
   await expect(page.getByText("De Dommelvallei, Borkel en Schaft")).toBeVisible();
 

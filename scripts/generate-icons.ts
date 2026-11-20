@@ -40,7 +40,11 @@ async function render(
 async function main() {
   const svg = await readFile(out("brand", "embleem.svg"), "utf8");
   const emblemUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
-  const fonts = (await fontFace("shrikhand-latin.woff2", "Shrikhand", "400")) + (await fontFace("rubik-latin-variable.woff2", "Rubik", "300 900"));
+  const fonts =
+    (await fontFace("sansita-swashed-latin-800.woff2", "Sansita Swashed", "100 900")) +
+    (await fontFace("nunito-latin-variable.woff2", "Nunito", "200 1000"));
+  /** "De Valkenburger / Spelen [2027]", as the Woordmerk component in the app. */
+  const woordmerk = (size: number, shadow: number) => `<div style="font-family:'Sansita Swashed';font-size:${size}px;line-height:1.06;white-space:nowrap;color:#FCEBD0;text-shadow:${shadow}px ${shadow}px 0 #F06A1F">De Valkenburger<br/><span style="display:inline-flex;align-items:center;gap:${Math.round(size * 0.3)}px">Spelen<span style="font-family:Nunito;text-shadow:none;background:#F5AE1B;color:${BROWN};font-weight:800;font-size:${Math.round(size * 0.42)}px;line-height:1;padding:${Math.round(size * 0.15)}px ${Math.round(size * 0.36)}px;border-radius:999px">2027</span></span></div>`;
 
   await mkdir(out("icons"), { recursive: true });
   await mkdir(out("splash"), { recursive: true });
@@ -75,10 +79,9 @@ async function main() {
       const emblem = Math.round(Math.min(size.width * 0.46, 260));
       const title = Math.round(Math.min(size.width * 0.092, 50));
       const html = `<!doctype html><html><head><style>${fonts}</style></head><body style="margin:0">
-        <div style="width:100vw;height:100vh;background:${BROWN};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(title * 0.4)}px;font-family:Rubik">
+        <div style="width:100vw;height:100vh;background:${BROWN};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(title * 0.4)}px;font-family:Nunito;text-align:center">
           <img src="${emblemUri}" style="width:${emblem}px;height:${emblem}px" />
-          <div style="font-family:Shrikhand;font-size:${title}px;line-height:1.06;color:#FCEBD0;text-shadow:3px 3px 0 #F06A1F;text-align:center">De Valkenburger<br/>Spelen</div>
-          <div style="background:#F5AE1B;color:${BROWN};font-weight:800;font-size:${Math.round(title * 0.42)}px;padding:6px 16px;border-radius:999px">2027</div>
+          ${woordmerk(title, 3)}
         </div></body></html>`;
       const file = path.join("splash", splashFileName(size));
       await render(browser, html, size.width, size.height, out(file), { scale: size.ratio });
@@ -87,21 +90,21 @@ async function main() {
 
     // Share image (WhatsApp, Signal): no location, just the name and the dates.
     const og = `<!doctype html><html><head><style>${fonts}</style></head><body style="margin:0">
-      <div style="position:relative;width:1200px;height:630px;overflow:hidden;background:${BROWN};font-family:Rubik;color:#FCEBD0">
-        <div style="position:absolute;left:-60px;top:-520px;width:1300px;height:1300px;border-radius:50%;background:repeating-conic-gradient(from 0deg,#35200F 0deg 7deg,${BROWN} 7deg 14deg)"></div>
+      <div style="position:relative;width:1200px;height:630px;overflow:hidden;background:${BROWN};font-family:Nunito;color:#FCEBD0">
+        <div style="position:absolute;left:60px;top:-120px;width:420px;height:760px;border-radius:50%;background:radial-gradient(closest-side,rgba(245,174,27,.34),rgba(245,174,27,.14) 45%,rgba(245,174,27,0))"></div>
+        <div style="position:absolute;left:520px;top:-160px;width:380px;height:700px;border-radius:50%;background:radial-gradient(closest-side,rgba(252,235,208,.14),rgba(252,235,208,.06) 45%,rgba(252,235,208,0))"></div>
+        <div style="position:absolute;left:820px;top:-120px;width:420px;height:760px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,106,31,.3),rgba(240,106,31,.12) 45%,rgba(240,106,31,0))"></div>
+        <div style="position:absolute;left:100px;top:470px;width:1000px;height:360px;border-radius:50%;background:radial-gradient(closest-side,rgba(180,68,26,.42),rgba(180,68,26,.18) 45%,rgba(180,68,26,0))"></div>
         <svg width="1200" height="630" viewBox="0 0 1200 630" style="position:absolute;inset:0">
           <path d="M-10 26 H1092 A82 82 0 0 1 1174 108 V640" fill="none" stroke="#F5AE1B" stroke-width="12" stroke-linecap="round"/>
           <path d="M-10 44 H1092 A64 64 0 0 1 1156 108 V640" fill="none" stroke="#F06A1F" stroke-width="12" stroke-linecap="round"/>
           <path d="M-10 62 H1092 A46 46 0 0 1 1138 108 V640" fill="none" stroke="#B4441A" stroke-width="12" stroke-linecap="round"/>
         </svg>
-        <div style="position:absolute;left:84px;top:118px;right:140px;display:flex;align-items:center;gap:56px">
-          <img src="${emblemUri}" style="width:380px;height:380px;flex:none" />
-          <div style="display:flex;flex-direction:column;gap:22px">
-            <div style="font-family:Shrikhand;font-size:84px;line-height:1.02;text-shadow:5px 5px 0 #F06A1F">De Valkenburger<br/>Spelen</div>
-            <div style="display:flex;align-items:center;gap:18px">
-              <span style="background:#F5AE1B;color:${BROWN};font-weight:800;font-size:34px;padding:8px 22px;border-radius:999px">2027</span>
-              <span style="font-weight:700;font-size:34px">Hemelvaart, 6 t/m 9 mei</span>
-            </div>
+        <div style="position:absolute;left:84px;top:118px;right:140px;display:flex;align-items:center;gap:48px">
+          <img src="${emblemUri}" style="width:340px;height:340px;flex:none" />
+          <div style="display:flex;flex-direction:column;gap:26px">
+            ${woordmerk(72, 5)}
+            <div style="font-weight:700;font-size:36px">Hemelvaart, 6 t/m 9 mei</div>
           </div>
         </div>
       </div></body></html>`;

@@ -26,7 +26,7 @@ export function Chip({ children, className }: { children: ReactNode; className?:
   );
 }
 
-/** Screen title in Shrikhand with the hard orange shadow. */
+/** Screen title in the display letter with the hard orange shadow. */
 export function SchermTitel({ children, sub, chip }: { children: ReactNode; sub?: ReactNode; chip?: ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5 pr-10">

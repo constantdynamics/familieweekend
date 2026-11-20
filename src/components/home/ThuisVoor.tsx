@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Embleem } from "@/components/brand/Embleem";
+import { Woordmerk } from "@/components/brand/Woordmerk";
 import { Bijgewerkt } from "@/components/pwa/AppSignalen";
 import { Chip, Kaart } from "@/components/ui/Kaart";
 import { Scherm } from "@/components/ui/Scherm";
@@ -30,7 +31,7 @@ export function ThuisVoor({ settings, renderedAt }: Props) {
       <div className="flex items-center gap-3.5 pr-9">
         <Embleem size={96} label="Voorlopig embleem: een valk in een lauwerkrans" className="flex-none" />
         <div className="flex min-w-0 flex-col items-start gap-1">
-          <Chip>Hemelvaart {amsterdamYear(start)}</Chip>
+          <Chip>Hemelvaart</Chip>
           <p className="m-0 text-[17px] leading-snug font-bold">{formatDateRange(start, end)}</p>
           <p className="m-0 text-[15px] leading-[1.3] text-zand">
             {settings.locationName}, {bijElkaar(settings.locationPlace)}
@@ -38,11 +39,7 @@ export function ThuisVoor({ settings, renderedAt }: Props) {
         </div>
       </div>
 
-      <h1 className="mt-4 mb-0 font-display text-[clamp(30px,9.75vw,38px)] leading-[1.08] font-normal text-beeldbuis schaduw-oranje">
-        De Valkenburger
-        <br />
-        Spelen
-      </h1>
+      <Woordmerk jaar={amsterdamYear(start)} className="mt-4" />
 
       <Aftelklok aftrap={settings.startAt} renderedAt={renderedAt} />
 

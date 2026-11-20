@@ -34,8 +34,9 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --font-display: var(--font-shrikhand), "Arial Black", serif;
-  --font-sans: var(--font-rubik), system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Chosen by the owner instead of Shrikhand and Rubik (docs/BESLISSINGEN.md). */
+  --font-display: var(--font-sansita), "Arial Black", serif;
+  --font-sans: var(--font-nunito), system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --text-label: 14px;
   --text-label--line-height: 1.35;
