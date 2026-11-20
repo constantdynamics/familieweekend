@@ -64,7 +64,7 @@ Unit- en integratietests (Vitest), inclusief een controle dat de rij-beveiliging
 npm run build && npm run test:e2e
 ```
 
-End-to-end op 390×844 en 360×780 (Playwright), met toegankelijkheidscheck (axe) en screenshots in `docs/screenshots/fase-1/`.
+End-to-end op 390×844 en 360×780 (Playwright), met toegankelijkheidscheck (axe), een controle op losse woorden en screenshots in `docs/screenshots/`. Meerdere werkkopieën tegelijk? Geef elk een eigen poort en testdatabase: `E2E_PORT=3110 E2E_DB=valk_e2e_a npm run test:e2e`.
 
 ```bash
 npm run lighthouse
@@ -93,9 +93,40 @@ De dagelijkse keepalive (`/api/keepalive`, beveiligd met `CRON_SECRET`) staat in
 
 De app praat met de database als `valk_app`. Het wachtwoord staat alleen in `DATABASE_URL` in Vercel. Nieuw wachtwoord zetten: maak lokaal een SCRAM-verifier en voer in de SQL-editor `alter role valk_app password 'SCRAM-SHA-256$…'` uit, en pas daarna `DATABASE_URL` in Vercel aan.
 
+## Rollen
+
+| Rol | Hoe | Waar |
+|---|---|---|
+| Familielid | Familiecode, daarna "Wie ben jij?" (één telefoon per naam) | Thuis, Programma, Prikbord, fun facts |
+| Captain | Team-PIN, één actief teamtoestel per team (een tweede neemt het over) | Inloggen → Captain |
+| Spelleider | Eigen PIN (gemaakt door de beheerder) | Inloggen → Spelleider |
+| Beheerder | Eigen PIN | Inloggen → Beheerder, of `/beheer` |
+
+## Realtime-seintjes
+
+Telefoons horen via Supabase Realtime dat er iets veranderd is (alleen een versienummer, nooit inhoud) en halen dan de stand op. Het publieke adres en de publieke sleutel staan in de database, niet in de repo:
+
+```sql
+update valk.settings set
+  realtime_url = 'https://<ref>.supabase.co',
+  realtime_key = '<publishable key, sb_publishable_…>'
+where id = 1;
+```
+
+Zonder deze regel werkt alles ook: telefoons vragen dan zelf om de paar seconden.
+
 ## Importeren en testmodus
 
-Komen in fase 4 (quiz): `npm run import:quiz -- <bestand>` en een aparte proefomgeving met een demo-quiz.
+- **Proefmodus:** Beheer → Proefmodus → "Zet de proef klaar". Dat maakt vier proefteams met team-PIN's, twaalf testnamen, de onderdelen en de demo-quiz. Met "Ga de proef in" zit je telefoon een dag in de proef. Een andere telefoon nodig je uit met de uitnodigingslink, en met "Bekijk als…" zie je de app als familielid, captain, meekijker of spelleider. "Maak de proef leeg" ruimt alles van de proef op; de echte Spelen raak je nooit.
+- **Quiz importeren:** in Beheer → Quiz (bestand uploaden), of:
+
+  ```bash
+  MIGRATION_DATABASE_URL='postgres://…' npm run import:quiz -- pad/naar/quiz.json
+  ```
+
+  Het formaat staat in SPEC §9.2. Exporteren als backup kan in Beheer → Quiz.
+
+- **De nieuwe app voor de familie:** Beheer → Instellingen → "Nieuwe app voor de familie". Uit: de familie ziet alleen de aftelklok. Aan: het menu met Prikbord, "Wie ben jij?", de fun facts vanaf de opening en wat je vrijgegeven hebt.
 
 ## Noodherstel
 
