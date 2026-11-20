@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { LiveOvername } from "@/components/live/LiveOvername";
 import { TabBalk } from "@/components/ui/TabBalk";
 import { getStaffSession } from "@/lib/server/session";
 import { getSettings } from "@/lib/server/settings";
@@ -11,6 +12,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <Suspense fallback={null}>
         <Menu />
       </Suspense>
+      <LiveOvername />
     </>
   );
 }
