@@ -63,8 +63,8 @@ export function ThuisVoor({ settings, renderedAt }: Props) {
         <Link href="/privacy" className="inline-flex min-h-11 items-center text-zand underline underline-offset-4">
           Wat we bewaren
         </Link>
-        <Link href="/beheer" className="inline-flex min-h-11 items-center text-zand underline underline-offset-4">
-          Beheer
+        <Link href="/inloggen" className="inline-flex min-h-11 items-center text-zand underline underline-offset-4">
+          Inloggen voor de spelleiding
         </Link>
       </p>
     </Scherm>

@@ -6,7 +6,16 @@
  * `server-only` import: the proxy imports this module too.
  */
 
-export type KeyPurpose = "session" | "staff" | "pin-pepper" | "code-pepper" | "ip-hash";
+export type KeyPurpose =
+  | "session"
+  | "staff"
+  | "pin-pepper"
+  | "code-pepper"
+  | "ip-hash"
+  | "captain"
+  | "proef"
+  | "bekijk"
+  | "photo";
 
 const encoder = new TextEncoder();
 const cache = new Map<string, Promise<Uint8Array>>();

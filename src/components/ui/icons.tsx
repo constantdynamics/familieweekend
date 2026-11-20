@@ -246,3 +246,200 @@ export const IconJoker = (p: IconProps) => (
     <path d="M12 8l1.2 2.5 2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4z" fill="currentColor" stroke="none" />
   </svg>
 );
+
+export const IconPrikbord = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />
+    <path d="M8 9.5h8M8 13h5" />
+  </Line>
+);
+
+export const IconHart = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+  </Line>
+);
+
+export const IconDuim = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M7 11v9H4v-9h3zM7 11l4-7c1.4 0 2.3 1 2 2.4L12.4 10H18a2 2 0 0 1 2 2.3l-1.1 5.9A2 2 0 0 1 17 20H7" />
+  </Line>
+);
+
+export const IconFoto = (p: IconProps) => (
+  <Line {...p}>
+    <rect x="3.5" y="5" width="17" height="14" rx="2" />
+    <circle cx="9" cy="10" r="1.6" />
+    <path d="M20.5 16l-5-5-8 8" />
+  </Line>
+);
+
+export const IconPlus = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 5v14M5 12h14" />
+  </Line>
+);
+
+export const IconMin = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M5 12h14" />
+  </Line>
+);
+
+export const IconPrullenbak = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13M10.5 11v5M13.5 11v5" />
+  </Line>
+);
+
+export const IconPotlood = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M15 5l4 4L9 19H5v-4L15 5zM13 7l4 4" />
+  </Line>
+);
+
+export const IconOog = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+    <circle cx="12" cy="12" r="2.8" />
+  </Line>
+);
+
+export const IconOogDicht = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M3 3l18 18M10.6 5.6A9.5 9.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.7 3.5M6.4 6.9C3.9 8.6 2.5 12 2.5 12S6 18.5 12 18.5c1.7 0 3.2-.5 4.5-1.2M9.9 9.9a2.8 2.8 0 0 0 4.2 4.2" />
+  </Line>
+);
+
+export const IconSpeld = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z" />
+    <circle cx="12" cy="9.8" r="2.4" />
+  </Line>
+);
+
+export const IconZon = (p: IconProps) => (
+  <Line {...p}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+  </Line>
+);
+
+export const IconWolk = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M7 18h10a4 4 0 0 0 .6-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 18z" />
+  </Line>
+);
+
+export const IconRegen = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M7 15h10a4 4 0 0 0 .6-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 15z" />
+    <path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5" />
+  </Line>
+);
+
+export const IconOnweer = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M7 15h10a4 4 0 0 0 .6-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 15z" />
+    <path d="M12.5 15.5l-2 3h3l-2 3" />
+  </Line>
+);
+
+export const IconSneeuw = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M7 14h10a4 4 0 0 0 .6-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7 14z" />
+    <path d="M9 18h.01M12 20h.01M15 18h.01" strokeWidth={3} />
+  </Line>
+);
+
+export const IconMist = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M4 9h16M6 13h12M4 17h16" />
+  </Line>
+);
+
+export const IconStopwatch = (p: IconProps) => (
+  <Line {...p}>
+    <circle cx="12" cy="13.5" r="7" />
+    <path d="M12 13.5V10M10 3h4M18.5 6.5l1.5-1.5" />
+  </Line>
+);
+
+export const IconKaartjes = (p: IconProps) => (
+  <Line {...p}>
+    <rect x="7" y="4" width="12" height="16" rx="2" />
+    <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h1" />
+    <path d="M10.5 9h5M10.5 12.5h5" />
+  </Line>
+);
+
+export const IconLuister = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+    <rect x="3.5" y="14" width="4" height="6" rx="1.5" />
+    <rect x="16.5" y="14" width="4" height="6" rx="1.5" />
+  </Line>
+);
+
+export const IconAfvinklijst = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M4 6.5l1.5 1.5L8 5.5M4 12.5l1.5 1.5L8 11.5M4 18.5l1.5 1.5L8 17.5M11 7h9M11 13h9M11 19h9" />
+  </Line>
+);
+
+export const IconProef = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M9 3h6M10 3v6L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3" />
+    <path d="M7.5 15h9" />
+  </Line>
+);
+
+export const IconTrofee = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" />
+  </Line>
+);
+
+export const IconDownload = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14" />
+  </Line>
+);
+
+export const IconReactie = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M20 12a8 8 0 0 1-11.7 7.1L4 20l1-4A8 8 0 1 1 20 12z" />
+  </Line>
+);
+
+export const IconVastgezet = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M14.5 3.5l6 6-2 1-4 4 .5 4-2 1-4-4-5 5M8.5 11.5l4-4 1-2" />
+  </Line>
+);
+
+export const IconSlepen = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" strokeWidth={3.2} />
+  </Line>
+);
+
+export const IconPijlOmhoog = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 19V5M6 11l6-6 6 6" />
+  </Line>
+);
+
+export const IconPijlOmlaag = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M12 5v14M6 13l6 6 6-6" />
+  </Line>
+);
+
+export const IconMuzieknoot = (p: IconProps) => (
+  <Line {...p}>
+    <path d="M9 18V6l10-2v12" />
+    <circle cx="6.5" cy="18" r="2.5" />
+    <circle cx="16.5" cy="16" r="2.5" />
+  </Line>
+);

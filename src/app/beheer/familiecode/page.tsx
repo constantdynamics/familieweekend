@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Scherm } from "@/components/ui/Scherm";
 import { requireAdmin } from "@/lib/server/session";
 import { BeheerKop, BeheerLaden } from "../onderdelen";
 import { FamiliecodeFormulier } from "./FamiliecodeFormulier";
@@ -9,11 +8,11 @@ export const metadata: Metadata = { title: "Familiecode" };
 
 export default function FamiliecodePage() {
   return (
-    <Scherm metTabBalk={false}>
+    <>
       <Suspense fallback={<BeheerLaden />}>
         <Inhoud />
       </Suspense>
-    </Scherm>
+    </>
   );
 }
 

@@ -85,14 +85,14 @@ export async function logUit(): Promise<void> {
   redirect("/beheer");
 }
 
-/* Instellingen: aftrap, einde, locatie, deadline. */
+/* Instellingen: aftrap, einde, locatie, opening en deadline van de fun facts. */
 export async function bewaarInstellingen(_previous: FormState, formData: FormData): Promise<FormState> {
   const staff = await requireAdmin();
   const get = (key: string) => String(formData.get(key) ?? "").trim();
   const waarden: Record<string, string> = {};
   for (const key of [
     "start_datum", "start_tijd", "eind_datum", "eind_tijd", "locatie", "plaats",
-    "breedtegraad", "lengtegraad", "deadline_datum", "deadline_tijd",
+    "breedtegraad", "lengtegraad", "deadline_datum", "deadline_tijd", "open_datum", "open_tijd",
   ]) {
     waarden[key] = get(key);
   }
@@ -105,6 +105,9 @@ export async function bewaarInstellingen(_previous: FormState, formData: FormDat
   if (!endAt) velden.eind = "Vul een geldige datum en tijd in.";
   if (startAt && endAt && endAt <= startAt) velden.eind = "Het einde moet na de aftrap liggen.";
   if (!deadline) velden.deadline = "Vul een geldige datum en tijd in.";
+  const openAt = parseAmsterdamInput(waarden.open_datum, waarden.open_tijd);
+  if (!openAt) velden.open = "Vul een geldige datum en tijd in.";
+  if (openAt && deadline && deadline <= openAt) velden.deadline = "De deadline moet na de opening liggen.";
   if (!waarden.locatie) velden.locatie = "Vul de naam van de locatie in.";
   if (waarden.locatie.length > 80) velden.locatie = "Houd de naam korter dan 80 tekens.";
   if (!waarden.plaats) velden.plaats = "Vul de plaats in.";
@@ -114,7 +117,7 @@ export async function bewaarInstellingen(_previous: FormState, formData: FormDat
   if (!Number.isFinite(lat) || lat < -90 || lat > 90) velden.breedtegraad = "Een breedtegraad ligt tussen -90 en 90.";
   if (!Number.isFinite(lng) || lng < -180 || lng > 180) velden.lengtegraad = "Een lengtegraad ligt tussen -180 en 180.";
 
-  if (Object.keys(velden).length > 0 || !startAt || !endAt || !deadline) {
+  if (Object.keys(velden).length > 0 || !startAt || !endAt || !deadline || !openAt) {
     return { fout: "Niet alles is goed ingevuld. Kijk bij de rode tekst.", velden, waarden };
   }
 
@@ -128,6 +131,7 @@ export async function bewaarInstellingen(_previous: FormState, formData: FormDat
         latitude: lat,
         longitude: lng,
         funfactsDeadline: deadline,
+        funfactsOpenAt: openAt,
       },
       actorFrom(staff),
     );

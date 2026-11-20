@@ -124,3 +124,117 @@ export function cookieBase(maxAgeS: number) {
     maxAge: maxAgeS,
   };
 }
+
+/* ------------------------------------------------------------------------ */
+/* Roles on a device beyond the family session.                              */
+/* ------------------------------------------------------------------------ */
+
+export const CAPTAIN_COOKIE = "valk_captain";
+export const PROEF_COOKIE = "valk_proef";
+export const BEKIJK_COOKIE = "valk_bekijk";
+
+export const CAPTAIN_MAX_AGE_S = 30 * 24 * 60 * 60;
+/** A device stays in the test environment for at most a day. */
+export const PROEF_MAX_AGE_S = 24 * 60 * 60;
+
+export type Env = "live" | "test";
+
+export type CaptainClaims = {
+  teamId: string;
+  env: Env;
+  pinVersion: number;
+  deviceId: string;
+};
+
+export async function createCaptainToken(claims: CaptainClaims, nowS = nowSeconds()): Promise<string> {
+  return new SignJWT({ env: claims.env, pv: claims.pinVersion, dev: claims.deviceId })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuer(ISSUER)
+    .setAudience("valk:captain")
+    .setSubject(claims.teamId)
+    .setIssuedAt(nowS)
+    .setExpirationTime(nowS + CAPTAIN_MAX_AGE_S)
+    .sign(await subKey("captain"));
+}
+
+export async function verifyCaptainToken(token: string | undefined): Promise<CaptainClaims | null> {
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, await subKey("captain"), {
+      issuer: ISSUER,
+      audience: "valk:captain",
+      algorithms: ["HS256"],
+    });
+    const { sub, env, pv, dev } = payload;
+    if (typeof sub !== "string" || typeof dev !== "string" || typeof pv !== "number") return null;
+    if (env !== "live" && env !== "test") return null;
+    return { teamId: sub, env, pinVersion: pv, deviceId: dev };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The test environment: on this device ("proef") or as an invitation link
+ * for another device ("uitnodiging"). Both expire within a day.
+ */
+export async function createProefToken(kind: "proef" | "uitnodiging", nowS = nowSeconds()): Promise<string> {
+  return new SignJWT({})
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuer(ISSUER)
+    .setAudience(`valk:${kind}`)
+    .setIssuedAt(nowS)
+    .setExpirationTime(nowS + PROEF_MAX_AGE_S)
+    .sign(await subKey("proef"));
+}
+
+export async function verifyProefToken(token: string | undefined, kind: "proef" | "uitnodiging"): Promise<boolean> {
+  if (!token) return false;
+  try {
+    await jwtVerify(token, await subKey("proef"), {
+      issuer: ISSUER,
+      audience: `valk:${kind}`,
+      algorithms: ["HS256"],
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** "Bekijk als…": the admin looks at the test environment through someone else's eyes. */
+export type ViewAs =
+  | { role: "familie"; participantId: string | null }
+  | { role: "captain"; teamId: string }
+  | { role: "meekijker"; teamId: string; participantId: string | null }
+  | { role: "spelleider" };
+
+export async function createViewAsToken(view: ViewAs, nowS = nowSeconds()): Promise<string> {
+  return new SignJWT({ view })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuer(ISSUER)
+    .setAudience("valk:bekijk")
+    .setIssuedAt(nowS)
+    .setExpirationTime(nowS + PROEF_MAX_AGE_S)
+    .sign(await subKey("bekijk"));
+}
+
+export async function verifyViewAsToken(token: string | undefined): Promise<ViewAs | null> {
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, await subKey("bekijk"), {
+      issuer: ISSUER,
+      audience: "valk:bekijk",
+      algorithms: ["HS256"],
+    });
+    const view = payload.view as ViewAs | undefined;
+    if (!view || typeof view !== "object") return null;
+    if (view.role === "captain" && typeof view.teamId === "string") return view;
+    if (view.role === "meekijker" && typeof view.teamId === "string") return view;
+    if (view.role === "familie") return view;
+    if (view.role === "spelleider") return view;
+    return null;
+  } catch {
+    return null;
+  }
+}

@@ -92,3 +92,10 @@ export async function endStaffSession(): Promise<void> {
   const store = await cookies();
   store.delete(STAFF_COOKIE);
 }
+
+/** Spelleider or beheerder: the zeskamp screens, the game helper and the checklist. */
+export async function requireStaff(): Promise<StaffSession> {
+  const staff = await getStaffSession();
+  if (!staff) redirect("/spelleider");
+  return staff;
+}

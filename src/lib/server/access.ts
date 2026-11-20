@@ -80,3 +80,55 @@ export async function changeStaffPin(staffId: string, pin: string, actor: Actor)
     return row.pin_version;
   });
 }
+
+/* ------------------------------------------------------------------------ */
+/* Spelleiders: each has an own PIN, linked to a name (SPEC §3).             */
+/* ------------------------------------------------------------------------ */
+
+export type StaffMember = { id: string; name: string; role: StaffRole; hasPin: boolean; active: boolean };
+
+export async function listStaff(role: StaffRole): Promise<StaffMember[]> {
+  const rows = await db()<{ id: string; name: string; role: StaffRole; pin_hash: string | null; active: boolean }[]>`
+    select id, name, role, pin_hash, active from valk.staff where role = ${role} order by active desc, lower(name)
+  `;
+  return rows.map((r) => ({ id: r.id, name: r.name, role: r.role, hasPin: r.pin_hash !== null, active: r.active }));
+}
+
+/** Add a spelleider with a fresh PIN (shown once to the admin). */
+export async function addSpelleider(name: string, pin: string, actor: Actor): Promise<string> {
+  const hash = await hashSecret("pin-pepper", pin);
+  return db().begin(async (sql) => {
+    const [row] = await sql<{ id: string }[]>`
+      insert into valk.staff (name, role, pin_hash) values (${name}, 'spelleider', ${hash})
+      on conflict (lower(name), role) do update set pin_hash = excluded.pin_hash, pin_version = valk.staff.pin_version + 1, active = true
+      returning id
+    `;
+    await logAudit(actor, { action: "spelleider.toegevoegd", entity: "staff", entityId: row.id, newValue: { naam: name } }, sql);
+    return row.id;
+  });
+}
+
+export async function resetSpelleiderPin(staffId: string, pin: string, actor: Actor): Promise<string> {
+  const hash = await hashSecret("pin-pepper", pin);
+  return db().begin(async (sql) => {
+    const [row] = await sql<{ name: string }[]>`
+      update valk.staff set pin_hash = ${hash}, pin_version = pin_version + 1, active = true, updated_at = now()
+      where id = ${staffId} and role = 'spelleider'
+      returning name
+    `;
+    if (!row) throw new Error("Deze spelleider bestaat niet meer.");
+    await logAudit(actor, { action: "spelleider.pin", entity: "staff", entityId: staffId, newValue: { naam: row.name } }, sql);
+    return row.name;
+  });
+}
+
+export async function stopSpelleider(staffId: string, actor: Actor): Promise<void> {
+  await db().begin(async (sql) => {
+    const [row] = await sql<{ name: string }[]>`
+      update valk.staff set active = false, pin_version = pin_version + 1, updated_at = now()
+      where id = ${staffId} and role = 'spelleider'
+      returning name
+    `;
+    if (row) await logAudit(actor, { action: "spelleider.gestopt", entity: "staff", entityId: staffId, oldValue: { naam: row.name } }, sql);
+  });
+}

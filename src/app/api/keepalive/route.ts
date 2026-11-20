@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { revalidateTag } from "next/cache";
 import { connection } from "next/server";
 import { db } from "@/lib/server/db";
+import { deleteOrphanUploads } from "@/lib/server/uploads";
 import { logError } from "@/lib/server/log";
 import { SETTINGS_TAG } from "@/lib/server/settings";
 
@@ -35,6 +36,8 @@ export async function GET(request: Request) {
       returning beats, last_seen_at
     `;
     await db()`delete from valk.login_attempts where created_at < now() - interval '7 days'`;
+    // Photos that were uploaded but never used.
+    await deleteOrphanUploads();
     revalidateTag(SETTINGS_TAG, { expire: 0 });
     return Response.json(
       { ok: true, beats: Number(row?.beats ?? 0), at: row?.last_seen_at?.toISOString() ?? null },

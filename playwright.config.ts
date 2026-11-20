@@ -16,11 +16,14 @@ function localAppPassword(): string | undefined {
  * starts the server itself.
  */
 export const E2E = {
-  port: 3100,
+  // Separate worktrees can run side by side: E2E_PORT and E2E_DB.
+  port: Number(process.env.E2E_PORT) || 3100,
   appSecret: "e2e-geheim-alleen-voor-tests-0123456789-abcdefghij",
   cronSecret: "e2e-cron-geheim-0123456789",
   appPassword: process.env.VALK_APP_PASSWORD ?? localAppPassword() ?? "e2e-valk-app-wachtwoord",
-  adminUrl: process.env.TEST_ADMIN_DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/valk_test",
+  adminUrl:
+    process.env.TEST_ADMIN_DATABASE_URL ??
+    `postgres://postgres:postgres@localhost:5432/${process.env.E2E_DB ?? "valk_test"}`,
   familyCode: "SPELEN2027",
   adminPin: "582036",
 };

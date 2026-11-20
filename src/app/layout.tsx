@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Suspense } from "react";
+import { ProefBalk } from "@/components/proef/ProefBalk";
 import { AppSignalen } from "@/components/pwa/AppSignalen";
 import { INSTALL_CAPTURE_SCRIPT } from "@/lib/shared/platform";
 import { siteUrl } from "@/lib/shared/site";
@@ -80,6 +82,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Naar de inhoud
         </a>
+        <Suspense fallback={null}>
+          <ProefBalk />
+        </Suspense>
         {children}
         <AppSignalen swEnabled={process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SW !== "off"} />
       </body>

@@ -39,15 +39,41 @@ async function main() {
     on conflict (lower(name), role) do update set pin_hash = excluded.pin_hash, pin_version = valk.staff.pin_version + 1, active = true
   `;
   if (process.env.SEED_RESET === "1") {
-    await sql`delete from valk.login_attempts`;
-    await sql`delete from valk.audit_log`;
+    // Everything that people or games add goes; the starting content of the
+    // migration comes back through valk.seed_defaults().
+    await sql`
+      do $$
+      declare t text;
+      begin
+        for t in
+          select tablename from pg_tables
+          where schemaname = 'valk'
+            and tablename not in ('schema_migrations', 'settings', 'family_access', 'staff', 'heartbeat', 'live_state')
+        loop
+          execute format('truncate valk.%I restart identity cascade', t);
+        end loop;
+      end
+      $$
+    `;
+    await sql`delete from valk.staff where role <> 'beheerder'`;
+    await sql`
+      update valk.live_state set
+        mode = 'rust', quiz_id = null, round_no = null, question_id = null, phase = null,
+        listening = false, countdown_until = null, ceremony_step = 0, lock_closed = false,
+        lock_closed_at = null, lock_auto = true, games_started_at = null, updated_at = now()
+    `;
     await sql`
       update valk.settings set
         start_at = '2027-05-06 14:00:00+02', end_at = '2027-05-09 15:00:00+02',
         location_name = 'De Dommelvallei', location_place = 'Borkel en Schaft',
-        latitude = 51.2975, longitude = 5.4417, funfacts_deadline = '2027-04-01 23:59:59+02'
+        latitude = 51.2975, longitude = 5.4417, funfacts_deadline = '2027-04-01 23:59:59+02',
+        funfacts_open_at = '2027-01-01 00:00:00+01', program_visible = false, teams_visible = false,
+        zeskamp_points = '{10,7,5,3}', intermezzo_points = 1, intermezzo_max_duels = null,
+        board_open = true, fase2_live = ${process.env.SEED_FASE2 !== "0"},
+        realtime_url = null, realtime_key = null
       where id = 1
     `;
+    await sql`select valk.seed_defaults()`;
   }
   console.log("Lokale gegevens klaar.");
 }

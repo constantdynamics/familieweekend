@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { KnopLink } from "@/components/ui/Knop";
-import { Scherm } from "@/components/ui/Scherm";
 import { listAudit, type AuditRow } from "@/lib/server/audit";
 import { requireAdmin } from "@/lib/server/session";
 import { formatFull } from "@/lib/shared/time";
@@ -14,11 +13,11 @@ const PER_PAGINA = 40;
 
 export default function LogboekPage({ searchParams }: PageProps<"/beheer/logboek">) {
   return (
-    <Scherm metTabBalk={false}>
+    <>
       <Suspense fallback={<BeheerLaden />}>
         <Inhoud searchParams={searchParams} />
       </Suspense>
-    </Scherm>
+    </>
   );
 }
 

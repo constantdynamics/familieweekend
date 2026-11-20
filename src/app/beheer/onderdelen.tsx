@@ -34,3 +34,15 @@ export function BeheerLaden() {
     </div>
   );
 }
+
+/** Shown on admin screens while this device is in the test environment. */
+export function ProefMelding() {
+  return (
+    <p
+      role="status"
+      className="m-0 mt-4 rounded-[16px] border-2 border-dashed border-mosterd bg-studio-licht px-4 py-3 text-[15px] leading-[1.4] font-bold text-mosterd"
+    >
+      Je zit in de proefmodus. Wat je hier verandert, raakt alleen de proef, niet de echte Spelen.
+    </p>
+  );
+}

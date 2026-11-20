@@ -18,12 +18,20 @@ export type AuditEntry = {
 
 type Sql = postgres.Sql | postgres.TransactionSql;
 
-/** Write one line to the logbook. Pass a transaction to log atomically. */
-export async function logAudit(actor: Actor, entry: AuditEntry, sql: Sql = db()): Promise<void> {
+/**
+ * Write one line to the logbook. Pass a transaction to log atomically, and
+ * the environment for actions in the test environment (kept apart).
+ */
+export async function logAudit(
+  actor: Actor,
+  entry: AuditEntry,
+  sql: Sql = db(),
+  env: "live" | "test" = "live",
+): Promise<void> {
   await sql`
-    insert into valk.audit_log (actor_id, actor_name, actor_role, action, entity, entity_id, old_value, new_value)
+    insert into valk.audit_log (env, actor_id, actor_name, actor_role, action, entity, entity_id, old_value, new_value)
     values (
-      ${actor.id}, ${actor.name}, ${actor.role}, ${entry.action},
+      ${env}, ${actor.id}, ${actor.name}, ${actor.role}, ${entry.action},
       ${entry.entity ?? null}, ${entry.entityId ?? null},
       ${entry.oldValue === undefined ? null : sql.json(entry.oldValue as postgres.JSONValue)},
       ${entry.newValue === undefined ? null : sql.json(entry.newValue as postgres.JSONValue)}

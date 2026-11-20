@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Scherm } from "@/components/ui/Scherm";
 import { requireAdmin } from "@/lib/server/session";
 import { readSettings } from "@/lib/server/settings";
 import { toAmsterdamInput } from "@/lib/shared/time";
@@ -11,11 +10,11 @@ export const metadata: Metadata = { title: "Instellingen" };
 
 export default function InstellingenPage() {
   return (
-    <Scherm metTabBalk={false}>
+    <>
       <Suspense fallback={<BeheerLaden />}>
         <Inhoud />
       </Suspense>
-    </Scherm>
+    </>
   );
 }
 
@@ -25,6 +24,7 @@ async function Inhoud() {
   const start = toAmsterdamInput(new Date(settings.startAt));
   const eind = toAmsterdamInput(new Date(settings.endAt));
   const deadline = toAmsterdamInput(new Date(settings.funfactsDeadline));
+  const open = toAmsterdamInput(new Date(settings.funfactsOpenAt));
   return (
     <>
       <BeheerKop
@@ -44,6 +44,8 @@ async function Inhoud() {
           lengtegraad: String(settings.longitude).replace(".", ","),
           deadline_datum: deadline.date,
           deadline_tijd: deadline.time,
+          open_datum: open.date,
+          open_tijd: open.time,
         }}
       />
     </>

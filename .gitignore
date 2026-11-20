@@ -47,3 +47,6 @@ next-env.d.ts
 /playwright-report
 /.lighthouseci
 !.env.example
+
+# werkkopieën van helpers (Claude Code)
+/.claude/worktrees/

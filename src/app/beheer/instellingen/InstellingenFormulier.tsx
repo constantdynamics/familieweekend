@@ -61,6 +61,13 @@ export function InstellingenFormulier({ beginwaarden }: Props) {
       <Kaart className="flex flex-col gap-4">
         <h2 className="m-0 text-[19px] font-extrabold">Fun facts</h2>
         <DatumTijd
+          label="Gaan open op"
+          hint="Vanaf dit moment kan iedereen de vragenlijst invullen."
+          datum={{ name: "open_datum", value: waarden.open_datum }}
+          tijd={{ name: "open_tijd", value: waarden.open_tijd }}
+          error={velden.open}
+        />
+        <DatumTijd
           label="Deadline"
           hint="Tot dit moment kan iedereen zijn antwoorden aanpassen."
           datum={{ name: "deadline_datum", value: waarden.deadline_datum }}

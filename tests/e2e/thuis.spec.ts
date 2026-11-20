@@ -74,21 +74,20 @@ test("op Android verschijnt de echte installatieknop als de browser hem aanbiedt
   expect(await page.evaluate(() => (window as unknown as Record<string, unknown>).__gevraagd)).toBe(true);
 });
 
-test("de vijf tabs werken en elk tabblad heeft een lege staat", async ({ page }) => {
+test("het menu heeft drie tabs: Thuis, Programma en Prikbord", async ({ page }) => {
   await loggedIn(page);
   const menu = page.getByRole("navigation", { name: "Hoofdmenu" });
+  await expect(menu.getByRole("link")).toHaveCount(3);
   await expect(menu.getByRole("link", { name: "Thuis" })).toHaveAttribute("aria-current", "page");
 
-  const tabs: [string, RegExp, string][] = [
-    ["Programma", /\/programma$/, "Het programma volgt"],
-    ["Quiz", /\/quiz$/, "De Grote Valkenburger Quiz"],
-    ["Zeskamp", /\/zeskamp$/, "Zes spellen, vier teams"],
-    ["Score", /\/score$/, "Nog geen punten"],
+  const tabs: [string, RegExp][] = [
+    ["Programma", /\/programma$/],
+    ["Prikbord", /\/prikbord$/],
   ];
-  for (const [name, url, heading] of tabs) {
+  for (const [name, url] of tabs) {
     await menu.getByRole("link", { name }).click();
     await expect(page).toHaveURL(url);
-    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name })).toBeVisible();
     await expect(menu.getByRole("link", { name })).toHaveAttribute("aria-current", "page");
   }
   await menu.getByRole("link", { name: "Thuis" }).click();
