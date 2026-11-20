@@ -14,7 +14,11 @@ Keuzes die de SPEC openliet of waarvan ik bewust afweek, met de reden. Nieuwste 
 | Service-sleutel van Supabase | Nog niet gebruikt | Komt in fase 2 voor de privé-bucket met foto's (ondertekende links). Die sleutel zet ik dan in Vercel, niet in de repo. |
 | Vercel-regio | Functies in `dub1` (Dublin) | Zo dicht mogelijk bij de database in Ierland. |
 | Vercel-plan | Hobby (gratis) | Volgens de SPEC. Hobby is voor persoonlijk, niet-commercieel gebruik; dat past bij een familieweekend. |
-| Adres | `valkenburger-spelen.vercel.app` (of het eerstvolgende vrije `*.vercel.app`-adres) | Gratis, volgens de SPEC prima. |
+| Adres | **https://valkenburger-spelen.vercel.app** | Gratis, volgens de SPEC prima. |
+| Vercel-project | Door de eigenaar zelf aangemaakt via *Import Git Repository*, met de vier omgevingsvariabelen (`DATABASE_URL`, `DATABASE_SSL`, `APP_SECRET`, `CRON_SECRET`) | De Vercel-koppeling van Claude mocht geen projecten aanmaken (403), en een token afgeven wilde de eigenaar liever niet. |
+| Productiebranch | `claude/bold-thompson-skzyxh` (de standaardbranch van de repo); elke push daarheen gaat automatisch live | Er is nog geen `main`. Wil je eerst kunnen nakijken voordat iets live gaat, maak dan een `main` en zet die in Vercel als productiebranch. |
+| Database-adres | Supabase-pooler in transactiemodus (poort 6543, gebruiker `valk_app.<project-ref>`) | Vercel kan alleen IPv4; het directe adres van Supabase is IPv6 (bevestigd in de documentatie van Supabase). |
+| Cloudomgeving voor Claude | Eigen omgeving "familieweekend" met een installatiescript (npm, lokale Postgres met de testdatabases) en toegang tot het live adres | Zodat volgende sessies direct kunnen testen, zonder iets aan de standaardomgeving te veranderen. |
 
 #### Gratis limieten
 
@@ -33,6 +37,8 @@ Keuzes die de SPEC openliet of waarvan ik bewust afweek, met de reden. Nieuwste 
 - 100 GB Fast Data Transfer per maand.
 - 1 miljoen edge requests per maand.
 - Een cronjob draait hoogstens één keer per dag, ergens binnen het opgegeven uur.
+
+**Gemeten op de live site** (Lighthouse mobiel, 20-11-2026): prestaties 96–99, toegankelijkheid 100, best practices 100, LCP ± 0,9 s, CLS 0.
 
 **Inschatting voor 75 deelnemers.** Een quizavond kost ongeveer 20.000 aanroepen en realtime-berichten. De foto's zijn samen zo'n 30 MB. Dat ligt allemaal ruim binnen de gratis limieten.
 

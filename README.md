@@ -2,6 +2,8 @@
 
 De PWA voor het familieweekend van de familie Valkenburg: Hemelvaart, do 6 t/m zo 9 mei 2027. De volledige opdracht staat in [`docs/SPEC.md`](docs/SPEC.md), de gemaakte keuzes in [`docs/BESLISSINGEN.md`](docs/BESLISSINGEN.md) en wat je wanneer doet in [`docs/DRAAIBOEK.md`](docs/DRAAIBOEK.md).
 
+**Live:** https://valkenburger-spelen.vercel.app
+
 **Stand:** fase 1 (teaser) is af: welkomstscherm met familiecode, Thuis met aftelklok, installatie-uitleg, PWA, beheer met instellingen, familiecode, PIN en logboek. Zie [`docs/PLAN-fase-1.md`](docs/PLAN-fase-1.md).
 
 ## Stack
@@ -82,7 +84,7 @@ De app draait op Vercel (project `valkenburger-spelen`, functies in Dublin, dich
    MIGRATION_DATABASE_URL='postgres://postgres:…@db.<ref>.supabase.co:5432/postgres' npm run db:migrate
    ```
 
-2. **Code**: push naar de productiebranch; Vercel bouwt en zet live.
+2. **Code**: push naar de productiebranch (nu `claude/bold-thompson-skzyxh`, de standaardbranch); Vercel bouwt en zet live.
 3. **Omgevingsvariabelen in Vercel**: `DATABASE_URL`, `DATABASE_SSL=require`, `APP_SECRET`, `CRON_SECRET`.
 
 De dagelijkse keepalive (`/api/keepalive`, beveiligd met `CRON_SECRET`) staat in `vercel.json`. De reserve in `.github/workflows/keepalive.yml` werkt zodra je in GitHub de geheimen `KEEPALIVE_URL` en `CRON_SECRET` invult (Settings → Secrets and variables → Actions).
