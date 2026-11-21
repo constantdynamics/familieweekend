@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Knop } from "@/components/ui/Knop";
 import { Kaart } from "@/components/ui/Kaart";
 import { Veld } from "@/components/ui/Veld";
+import { useGehydrateerd } from "@/lib/client/gehydrateerd";
 import { logIn, type FormState } from "./actions";
 
 export function PinLogin() {
   const [state, action, pending] = useActionState<FormState, FormData>(logIn, {});
+  const klaar = useGehydrateerd();
   return (
     <>
       <div className="flex flex-col gap-2 pr-10">
@@ -19,7 +21,7 @@ export function PinLogin() {
         <h2 id="pin-titel" className="m-0 text-[22px] leading-tight font-extrabold">
           Log in met je PIN
         </h2>
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <form action={action} className="flex flex-col gap-4" noValidate data-klaar={klaar ? "" : undefined}>
           <Veld
             label="Jouw PIN"
             name="pin"

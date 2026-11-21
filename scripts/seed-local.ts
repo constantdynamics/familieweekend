@@ -28,8 +28,25 @@ if (!appPassword || !familyCode || !adminPin || !process.env.APP_SECRET) {
 
 const sql = postgres(url, { max: 1, onnotice: () => {} });
 
+/**
+ * The valk_app role is shared by every database on this Postgres server, so
+ * parallel test runs (each with its own E2E_DB) can collide here with
+ * "tuple concurrently updated". Then simply try again.
+ */
+async function setAppPassword() {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await sql.unsafe(`alter role valk_app password '${appPassword!.replace(/'/g, "''")}'`);
+      return;
+    } catch (error) {
+      if (attempt >= 8 || !String(error).includes("concurrently updated")) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
+    }
+  }
+}
+
 async function main() {
-  await sql.unsafe(`alter role valk_app password '${appPassword!.replace(/'/g, "''")}'`);
+  await setAppPassword();
   const codeHash = await hashSecret("code-pepper", normalizeFamilyCode(familyCode));
   const pinHash = await hashSecret("pin-pepper", adminPin!);
   await sql`update valk.family_access set code_hash = ${codeHash}, updated_at = now(), updated_by = 'seed' where id = 1`;

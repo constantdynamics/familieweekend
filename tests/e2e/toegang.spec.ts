@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { E2E } from "../../playwright.config";
-import { enterFamilyCode, loggedIn, resetState } from "./helpers";
+import { enterFamilyCode, loggedIn, resetState, formKlaar } from "./helpers";
 
 test.beforeEach(async () => {
   await resetState();
@@ -13,6 +13,7 @@ test("zonder familiecode kom je bij het welkomstscherm, ook via een diepe link",
   // Nothing about the place or the date before the code.
   await expect(page.getByText("Borkel en Schaft")).toHaveCount(0);
 
+  await formKlaar(page);
   await page.getByLabel("Familiecode").fill(E2E.familyCode.toLowerCase());
   await page.getByRole("button", { name: "Kom binnen" }).click();
   await expect(page).toHaveURL(/\/programma$/);

@@ -1,30 +1,30 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useSyncExternalStore } from "react";
 import { Knop } from "@/components/ui/Knop";
 import { Veld } from "@/components/ui/Veld";
+import { useGehydrateerd } from "@/lib/client/gehydrateerd";
 import { controleerFamiliecode, type CodeState } from "./actions";
 
 const initial: CodeState = {};
 
+const nietsTeVolgen = () => () => {};
+const terugUitAdres = () => new URLSearchParams(window.location.search).get("terug") ?? "";
+
 /**
  * The code form. It is part of the static page and works before JavaScript
  * has loaded (the Server Action posts as a normal form). The return path is
- * read from the URL after loading, without replacing the form, so nothing
- * typed in the meantime gets lost.
+ * read from the URL right after hydration, without replacing the form, so
+ * nothing typed in the meantime gets lost.
  */
 export function CodeFormulier() {
   const [state, action, pending] = useActionState(controleerFamiliecode, initial);
-  const terug = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const path = new URLSearchParams(window.location.search).get("terug");
-    if (path && terug.current) terug.current.value = path;
-  }, []);
+  const klaar = useGehydrateerd();
+  const terug = useSyncExternalStore(nietsTeVolgen, terugUitAdres, () => "");
 
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate>
-      <input ref={terug} type="hidden" name="terug" defaultValue="" />
+    <form action={action} className="flex flex-col gap-4" noValidate data-klaar={klaar ? "" : undefined}>
+      <input type="hidden" name="terug" value={terug} />
       <Veld
         label="Familiecode"
         name="code"

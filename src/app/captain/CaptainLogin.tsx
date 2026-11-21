@@ -4,16 +4,18 @@ import { useActionState } from "react";
 import { Kaart } from "@/components/ui/Kaart";
 import { Knop } from "@/components/ui/Knop";
 import { Veld } from "@/components/ui/Veld";
+import { useGehydrateerd } from "@/lib/client/gehydrateerd";
 import { wordCaptain, type CaptainState } from "./actions";
 
 export function CaptainLogin({ terug }: { terug: string }) {
   const [state, action, pending] = useActionState<CaptainState, FormData>(wordCaptain, {});
+  const klaar = useGehydrateerd();
   return (
     <Kaart aria-labelledby="captain-titel" className="mt-5 flex flex-col gap-3 p-[22px]!">
       <h2 id="captain-titel" className="m-0 text-[22px] leading-tight font-extrabold">
         Log in met de team-PIN
       </h2>
-      <form action={action} className="flex flex-col gap-4" noValidate>
+      <form action={action} className="flex flex-col gap-4" noValidate data-klaar={klaar ? "" : undefined}>
         <input type="hidden" name="terug" value={terug} />
         <Veld
           label="Team-PIN"

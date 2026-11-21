@@ -48,8 +48,12 @@ export function AppSignalen({ swEnabled }: { swEnabled: boolean }) {
     const serwist = window.__valkSerwist ?? new Serwist("/sw.js", { scope: "/", type: "classic", updateViaCache: "none" });
     window.__valkSerwist = serwist;
     const onWaiting = () => setUpdateReady(true);
+    // The very first service worker taking over changes nothing on screen,
+    // so no reload then: it would wipe what someone is typing. Only a new
+    // version replacing an old one reloads, to fetch the new files.
+    const hadController = Boolean(navigator.serviceWorker.controller);
     const onControlling = (event: { isUpdate?: boolean; isExternal?: boolean }) => {
-      if (event.isUpdate || event.isExternal) window.location.reload();
+      if (hadController && (event.isUpdate || event.isExternal)) window.location.reload();
     };
     serwist.addEventListener("waiting", onWaiting);
     serwist.addEventListener("controlling", onControlling);

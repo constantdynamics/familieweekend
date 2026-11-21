@@ -5,7 +5,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
 import { E2E } from "../../playwright.config";
-import { loggedIn, loginAdmin, losseWoorden, resetState } from "./helpers";
+import { loggedIn, loginAdmin, losseWoorden, resetState, formKlaar } from "./helpers";
 
 test.beforeEach(async () => {
   await resetState();
@@ -67,6 +67,7 @@ test("spelleiders zien de afvinklijst en plaatsen notities op naam; de familie n
   const spelleider = await nieuwToestel(browser);
   await loggedIn(spelleider.page);
   await spelleider.page.goto("/spelleider");
+  await formKlaar(spelleider.page);
   await spelleider.page.getByLabel("Jouw PIN").fill(pin);
   await spelleider.page.getByRole("button", { name: "Log in" }).click();
   await spelleider.page.getByRole("link", { name: /Afvinklijst/ }).click();

@@ -30,8 +30,14 @@ export async function resetState() {
 /** A moment in November 2026, so countdown screenshots are stable. */
 export const VASTE_TIJD = new Date("2026-11-20T14:20:15+01:00");
 
+/** Wait until React listens to the form; text typed before that can get lost. */
+export async function formKlaar(page: Page) {
+  await page.locator("form[data-klaar]").first().waitFor({ state: "attached" });
+}
+
 export async function enterFamilyCode(page: Page, code = E2E.familyCode) {
   await page.goto("/welkom");
+  await formKlaar(page);
   await page.getByLabel("Familiecode").fill(code);
   await page.getByRole("button", { name: "Kom binnen" }).click();
 }
@@ -45,6 +51,7 @@ export async function loggedIn(page: Page) {
 /** Type a PIN on the admin login screen; does not wait for the outcome. */
 export async function tryAdminPin(page: Page, pin: string) {
   await page.goto("/beheer");
+  await formKlaar(page);
   await page.getByLabel("Jouw PIN").fill(pin);
   await page.getByRole("button", { name: "Log in" }).click();
 }

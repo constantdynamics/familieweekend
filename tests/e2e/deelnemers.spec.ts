@@ -4,7 +4,7 @@
  */
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import { E2E } from "../../playwright.config";
-import { enterFamilyCode, loggedIn, loginAdmin, resetState } from "./helpers";
+import { enterFamilyCode, loggedIn, loginAdmin, resetState, formKlaar } from "./helpers";
 
 test.beforeEach(async () => {
   await resetState();
@@ -87,6 +87,7 @@ test("een tweede captaintoestel neemt het over", async ({ page, browser }) => {
   const eerste = await nieuwToestel(browser);
   await loggedIn(eerste.page);
   await eerste.page.goto("/captain");
+  await formKlaar(eerste.page);
   await eerste.page.getByLabel("Team-PIN", { exact: true }).fill(pin);
   await eerste.page.getByRole("button", { name: "Word teamtoestel" }).click();
   await expect(eerste.page.getByText("Deze telefoon is het teamtoestel.")).toBeVisible();
@@ -94,6 +95,7 @@ test("een tweede captaintoestel neemt het over", async ({ page, browser }) => {
   const tweede = await nieuwToestel(browser);
   await loggedIn(tweede.page);
   await tweede.page.goto("/captain");
+  await formKlaar(tweede.page);
   await tweede.page.getByLabel("Team-PIN", { exact: true }).fill(pin);
   await tweede.page.getByRole("button", { name: "Word teamtoestel" }).click();
   await expect(tweede.page.getByText("Deze telefoon is het teamtoestel.")).toBeVisible();
@@ -117,6 +119,7 @@ test("een spelleider krijgt een PIN en logt daarmee in", async ({ page, browser 
   const spelleider = await nieuwToestel(browser);
   await loggedIn(spelleider.page);
   await spelleider.page.goto("/spelleider");
+  await formKlaar(spelleider.page);
   await spelleider.page.getByLabel("Jouw PIN").fill(pin);
   await spelleider.page.getByRole("button", { name: "Log in" }).click();
   await expect(spelleider.page.getByText("Hoi Kees! Wat ga je doen?")).toBeVisible();
