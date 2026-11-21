@@ -151,7 +151,21 @@ async function check(page: Page, info: TestInfo, name: string) {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze();
-  const problems = results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`);
+  // For contrast problems: the colours axe saw and what it took as the background.
+  const problems = results.violations.map((v) => {
+    const nodes = v.nodes.map((n) => {
+      const data = n.any[0]?.data as { fgColor?: string; bgColor?: string; contrastRatio?: number } | undefined;
+      const behind = n.any[0]?.relatedNodes?.map((r) => r.target.join(" ")).join(" + ");
+      return data?.fgColor ? `${n.target.join(" ")} (${data.fgColor} op ${data.bgColor} = ${data.contrastRatio}, achter: ${behind})` : n.target.join(" ");
+    });
+    return `${v.id}: ${nodes.join(", ")}`;
+  });
+  if (problems.length > 0) {
+    const tabs = await page.getByRole("tab").evaluateAll((elements) =>
+      elements.map((el) => `${el.id} ${el.getAttribute("aria-selected")} ${getComputedStyle(el).color} op ${getComputedStyle(el).backgroundColor}`),
+    );
+    console.log(`Tabs op ${name} na axe: ${tabs.join(" | ") || "geen"}`);
+  }
   expect(problems, `toegankelijkheid op ${name}`).toEqual([]);
   expect(await losseWoorden(page), `losse woorden op ${name}`).toEqual([]);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

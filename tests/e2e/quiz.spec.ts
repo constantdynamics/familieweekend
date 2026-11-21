@@ -62,6 +62,16 @@ test("een mini-quiz met quizmaster, vier captains en twee meekijkers", async ({ 
   await eva.page.goto("/quiz");
   await expect(bram.page.getByRole("heading", { level: 1, name: "De quiz" })).toBeVisible();
 
+  // Bram's phone misses the start: it hears of the start and Petrol's joker in one go
+  // (its state requests wait), and must still show the joker banner.
+  let laatBramDoor = () => {};
+  const bramMagDoor = new Promise<void>((resolve) => (laatBramDoor = resolve));
+  await bram.page.route("**/api/quiz/state", async (route) => {
+    await bramMagDoor;
+    // The phone may have given up on a request that waited: then there is nothing to continue.
+    await route.continue().catch(() => {});
+  });
+
   // The quizmaster starts the demo quiz.
   await admin.goto("/beheer/quiz/console");
   await expect(admin.getByRole("heading", { name: "Start de quiz" })).toBeVisible();
@@ -74,7 +84,7 @@ test("een mini-quiz met quizmaster, vier captains en twee meekijkers", async ({ 
   for (const kleur of KLEUREN) await wachtOpFase(captain[kleur].page, "rondescherm");
   const oranje = captain.Oranje.page;
   await expect(oranje.getByRole("heading", { level: 1, name: /Hemelvaart en\sMoederdag/ })).toBeVisible();
-  const vooraf = JSON.stringify(await stand(bram.page));
+  const vooraf = JSON.stringify(await stand(eva.page));
   expect(vooraf).not.toContain("Hemelvaartsdag");
   expect(vooraf).not.toContain("Donderdag");
   await check(oranje, "40-quiz-rondescherm-captain");
@@ -83,6 +93,9 @@ test("een mini-quiz met quizmaster, vier captains en twee meekijkers", async ({ 
   const petrol = captain.Petrol.page;
   await petrol.getByRole("button", { name: "Speel de joker in ronde 1" }).click();
   await petrol.getByRole("button", { name: "Ja, speel de joker" }).click();
+  await expect.poll(async () => ((await stand(eva.page)).jokers as unknown[]).length).toBe(1);
+  laatBramDoor();
+  await bram.page.unroute("**/api/quiz/state");
   await expect(bram.page.getByText(/Proefteam Petrol speelt de joker in ronde\s1!/).first()).toBeVisible({ timeout: 15_000 });
   await check(bram.page, "41-quiz-jokerbanier", { scroll: false });
   await expect(petrol.getByRole("button", { name: /Speel de joker/ })).toHaveCount(0);

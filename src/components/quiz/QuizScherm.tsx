@@ -79,6 +79,7 @@ export function QuizScherm({ initial, kop, children }: { initial: QuizView; kop:
   // Sound is on by default only for captains; everyone can switch it.
   const voorkeur = useSyncExternalStore(abonneerGeluid, leesGeluid, () => null);
   const geluidAan = voorkeur === null ? captain : voorkeur;
+  const nieuweJokers = useNieuweJokers(view.jokers);
 
   if (!loopt) {
     return (
@@ -123,7 +124,7 @@ export function QuizScherm({ initial, kop, children }: { initial: QuizView; kop:
           </Link>
         </div>
       ) : null}
-      <JokerBanier jokers={view.jokers} />
+      <JokerBanier nieuw={nieuweJokers} />
       {error ? (
         <p role="status" className="m-0 mt-3 text-label text-zand">
           Even geen verbinding. De app probeert het steeds opnieuw.
@@ -196,8 +197,12 @@ function Aankondiging({ view }: { view: QuizView }) {
   );
 }
 
-/** "Team Petrol speelt de joker in ronde 4!" on every phone, the moment it happens. */
-function JokerBanier({ jokers }: { jokers: QuizView["jokers"] }) {
+/**
+ * The jokers played since this phone opened the quiz page, for seven seconds
+ * each. Runs from the first render, also before the quiz starts: a joker
+ * played before this phone saw the start is still new.
+ */
+function useNieuweJokers(jokers: QuizView["jokers"]): QuizView["jokers"] {
   const gezien = useRef<Set<string> | null>(null);
   const [nieuw, setNieuw] = useState<QuizView["jokers"]>([]);
   useEffect(() => {
@@ -218,6 +223,11 @@ function JokerBanier({ jokers }: { jokers: QuizView["jokers"] }) {
     const weg = setTimeout(() => setNieuw([]), 7000);
     return () => clearTimeout(weg);
   }, [nieuw]);
+  return nieuw;
+}
+
+/** "Team Petrol speelt de joker in ronde 4!" on every phone, the moment it happens. */
+function JokerBanier({ nieuw }: { nieuw: QuizView["jokers"] }) {
   if (nieuw.length === 0) return null;
   return (
     <div role="status" className="mt-4 flex flex-col gap-2">

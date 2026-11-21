@@ -57,7 +57,8 @@ export function AppSignalen({ swEnabled }: { swEnabled: boolean }) {
     };
     serwist.addEventListener("waiting", onWaiting);
     serwist.addEventListener("controlling", onControlling);
-    void serwist.register();
+    // Registering can fail (private mode, blocked in tests): the app works without it.
+    serwist.register().catch(() => {});
     // Check for a new version whenever the app comes back to the foreground.
     const onVisible = () => {
       if (document.visibilityState === "visible") void serwist.update();
