@@ -2,6 +2,7 @@ import "server-only";
 import type { TransactionSql } from "postgres";
 import { logAudit, type Actor } from "./audit";
 import { db } from "./db";
+import { seedTestFunfacts } from "./funfacts";
 import { hashSecret } from "./hashing";
 import { generatePin } from "./pins";
 
@@ -28,7 +29,7 @@ type Sql = TransactionSql;
  * transaction, after the test teams and names exist.
  */
 type Stap = (sql: Sql) => Promise<void>;
-const STAPPEN: Stap[] = [];
+const STAPPEN: Stap[] = [seedTestFunfacts];
 
 /** Fresh test teams with new PINs (returned once), test names and a copy of the events. */
 export async function setUpTestEnvironment(actor: Actor): Promise<ProefPin[]> {

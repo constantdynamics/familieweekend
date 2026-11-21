@@ -2,12 +2,13 @@ import Link from "next/link";
 import { Embleem } from "@/components/brand/Embleem";
 import { Woordmerk } from "@/components/brand/Woordmerk";
 import { Bijgewerkt } from "@/components/pwa/AppSignalen";
-import { Chip, Kaart } from "@/components/ui/Kaart";
+import { Chip } from "@/components/ui/Kaart";
 import { Scherm } from "@/components/ui/Scherm";
 import type { Settings } from "@/lib/server/settings";
 import { bijElkaar } from "@/lib/shared/tekst";
-import { amsterdamYear, formatDateRange, formatDayMonth } from "@/lib/shared/time";
+import { amsterdamYear, formatDateRange } from "@/lib/shared/time";
 import { Aftelklok } from "./Aftelklok";
+import { FunfactsKaart } from "./FunfactsKaart";
 import { InstallatieHint } from "./Installatie";
 
 type Props = {
@@ -43,19 +44,7 @@ export function ThuisVoor({ settings, renderedAt }: Props) {
 
       <Aftelklok aftrap={settings.startAt} renderedAt={renderedAt} />
 
-      <Kaart aria-labelledby="funfacts-titel" className="mt-4 flex flex-col gap-2.5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="funfacts-titel" className="m-0 text-[20px] leading-tight font-extrabold">
-            Je fun facts
-          </h2>
-          <span className="rounded-pil bg-studio px-3 py-1 text-klein font-bold text-beeldbuis">Vanaf januari</span>
-        </div>
-        <p className="m-0 text-[15px] leading-[1.45]">
-          In januari vul je hier een paar luchtige vragen in voor de quiz, plus je meest merkwaardige foto. Alleen
-          de organisatie ziet je antwoorden.
-        </p>
-        <p className="m-0 text-label font-medium">Invullen kan tot {formatDayMonth(new Date(settings.funfactsDeadline))}.</p>
-      </Kaart>
+      <FunfactsKaart settings={settings} now={renderedAt} />
 
       <InstallatieHint />
 
