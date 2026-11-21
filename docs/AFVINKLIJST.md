@@ -28,7 +28,7 @@ Wil je iets eerst uitproberen? Dat kan alles in **Beheer → Proefmodus**. Daar 
 - [ ] **Quizvragen maken met Claude.** Met de export van de fun facts (Beheer → Fun facts → Exporteer) en de prompt uit de SPEC (Bijlage B). Importeren in Beheer → Quiz. *(De app ziet dit zelf.)*
 - [ ] **Eerlijkheidscheck van de quiz in orde.** Beheer → Quiz laat per ronde zien hoeveel vragen per team voorkennis geven. *(De app ziet dit zelf.)*
 - [ ] **AI-versies maken voor Echt of AI.** Beheer → Fun facts → Foto's.
-- [ ] **Foto's voor de kaartronde verzamelen.** Valk-plekken in binnen- en buitenland (een Valkenburgerstraat, Falkenberg, een Halcón-wijk…). Maak per plek een of meer Street View-screenshots en plak de link in de vraag: de app zet de plek dan zelf. Van makkelijk naar moeilijk. Hoe het gaat: `docs/UITPROBEREN.md`, stap 5.
+- [ ] **Foto's voor de kaartronde verzamelen.** Valk-plekken in binnen- en buitenland (een Valkenburgerstraat, Falkenberg, een Halcón-wijk…). Maak per plek een of meer Street View-screenshots en plak de link in de vraag: de app zet de plek dan zelf. Van makkelijk naar moeilijk. 25 suggesties met links: [`docs/KAARTRONDE.md`](KAARTRONDE.md). Hoe het gaat: `docs/UITPROBEREN.md`, stap 5.
 - [ ] **Spotify-playlist voor de muziekronde klaarzetten.** Zet de aanwijzingen in het notitieveld van elke vraag.
 - [ ] **Proefquiz spelen met een paar familieleden.** Half april, in de proefmodus: nodig hun telefoons uit met de uitnodigingslink.
 
