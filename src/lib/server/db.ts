@@ -7,6 +7,11 @@ import { serverEnv } from "./env";
  * Supabase pooler in transaction mode, so prepared statements are off.
  * Every query names the `valk` schema explicitly.
  *
+ * One query at a time per connection (`max_pipeline: 1`): Supavisor, the
+ * pooler behind Supabase's port 6543, hangs on pipelined queries in
+ * transaction mode before version 2.10. The queries are sent, but their
+ * answers never arrive (see "Connection poolers" in the postgres.js README).
+ *
  * Vercel freezes an instance between visits. A connection that sat open
  * during that time can be dead without anyone noticing: a query sent over
  * it then waits until TCP gives up, minutes later, and the page hangs. So:
@@ -30,6 +35,7 @@ function createPool(): postgres.Sql {
   return postgres(env.DATABASE_URL, {
     prepare: false,
     max: 5,
+    max_pipeline: 1,
     idle_timeout: 10,
     max_lifetime: 5 * 60,
     connect_timeout: 10,
