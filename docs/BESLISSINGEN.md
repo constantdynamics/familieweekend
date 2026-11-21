@@ -4,7 +4,7 @@ Keuzes die de SPEC openliet of waarvan ik bewust afweek, met de reden. Nieuwste 
 
 ## Fase 2 t/m 4: de rest van de app (21 november 2026)
 
-De eigenaar wilde alles wat in beheer als "Binnenkort" stond nu al, in één oplevering, en alles meteen kunnen uitproberen (zie `docs/PLAN-fase-2-4.md` voor zijn keuzes).
+De eigenaar wilde alles wat in beheer als "Binnenkort" stond nu al, in één oplevering, en alles meteen kunnen uitproberen (de keuzes van de eigenaar staan in `docs/PLAN-fase-2-4.md`).
 
 ### Techniek
 

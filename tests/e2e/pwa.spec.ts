@@ -53,6 +53,9 @@ test("de service worker neemt de app over en vangt offline af", async ({ page, c
   );
   await page.reload();
   await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
+  // Once more through the service worker, so Thuis lands in its page cache.
+  await page.reload();
+  await expect.poll(() => page.evaluate(async () => Boolean(await caches.match("/"))), { timeout: 15_000 }).toBe(true);
 
   await context.setOffline(true);
   // A page seen before comes from the cache, with the offline banner.
