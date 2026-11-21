@@ -118,7 +118,8 @@ test("een mini-quiz met quizmaster, vier captains en twee meekijkers", async ({ 
   await console_(admin, "Nog 10 seconden!");
   await expect(captain.Avocado.page.getByText(/seconden!/).last()).toBeVisible({ timeout: 15_000 });
   await check(captain.Avocado.page, "44-quiz-nog-10-seconden", { scroll: false });
-  await expect(captain.Avocado.page.getByText(/De vraag is gesloten/)).toBeVisible({ timeout: 25_000 });
+  // The visible line, not the announcement for screen readers that may be there at the same time.
+  await expect(captain.Avocado.page.getByText(/De vraag is gesloten\.\sEven\swachten/)).toBeVisible({ timeout: 25_000 });
   const telaat = await antwoordViaApp(oranje, { choice: 1 });
   expect(telaat.status).toBe(409);
   await check(captain.Avocado.page, "45-quiz-gesloten");

@@ -42,15 +42,12 @@ test("iOS krijgt splashscreens en een apple-touch-icon", async ({ page }) => {
 
 test("de service worker neemt de app over en vangt offline af", async ({ page, context }) => {
   await loggedIn(page);
-  // Installing means precaching every static file; on a busy machine that takes a while.
-  await page.waitForFunction(
-    async () => {
-      const registration = await navigator.serviceWorker.getRegistration();
-      return Boolean(registration?.active);
-    },
-    undefined,
-    { timeout: 30_000 },
-  );
+  // Wait until the worker has installed (precached every static file) and is active.
+  // Not with waitForFunction: it takes the promise of an async check as a yes right away.
+  // A page reloaded while the worker still installs stays without a controller.
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
   await page.reload();
   await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
   // Once more through the service worker, so Thuis lands in its page cache.
@@ -71,8 +68,8 @@ test("de service worker neemt de app over en vangt offline af", async ({ page, c
 test("de service worker cachet geen beheer en geen API", async ({ page }) => {
   await loggedIn(page);
   await page.goto("/beheer");
-  await page.waitForFunction(async () => Boolean((await navigator.serviceWorker.getRegistration())?.active), undefined, {
-    timeout: 30_000,
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
   });
   await page.goto("/beheer");
   const cached = await page.evaluate(async () => {

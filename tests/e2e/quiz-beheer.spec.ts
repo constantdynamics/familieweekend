@@ -30,7 +30,7 @@ const QUIZ = {
       intermezzo_na: false,
       vragen: [
         { id: "r1v1", type: "meerkeuze", vraag: "Hoeveel van ons hebben ooit iets gebroken?", opties: ["9", "14", "17", "23"], goed: 2, uitleg: "17 van de 45 familieleden brak ooit iets." },
-        { id: "r1v2", type: "waar_niet_waar", vraag: "Waar of niet waar: meer dan de helft van ons drinkt koffie.", goed: true },
+        { id: "r1v2", type: "waar_niet_waar", vraag: "Waar of niet waar: meer dan de helft van ons drinkt koffie.", goed: true, fotos: ["koffie.jpg"] },
       ],
     },
     {
@@ -82,6 +82,7 @@ test("de beheerder maakt de quiz, leest een bestand in, bewerkt een vraag en maa
   await expect(page.getByText(/Quiz ingelezen: 3 rondes, 6 vragen/)).toBeVisible();
   // The participants list is still empty, so the names are not checked yet.
   await expect(page.getByText(/De deelnemerslijst is nog leeg/)).toBeVisible();
+  await expect(page.getByText(/Ronde\s1,\svraag\s2\s\(r1v2\):\sextra\sfoto's\shoren\salleen\sbij\seen\skaartvraag\./)).toBeVisible();
   await check(page, "82-beheer-quiz-ingelezen");
 
   // The overview: maximum points, a warning for the heavy map round, and the fairness check.
@@ -222,15 +223,27 @@ test("een kaartvraag krijgt zijn plek uit een Street View-link en meerdere foto'
   await zichtbaar(page.getByRole("button", { name: "Haal foto 1 weg" })).click();
   await expect(page.getByRole("img", { name: "Foto 3 bij deze vraag" }).filter({ visible: true })).toHaveCount(0);
   await expect(zichtbaar(page.getByRole("img", { name: "Foto 2 bij deze vraag" }))).toBeVisible();
+  await zichtbaar(page.getByLabel(/Voeg foto's toe/)).setInputFiles([
+    "public/icons/maskable-192.png",
+    "public/icons/maskable-512.png",
+    "public/icons/icon-1024.png",
+    "public/og.png",
+  ]);
+  await expect(zichtbaar(page.getByText(/Hoogstens\s5\sfoto's\sbij\seen\skaartvraag,\sdus\sde\seerste\s3\szijn\stoegevoegd\./))).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.getByRole("img", { name: /^Foto \d bij deze vraag$/ }).filter({ visible: true })).toHaveCount(5);
+  await expect(zichtbaar(page.getByText(/Dit\szijn\ser\s5,\smeer\skan\sniet\./))).toBeVisible();
+  await expect(page.getByLabel(/Voeg foto's toe/).filter({ visible: true })).toHaveCount(0);
   await zichtbaar(page.getByLabel("Bron van de foto")).fill("Google Street View");
   await zichtbaar(page.getByRole("button", { name: "Bewaar de vraag" })).click();
   await expect(zichtbaar(page.getByText(/Goed:\s52,369°\sN,\s4,905°\sO\s\(nederland\)/))).toBeVisible();
 
-  // Both photos are kept, and the backup has the extra one under "fotos".
+  // All five photos are kept: the first under "foto", the other four under "fotos".
   const bestand = await (await page.request.get("/api/quiz/export")).json();
   const vraag = bestand.rondes[1].vragen.find((v: { vraag: string }) => v.vraag.startsWith("Waar zijn deze foto's gemaakt?"));
   expect(vraag).toMatchObject({ type: "kaart", antwoord: { lat: 52.369125, lng: 4.905217 }, foto_bron: "Google Street View" });
   expect(vraag.foto).toMatch(/^[0-9a-f-]{36}$/);
-  expect(vraag.fotos).toHaveLength(1);
-  expect(vraag.fotos[0]).not.toBe(vraag.foto);
+  expect(vraag.fotos).toHaveLength(4);
+  expect(new Set([vraag.foto, ...vraag.fotos]).size).toBe(5);
 });
