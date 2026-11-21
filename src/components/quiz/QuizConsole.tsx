@@ -14,7 +14,7 @@ import type { ConsoleQuestion, ConsoleTeam, ConsoleView } from "@/lib/server/qui
 import { formatPoints } from "@/lib/shared/scoring";
 import { bijElkaar } from "@/lib/shared/tekst";
 import { stuur, useWakeLock } from "./hulp";
-import { korteNaam, QuizFoto, StandLijst } from "./onderdelen";
+import { korteNaam, QuizFotos, StandLijst } from "./onderdelen";
 import { TILE } from "./tegelKleuren";
 
 function abonneer(onChange: () => void) {
@@ -404,8 +404,8 @@ function VraagKaart({ vraag }: { vraag: ConsoleQuestion }) {
   return (
     <>
       {vraag.photoUrl ? (
-        <QuizFoto
-          src={vraag.photoUrl}
+        <QuizFotos
+          srcs={[vraag.photoUrl, ...(vraag.extraPhotoUrls ?? [])]}
           alt={`Foto bij vraag ${vraag.number}`}
           onderschrift={vraag.submitter ? `Ingezonden door ${vraag.submitter}` : vraag.photoCredit}
         />

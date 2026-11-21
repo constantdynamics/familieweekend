@@ -51,6 +51,8 @@ export type QuizQuestion = {
   scale: MapScale | null;
   explanation: string | null;
   photoUploadId: string | null;
+  /** More photos of the same place after the first one (map questions), at most 4. */
+  extraPhotoIds?: string[];
   /**
    * The photo the phones get. Echt of AI with a fun-fact photo shows the
    * version chosen in the photo admin (uploads.quiz_variant); otherwise the
@@ -138,6 +140,8 @@ export type ViewQuestion = {
   unit: string | null;
   scale: MapScale | null;
   photoUrl: string | null;
+  /** Signed links to the photos after the first (map questions), only when the first is there too. */
+  extraPhotoUrls: string[];
   photoCredit: string | null;
   /** echt_of_ai: who sent the photo in, "Oom Kees, Team Oranje". */
   submitter: string | null;
@@ -225,6 +229,7 @@ export type ConsoleQuestion = {
   explanation: string | null;
   note: string | null;
   photoUrl: string | null;
+  extraPhotoUrls: string[];
   photoCredit: string | null;
   submitter: string | null;
   subjects: string[];

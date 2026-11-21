@@ -92,6 +92,8 @@ export type PhoneViewInput = {
   viewer: Viewer;
   /** A signed link, made by the caller only when `viewerSeesQuestion` says so. */
   photoUrl: string | null;
+  /** Signed links to the extra photos, under the same rule. */
+  extraPhotoUrls?: string[];
   /** echt_of_ai: "Oom Kees, Team Oranje". */
   submitter: string | null;
 };
@@ -207,6 +209,7 @@ export function buildQuizView(input: PhoneViewInput): QuizView {
     unit: question.unit,
     scale: question.scale,
     photoUrl: input.photoUrl,
+    extraPhotoUrls: input.photoUrl ? (input.extraPhotoUrls ?? []) : [],
     photoCredit: question.photoUploadId ? question.photoCredit : null,
     submitter: input.submitter,
     correct,
@@ -257,12 +260,19 @@ export type ConsoleViewInput = {
   /** Upload id → "Oom Kees, Team Oranje". */
   submitters: Readonly<Record<string, string>>;
   photoUrl: string | null;
+  extraPhotoUrls?: string[];
   reviewId: string | null;
   canRestart: boolean;
   botsAllowed: boolean;
 };
 
-function consoleQuestion(content: QuizContent, question: QuizQuestion, photoUrl: string | null, submitters: Readonly<Record<string, string>>): ConsoleQuestion {
+function consoleQuestion(
+  content: QuizContent,
+  question: QuizQuestion,
+  photoUrl: string | null,
+  extraPhotoUrls: string[],
+  submitters: Readonly<Record<string, string>>,
+): ConsoleQuestion {
   const found = findQuestion(content, question.id);
   const correct = readCorrect(question);
   return {
@@ -280,6 +290,7 @@ function consoleQuestion(content: QuizContent, question: QuizQuestion, photoUrl:
     explanation: question.explanation,
     note: question.note,
     photoUrl,
+    extraPhotoUrls: photoUrl ? extraPhotoUrls : [],
     photoCredit: question.photoCredit,
     submitter: question.photoUploadId ? (submitters[question.photoUploadId] ?? null) : null,
     subjects: question.subjects,
@@ -350,7 +361,7 @@ export function buildConsoleView(input: ConsoleViewInput): ConsoleView {
   const reviewFound = active && input.reviewId ? findQuestion(content, input.reviewId) : null;
   if (active && reviewFound) {
     review = {
-      question: consoleQuestion(content, reviewFound.question, null, input.submitters),
+      question: consoleQuestion(content, reviewFound.question, null, [], input.submitters),
       teams: consoleTeams(reviewFound.question, reviewFound.round.number, input, true, true),
     };
   }
@@ -370,7 +381,7 @@ export function buildConsoleView(input: ConsoleViewInput): ConsoleView {
       ? { number: round.number, title: round.title, intro: round.intro, listeningRound: round.listening, intermezzoAfter: round.intermezzoAfter }
       : null,
     listening: state.listening,
-    question: current && content ? consoleQuestion(content, current, input.photoUrl, input.submitters) : null,
+    question: current && content ? consoleQuestion(content, current, input.photoUrl, input.extraPhotoUrls ?? [], input.submitters) : null,
     upNext,
     countdownMs: phase === "open" && state.countdownUntil !== null ? Math.max(0, state.countdownUntil - now) : null,
     buttons: consoleButtons({ ...state, phase }, active ? content : null),

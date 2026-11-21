@@ -141,7 +141,7 @@ export async function deleteOrphanUploads(): Promise<number> {
         select 1 from valk.board_posts p where u.id = any (p.photo_ids)
       )
       and not exists (
-        select 1 from valk.quiz_questions q where q.photo_upload_id = u.id
+        select 1 from valk.quiz_questions q where q.photo_upload_id = u.id or u.id = any (q.extra_photo_ids)
       )
     returning u.id
   `;

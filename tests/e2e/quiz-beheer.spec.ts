@@ -172,3 +172,65 @@ test("de demo-quiz staat klaar in de proef", async ({ page }) => {
   await expect(page.getByText(/Voorkennis per team: Oranje\s1, Mosterd\s1, Avocado\s1, Petrol\s0 \(hele\squiz\)\./)).toBeVisible();
   await check(page, "86-beheer-demo-quiz");
 });
+
+test("een kaartvraag krijgt zijn plek uit een Street View-link en meerdere foto's van dezelfde plek", async ({ page }) => {
+  test.setTimeout(120_000);
+  await loggedIn(page);
+  await loginAdmin(page);
+  await page.goto("/beheer/quiz");
+  await page.getByRole("button", { name: "Maak de vijf rondes" }).click();
+  await page.getByRole("link", { name: /Waar ligt\sValkenburg\?/ }).click();
+  const zichtbaar = (locator: Locator) => locator.filter({ visible: true }).first();
+  await zichtbaar(page.getByRole("link", { name: "Voeg een vraag toe" })).click();
+  await zichtbaar(page.getByLabel("Soort vraag")).selectOption("kaart");
+  await zichtbaar(page.getByLabel("Vraag", { exact: true })).fill("Waar zijn deze foto's gemaakt? Er zit een valk in de straatnaam.");
+
+  // A short link from the Maps app goes via the server; here it leads nowhere, with a clear message.
+  const link = zichtbaar(page.getByLabel("Street View-link"));
+  await link.fill("https://maps.app.goo.gl/BestaatNiet123");
+  await zichtbaar(page.getByRole("button", { name: "Zet de plek uit de link" })).click();
+  await expect(zichtbaar(page.getByRole("alert").filter({ hasText: /Die link kon ik niet openen|Hier staat geen plek in/ }))).toBeVisible();
+
+  // The link from the address bar of Street View: the place is the camera position.
+  await link.fill("https://www.google.com/maps/@52.3691253,4.9052171,3a,75y,90h,95t/data=!3m6!1e1!3m4!1sAbc!2e0!7i16384!8i8192");
+  await zichtbaar(page.getByRole("button", { name: "Zet de plek uit de link" })).click();
+  await expect(zichtbaar(page.getByText(/Plek gezet:\s52\.369125,\s4\.905217\./))).toBeVisible();
+  await expect(zichtbaar(page.getByLabel("Breedtegraad"))).toHaveValue("52.369125");
+  await expect(zichtbaar(page.getByLabel("Lengtegraad"))).toHaveValue("4.905217");
+  await expect(zichtbaar(page.getByText(/Tip: zet in een kaartronde de makkelijkste plek eerst/))).toBeVisible();
+
+  // Three Street View screenshots at once; then the first one goes and the second moves up.
+  await zichtbaar(page.getByLabel(/Kies een of meer foto's/)).setInputFiles([
+    "public/icons/icon-192.png",
+    "public/icons/icon-512.png",
+    "public/apple-touch-icon.png",
+  ]);
+  await expect(zichtbaar(page.getByRole("img", { name: "Foto 3 bij deze vraag" }))).toBeVisible({ timeout: 20_000 });
+  await check(page, "86-beheer-quiz-kaart-streetview");
+  // The middle of the form for the review: the place from the link and the three photos.
+  const viewport = test.info().project.name.replace(/^(iphone|android)-/, "");
+  await zichtbaar(page.getByRole("heading", { name: "Het goede antwoord" })).evaluate((el) => {
+    el.scrollIntoView({ block: "start" });
+    window.scrollBy(0, -48);
+  });
+  await page.screenshot({ path: `docs/screenshots/fase-2-4/${viewport}/86-beheer-quiz-kaart-streetview-midden.png` });
+  await zichtbaar(page.getByRole("heading", { name: "Foto", exact: true })).evaluate((el) => {
+    el.scrollIntoView({ block: "start" });
+    window.scrollBy(0, -48);
+  });
+  await page.screenshot({ path: `docs/screenshots/fase-2-4/${viewport}/86-beheer-quiz-kaart-streetview-fotos.png` });
+  await zichtbaar(page.getByRole("button", { name: "Haal foto 1 weg" })).click();
+  await expect(page.getByRole("img", { name: "Foto 3 bij deze vraag" }).filter({ visible: true })).toHaveCount(0);
+  await expect(zichtbaar(page.getByRole("img", { name: "Foto 2 bij deze vraag" }))).toBeVisible();
+  await zichtbaar(page.getByLabel("Bron van de foto")).fill("Google Street View");
+  await zichtbaar(page.getByRole("button", { name: "Bewaar de vraag" })).click();
+  await expect(zichtbaar(page.getByText(/Goed:\s52,369°\sN,\s4,905°\sO\s\(nederland\)/))).toBeVisible();
+
+  // Both photos are kept, and the backup has the extra one under "fotos".
+  const bestand = await (await page.request.get("/api/quiz/export")).json();
+  const vraag = bestand.rondes[1].vragen.find((v: { vraag: string }) => v.vraag.startsWith("Waar zijn deze foto's gemaakt?"));
+  expect(vraag).toMatchObject({ type: "kaart", antwoord: { lat: 52.369125, lng: 4.905217 }, foto_bron: "Google Street View" });
+  expect(vraag.foto).toMatch(/^[0-9a-f-]{36}$/);
+  expect(vraag.fotos).toHaveLength(1);
+  expect(vraag.fotos[0]).not.toBe(vraag.foto);
+});

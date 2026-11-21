@@ -56,6 +56,7 @@ async function Inhoud({
     onderwerp: "",
     foto: "",
     fotoUrl: null,
+    extraFotos: [],
     fotobron: "",
     idBestand: "",
   };
@@ -93,6 +94,7 @@ async function Inhoud({
       onderwerp: vraag.subjects.join(", "),
       foto: vraag.photoUploadId ?? "",
       fotoUrl: vraag.photoUploadId ? await signedPhotoUrl(vraag.photoUploadId) : null,
+      extraFotos: await Promise.all((vraag.extraPhotoIds ?? []).map(async (foto) => ({ id: foto, url: await signedPhotoUrl(foto) }))),
       fotobron: vraag.photoCredit ?? "",
       idBestand: vraag.extId ?? "",
     };

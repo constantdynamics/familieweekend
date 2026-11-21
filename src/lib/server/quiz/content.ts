@@ -48,6 +48,7 @@ export type QuestionRow = {
   scale: string | null;
   explanation: string | null;
   photo_upload_id: string | null;
+  extra_photo_ids: string[] | null;
   photo_credit: string | null;
   subjects: unknown;
   note: string | null;
@@ -71,6 +72,7 @@ export function toQuestion(row: QuestionRow): QuizQuestion {
     scale: isMapScale(row.scale) ? row.scale : null,
     explanation: row.explanation,
     photoUploadId: row.photo_upload_id,
+    extraPhotoIds: row.extra_photo_ids ?? [],
     photoCredit: row.photo_credit,
     subjects: strings(row.subjects),
     note: row.note,
@@ -105,7 +107,7 @@ export async function loadContent(quizId: string, sql: Sql = db()): Promise<Quiz
     `,
     sql<QuestionRow[]>`
       select q.id, q.round_id, q.sort, q.ext_id, q.kind, q.text, q.options, q.correct, q.unit, q.scale,
-        q.explanation, q.photo_upload_id, q.photo_credit, q.subjects, q.note
+        q.explanation, q.photo_upload_id, q.extra_photo_ids, q.photo_credit, q.subjects, q.note
       from valk.quiz_questions q join valk.quiz_rounds r on r.id = q.round_id
       where r.quiz_id = ${quizId}
       order by q.sort, q.id

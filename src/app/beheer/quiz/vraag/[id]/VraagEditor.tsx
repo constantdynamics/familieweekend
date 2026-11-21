@@ -10,8 +10,9 @@ import { Knop } from "@/components/ui/Knop";
 import { Veld } from "@/components/ui/Veld";
 import { uploadFoto } from "@/lib/client/foto";
 import type { QuestionType } from "@/lib/server/quiz/types";
+import { plekUitLink } from "@/lib/shared/kaartlink";
 import { bijElkaar } from "@/lib/shared/tekst";
-import { bewaarVraag, verwijderVraag, type QuizState } from "../../actions";
+import { bewaarVraag, leesKaartLink, verwijderVraag, type QuizState } from "../../actions";
 
 export type VraagWaarden = {
   soort: QuestionType;
@@ -30,9 +31,14 @@ export type VraagWaarden = {
   onderwerp: string;
   foto: string;
   fotoUrl: string | null;
+  /** The photos after the first, for a map question with several views of the same place. */
+  extraFotos: { id: string; url: string }[];
   fotobron: string;
   idBestand: string;
 };
+
+/** A map question shows at most this many photos of the same place. */
+const MAX_FOTOS = 5;
 
 /** A fun-fact photo the admin picked for Echt of AI, in the version that goes into the quiz. */
 export type FotoKeuze = { id: string; label: string; url: string; goed: "echt" | "ai" };
@@ -59,12 +65,81 @@ export function VraagEditor({
   const [w, setW] = useState<VraagWaarden>(begin);
   const [uploaden, setUploaden] = useState(false);
   const [fotoFout, setFotoFout] = useState<string | null>(null);
+  const [kaartLink, setKaartLink] = useState("");
+  const [linkBezig, setLinkBezig] = useState(false);
+  const [linkMelding, setLinkMelding] = useState<{ tone: "goed" | "fout"; tekst: string } | null>(null);
   const [zeker, setZeker] = useState(false);
   const velden = state.velden ?? {};
   const zet = <K extends keyof VraagWaarden>(key: K, value: VraagWaarden[K]) => setW((oud) => ({ ...oud, [key]: value }));
   const keuze = w.soort === "meerkeuze" || w.soort === "wie_van_ons" || w.soort === "schatting_bereik";
   // Echt of AI with a fun-fact photo: the right answer follows from the photo admin.
   const funfactFoto = w.soort === "echt_of_ai" ? fotoKeuzes.find((foto) => foto.id === w.foto) : undefined;
+  const kaart = w.soort === "kaart";
+  const fotos = w.fotoUrl ? [{ id: w.foto, url: w.fotoUrl }, ...(kaart ? w.extraFotos : [])] : [];
+
+  /** The place from a pasted Street View or Maps link; a short link from the Maps app goes via the server. */
+  async function zetPlek() {
+    setLinkMelding(null);
+    const direct = plekUitLink(kaartLink);
+    let plek = direct;
+    if (!plek) {
+      setLinkBezig(true);
+      const result = await leesKaartLink(kaartLink);
+      setLinkBezig(false);
+      if ("fout" in result) {
+        setLinkMelding({ tone: "fout", tekst: result.fout });
+        return;
+      }
+      plek = result.plek;
+    }
+    setW((oud) => ({ ...oud, lat: String(plek.lat), lng: String(plek.lng) }));
+    setLinkMelding({ tone: "goed", tekst: `Plek gezet: ${plek.lat}, ${plek.lng}.` });
+  }
+
+  /** One or more chosen photos: the first becomes the photo, at a map question the rest are added. */
+  async function kiesFotos(files: File[]) {
+    setFotoFout(null);
+    // A map question takes photos up to MAX_FOTOS; only those that still fit are uploaded.
+    const ruimte = kaart ? MAX_FOTOS - fotos.length : 1;
+    const gekozen = files.slice(0, Math.max(0, ruimte));
+    if (gekozen.length === 0) {
+      setFotoFout(`Hoogstens ${MAX_FOTOS} foto's bij een kaartvraag.`);
+      return;
+    }
+    setUploaden(true);
+    try {
+      for (const file of gekozen) {
+        const result = await uploadFoto(file, "quiz");
+        if ("fout" in result) {
+          setFotoFout(result.fout);
+          return;
+        }
+        setW((oud) =>
+          !oud.foto || oud.soort !== "kaart"
+            ? { ...oud, foto: result.id, fotoUrl: result.url }
+            : { ...oud, extraFotos: [...oud.extraFotos, { id: result.id, url: result.url }].slice(0, MAX_FOTOS - 1) },
+        );
+      }
+      if (gekozen.length < files.length) {
+        setFotoFout(
+          `Hoogstens ${MAX_FOTOS} foto's bij een kaartvraag, dus ${gekozen.length === 1 ? "de eerste is" : `de eerste ${gekozen.length} zijn`} toegevoegd.`,
+        );
+      }
+    } finally {
+      setUploaden(false);
+    }
+  }
+
+  /** Remove photo `index`; when the first goes, the next one moves up. */
+  function haalFotoWeg(index: number) {
+    setW((oud) => {
+      if (index > 0) return { ...oud, extraFotos: oud.extraFotos.filter((_, i) => i !== index - 1) };
+      const [volgende, ...rest] = oud.extraFotos;
+      return volgende
+        ? { ...oud, foto: volgende.id, fotoUrl: volgende.url, extraFotos: rest }
+        : { ...oud, foto: "", fotoUrl: null, extraFotos: [] };
+    });
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -75,6 +150,7 @@ export function VraagEditor({
         <input type="hidden" name="ronde" value={ronde} />
         <input type="hidden" name="id" value={id ?? ""} />
         <input type="hidden" name="foto" value={w.foto} />
+        <input type="hidden" name="extra_fotos" value={kaart ? w.extraFotos.map((foto) => foto.id).join(",") : ""} />
         <input type="hidden" name="id_bestand" value={w.idBestand} />
         <Kaart className="flex flex-col gap-3">
           <Keuzelijst
@@ -181,12 +257,32 @@ export function VraagEditor({
             </div>
           ) : (
             <>
+              <div className="flex flex-col gap-2">
+                <Veld
+                  label="Street View-link"
+                  value={kaartLink}
+                  onChange={(event) => setKaartLink(event.target.value)}
+                  hint={bijElkaar("Plak de link van de plek waar je de foto's maakte. De link uit de Maps-app op je telefoon werkt ook.")}
+                  inputMode="url"
+                  autoComplete="off"
+                  placeholder="https://www.google.com/maps/@52.36913,4.90522,3a,…"
+                />
+                <Knop type="button" size="klein" variant="secundair-licht" className="self-start" disabled={!kaartLink.trim() || linkBezig} onClick={() => void zetPlek()}>
+                  {linkBezig ? "Even kijken…" : "Zet de plek uit de link"}
+                </Knop>
+                {linkMelding ? <Melding tone={linkMelding.tone}>{bijElkaar(linkMelding.tekst)}</Melding> : null}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <Veld label="Breedtegraad" name="lat" inputMode="decimal" value={w.lat} onChange={(event) => zet("lat", event.target.value)} autoComplete="off" />
                 <Veld label="Lengtegraad" name="lng" inputMode="decimal" value={w.lng} onChange={(event) => zet("lng", event.target.value)} autoComplete="off" />
               </div>
               {velden.goed ? <p className="m-0 text-label font-bold text-roest">{velden.goed}</p> : null}
-              <p className="m-0 text-label leading-[1.4]">Bijvoorbeeld 50,865 en 5,832 voor Valkenburg aan de Geul. Controleer de plek op een kaart.</p>
+              <p className="m-0 text-label leading-[1.4]">
+                {bijElkaar("Of typ ze over, bijvoorbeeld 50,865 en 5,832 voor Valkenburg aan de Geul. Controleer de plek op een kaart.")}
+              </p>
+              <p className="m-0 text-label leading-[1.4] font-bold">
+                {bijElkaar("Tip: zet in een kaartronde de makkelijkste plek eerst en de moeilijkste als laatste.")}
+              </p>
               <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
                 <legend className="mb-1.5 p-0 text-[15px] font-bold">Schaal</legend>
                 <div className="grid grid-cols-2 gap-2">
@@ -232,48 +328,90 @@ export function VraagEditor({
               ))}
             </Keuzelijst>
           ) : null}
-          {w.fotoUrl ? (
+          {fotos.length > 1 ? (
             <>
+              <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0">
+                {fotos.map((foto, index) => (
+                  <li key={foto.id} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={foto.url}
+                      alt={`Foto ${index + 1} bij deze vraag`}
+                      className="aspect-[10/7] w-full rounded-tegel bg-papier-streep object-contain"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute top-1.5 left-1.5 flex h-7 min-w-7 items-center justify-center rounded-pil border-2 border-papier bg-studio px-2 text-[14px] font-extrabold text-papier"
+                    >
+                      {index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Haal foto ${index + 1} weg`}
+                      className="absolute top-0 right-0 flex h-11 w-11 items-center justify-center rounded-pil border-2 border-papier bg-studio text-papier shadow-kaart"
+                      onClick={() => haalFotoWeg(index)}
+                    >
+                      <IconPrullenbak size={20} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <p className="m-0 text-[15px] leading-[1.45]">
+                {bijElkaar("De teams zien de foto's in deze volgorde. Met de prullenbak haal je er een weg.")}
+              </p>
+            </>
+          ) : fotos.length === 1 ? (
+            <div className="flex flex-col gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={w.fotoUrl} alt="De foto bij deze vraag" className="max-h-[240px] w-full rounded-tegel bg-papier-streep object-contain" />
-              <Knop type="button" size="klein" variant="secundair-licht" className="self-start" onClick={() => setW((oud) => ({ ...oud, foto: "", fotoUrl: null }))}>
+              <img src={fotos[0].url} alt="De foto bij deze vraag" className="max-h-[240px] w-full rounded-tegel bg-papier-streep object-contain" />
+              <Knop type="button" size="klein" variant="secundair-licht" className="self-start" onClick={() => haalFotoWeg(0)}>
                 <IconPrullenbak size={18} />
                 Haal de foto weg
               </Knop>
-            </>
+            </div>
           ) : (
             <p className="m-0 text-[15px] leading-[1.45]">
               {bijElkaar(
                 w.soort === "kaart"
-                  ? "Bij een kaartvraag zoals GeoGuessr: een foto van de plek, en de captain zet een speld waar hij gemaakt is."
+                  ? "Bij een kaartvraag zoals GeoGuessr: een of meer Street View-foto's van dezelfde plek (tot 5), en de captain zet een speld waar ze gemaakt zijn."
                   : w.soort === "echt_of_ai"
                     ? "Bij Echt of AI hoort altijd een foto."
                     : "Een foto mag, bijvoorbeeld een babyfoto.",
               )}
             </p>
           )}
-          <label className="inline-flex min-h-12 cursor-pointer items-center gap-2 self-start rounded-pil border-2 border-studio px-[22px] text-[17px] font-bold">
-            <IconCamera size={20} />
-            {uploaden ? "Bezig met uploaden…" : w.fotoUrl ? "Kies een andere foto" : "Kies een foto"}
-            <input
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              disabled={uploaden}
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-                event.target.value = "";
-                if (!file) return;
-                setUploaden(true);
-                setFotoFout(null);
-                const result = await uploadFoto(file, "quiz");
-                setUploaden(false);
-                if ("fout" in result) setFotoFout(result.fout);
-                else setW((oud) => ({ ...oud, foto: result.id, fotoUrl: result.url }));
-              }}
-            />
-          </label>
+          {kaart && fotos.length >= MAX_FOTOS ? (
+            <p className="m-0 text-[15px] leading-[1.45] font-bold">
+              {bijElkaar(`Dit zijn er ${MAX_FOTOS}, meer kan niet. Haal er een weg om een andere te kiezen.`)}
+            </p>
+          ) : (
+            <label className="inline-flex min-h-12 cursor-pointer items-center gap-2 self-start rounded-pil border-2 border-studio px-[22px] text-[17px] font-bold">
+              <IconCamera size={20} />
+              {uploaden
+                ? "Bezig met uploaden…"
+                : !w.fotoUrl
+                  ? kaart
+                    ? "Kies een of meer foto's"
+                    : "Kies een foto"
+                  : kaart
+                    ? "Voeg foto's toe"
+                    : "Kies een andere foto"}
+              <input
+                type="file"
+                accept="image/*"
+                multiple={kaart}
+                className="sr-only"
+                disabled={uploaden}
+                onChange={(event) => {
+                  const files = Array.from(event.target.files ?? []);
+                  event.target.value = "";
+                  if (files.length > 0) void kiesFotos(kaart ? files : files.slice(0, 1));
+                }}
+              />
+            </label>
+          )}
           {fotoFout ? <Melding tone="fout">{bijElkaar(fotoFout)}</Melding> : null}
+          {velden.foto ? <Melding tone="fout">{bijElkaar(velden.foto)}</Melding> : null}
           {w.foto ? (
             <Veld
               label="Bron van de foto"

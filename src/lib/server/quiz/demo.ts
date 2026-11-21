@@ -14,8 +14,10 @@ import type { QuestionInput } from "./format";
 export const DEMO_TITLE = "Proefquiz: De Kleine Valkenburger";
 export const DEMO_PHOTO_CREDIT = "Illustratie, getekend voor de proefquiz";
 
-type DemoQuestion = Omit<QuestionInput, "photo" | "photoCredit"> & {
+type DemoQuestion = Omit<QuestionInput, "photo" | "photoCredit" | "extraPhotos"> & {
   photo?: keyof typeof DEMO_PHOTOS;
+  /** More views of the same place (a map question with a photo strip). */
+  extraPhotos?: (keyof typeof DEMO_PHOTOS)[];
   /** echt_of_ai: the test name that "sent the photo in". */
   submitter?: string;
 };
@@ -80,6 +82,7 @@ export const DEMO_ROUNDS: DemoRound[] = [
         correct: { lat: 52.3699, lng: 4.906 },
         scale: "nederland",
         photo: "valkenburgerstraat",
+        extraPhotos: ["valkenburgerstraat_fiets", "valkenburgerstraat_bord"],
         explanation: "Amsterdam! De Valkenburgerstraat ligt vlak bij het Waterlooplein. De grachtenhuizen en de Amsterdammertjes verraden het.",
       }),
       q({
@@ -193,7 +196,7 @@ export const DEMO_TEXTS = DEMO_ROUNDS.flatMap((round) => round.questions.map((qu
  */
 export async function seedDemoQuiz(sql: postgres.TransactionSql): Promise<void> {
   const oldPhotos = await sql<{ id: string }[]>`
-    select q.photo_upload_id as id
+    select unnest(array_prepend(q.photo_upload_id, q.extra_photo_ids)) as id
     from valk.quiz_questions q
     join valk.quiz_rounds r on r.id = q.round_id
     join valk.quizzes z on z.id = r.quiz_id
@@ -216,23 +219,25 @@ export async function seedDemoQuiz(sql: postgres.TransactionSql): Promise<void> 
       returning id
     `;
     for (const [index, question] of round.questions.entries()) {
-      let photoId: string | null = null;
-      if (question.photo) {
-        const photo = DEMO_PHOTOS[question.photo];
+      const store = async (key: keyof typeof DEMO_PHOTOS): Promise<string> => {
+        const photo = DEMO_PHOTOS[key];
         const bytes = Buffer.from(photo.base64, "base64");
         const [upload] = await sql<{ id: string }[]>`
           insert into valk.uploads (kind, participant_id, mime, bytes, width, height, size_bytes, created_by)
           values ('quiz', ${personId(question.submitter)}, 'image/jpeg', ${bytes}, ${photo.width}, ${photo.height}, ${bytes.length}, 'proefquiz')
           returning id
         `;
-        photoId = upload.id;
-      }
+        return upload.id;
+      };
+      const photoId = question.photo ? await store(question.photo) : null;
+      const extraIds: string[] = [];
+      for (const key of photoId ? (question.extraPhotos ?? []) : []) extraIds.push(await store(key));
       await sql`
         insert into valk.quiz_questions (round_id, sort, ext_id, kind, text, options, correct, unit, scale, explanation,
-          photo_upload_id, photo_credit, subjects, note)
+          photo_upload_id, extra_photo_ids, photo_credit, subjects, note)
         values (${row.id}, ${index + 1}, ${question.extId}, ${question.kind}, ${question.text},
           ${question.options === null ? null : sql.json(question.options)}, ${sql.json(question.correct as postgres.JSONValue)},
-          ${question.unit}, ${question.scale}, ${question.explanation}, ${photoId},
+          ${question.unit}, ${question.scale}, ${question.explanation}, ${photoId}, ${extraIds}::uuid[],
           ${photoId ? DEMO_PHOTO_CREDIT : null}, ${sql.json(question.subjects)}, ${question.note})
       `;
     }

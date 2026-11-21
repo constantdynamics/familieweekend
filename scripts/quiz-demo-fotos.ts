@@ -53,8 +53,8 @@ function house(x: number, width: number, height: number, color: string, gable: "
   return `<rect x="${x}" y="${top}" width="${width}" height="${height}" fill="${color}"/>${roof}${hoist}${windows.join("")}${door}`;
 }
 
-const PHOTOS: Record<string, string> = {
-  valkenburgerstraat: frame(`
+/** The Valkenburgerstraat in Amsterdam, drawn: canal houses, bollards, a bike and the street sign. */
+const STRAAT = `
     <rect width="${W}" height="${H}" fill="#bcd9e6"/>
     <circle cx="660" cy="86" r="40" fill="#fff6dc"/>
     <path d="M90 90 q30 -26 66 -6 q24 -18 50 4 q-60 14 -116 2z" fill="#ffffff" opacity="0.9"/>
@@ -72,20 +72,26 @@ const PHOTOS: Record<string, string> = {
       <line x1="40" y1="450" x2="150" y2="450"/><line x1="260" y1="472" x2="400" y2="472"/>
       <line x1="520" y1="446" x2="640" y2="446"/><line x1="120" y1="512" x2="260" y2="512"/><line x1="560" y1="520" x2="720" y2="520"/>
     </g>
+    <g stroke="#2b1810" stroke-width="5" fill="none">
+      <circle cx="560" cy="384" r="22"/><circle cx="626" cy="384" r="22"/>
+      <path d="M560 384 l26 -36 h30 l10 36 M586 348 l-6 -12 M612 348 l6 -14 h14"/>
+    </g>
     <g fill="#7a1f1a">
-      ${[70, 170, 270, 370, 470, 570, 670, 760].map((px) => `<rect x="${px}" y="388" width="12" height="40" rx="5"/>`).join("")}
+      ${[70, 170, 270, 370, 470, 570, 670, 760].map((px) => `<rect x="${px}" y="372" width="12" height="40" rx="5"/>`).join("")}
     </g>
     <g fill="#ffffff" font-family="Arial, sans-serif" font-size="9" font-weight="700">
-      ${[70, 170, 270, 370, 470, 570, 670, 760].map((px) => `<text x="${px + 1}" y="402">XXX</text>`).join("")}
-    </g>
-    <g stroke="#2b1810" stroke-width="5" fill="none">
-      <circle cx="560" cy="398" r="22"/><circle cx="626" cy="398" r="22"/>
-      <path d="M560 398 l26 -36 h30 l10 36 M586 362 l-6 -12 M612 362 l6 -14 h14"/>
+      ${[70, 170, 270, 370, 470, 570, 670, 760].map((px) => `<text x="${px + 1}" y="386">XXX</text>`).join("")}
     </g>
     <rect x="96" y="210" width="10" height="190" fill="#2b1810"/>
     <rect x="14" y="174" width="264" height="54" rx="6" fill="#ffffff" stroke="#1f3b78" stroke-width="5"/>
     <text x="146" y="209" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#1f3b78">Valkenburgerstraat</text>
-  `),
+  `;
+
+const PHOTOS: Record<string, string> = {
+  valkenburgerstraat: frame(STRAAT),
+  // Two more views of the same street, for the photo strip of a map question.
+  valkenburgerstraat_fiets: frame(`<g transform="scale(2) translate(-400 -200)">${STRAAT}</g>`),
+  valkenburgerstraat_bord: frame(`<g transform="scale(1.6) translate(0 -110)">${STRAAT}</g>`),
   falkenberg: frame(`
     <rect width="${W}" height="${H}" fill="#c7e3f0"/>
     <path d="M0 150 q120 -40 260 -6 q140 30 280 -10 q140 -36 260 4 v120 H0z" fill="#9db7a1"/>

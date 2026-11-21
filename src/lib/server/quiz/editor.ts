@@ -97,6 +97,8 @@ export type QuestionForm = {
   note: string;
   subjects: string;
   photoUploadId: string;
+  /** The photos after the first (map questions), in order. */
+  extraPhotoIds: string[];
   photoCredit: string;
   extId: string;
 };
@@ -168,7 +170,18 @@ export function readQuestionForm(form: QuestionForm): { ok: true; question: Ques
     }
     return { ok: false, errors };
   }
-  return { ok: true, question: { ...toQuestionInput(parsed.data), photo: form.photoUploadId.trim() || null } };
+  const photo = form.photoUploadId.trim() || null;
+  const extraPhotos = form.extraPhotoIds.map((id) => id.trim()).filter(Boolean);
+  if (extraPhotos.length > 4) return { ok: false, errors: { foto: "Hoogstens 5 foto's bij een vraag." } };
+  return {
+    ok: true,
+    question: {
+      ...toQuestionInput(parsed.data),
+      // Without a first photo, the first extra one moves up.
+      photo: photo ?? extraPhotos[0] ?? null,
+      extraPhotos: photo ? extraPhotos : extraPhotos.slice(1),
+    },
+  };
 }
 
 /** Add a question to a round (questionId null) or change one. Returns its id. */
@@ -180,6 +193,14 @@ export async function saveQuestion(roundId: string, questionId: string | null, i
     `;
     if (!round) throw new QuizEditError("Deze ronde bestaat niet meer.");
     const photo = await checkPhoto(sql, input.photo);
+    // More photos of the same place belong to a map question only.
+    const extraPhotos: string[] = [];
+    if (photo && input.kind === "kaart") {
+      for (const id of input.extraPhotos ?? []) {
+        const checked = await checkPhoto(sql, id);
+        if (checked && checked !== photo && !extraPhotos.includes(checked)) extraPhotos.push(checked);
+      }
+    }
     const values = {
       kind: input.kind,
       text: input.text,
@@ -189,6 +210,7 @@ export async function saveQuestion(roundId: string, questionId: string | null, i
       scale: input.scale,
       explanation: input.explanation,
       photo_upload_id: photo,
+      extra_photo_ids: extraPhotos.slice(0, 4),
       photo_credit: photo ? input.photoCredit : null,
       subjects: sql.json(input.subjects),
       note: input.note,
@@ -205,7 +227,8 @@ export async function saveQuestion(roundId: string, questionId: string | null, i
         update valk.quiz_questions set
           kind = ${values.kind}, text = ${values.text}, options = ${values.options}, correct = ${values.correct},
           unit = ${values.unit}, scale = ${values.scale}, explanation = ${values.explanation},
-          photo_upload_id = ${values.photo_upload_id}, photo_credit = ${values.photo_credit},
+          photo_upload_id = ${values.photo_upload_id}, extra_photo_ids = ${values.extra_photo_ids}::uuid[],
+          photo_credit = ${values.photo_credit},
           subjects = ${values.subjects}, note = ${values.note}, ext_id = ${values.ext_id}, updated_at = now()
         where id = ${questionId}
       `;
@@ -225,10 +248,10 @@ export async function saveQuestion(roundId: string, questionId: string | null, i
       const [last] = await sql<{ sort: number | null }[]>`select max(sort) as sort from valk.quiz_questions where round_id = ${roundId}`;
       const [row] = await sql<{ id: string }[]>`
         insert into valk.quiz_questions (round_id, sort, ext_id, kind, text, options, correct, unit, scale, explanation,
-          photo_upload_id, photo_credit, subjects, note)
+          photo_upload_id, extra_photo_ids, photo_credit, subjects, note)
         values (${roundId}, ${(last?.sort ?? 0) + 1}, ${values.ext_id}, ${values.kind}, ${values.text}, ${values.options},
           ${values.correct}, ${values.unit}, ${values.scale}, ${values.explanation}, ${values.photo_upload_id},
-          ${values.photo_credit}, ${values.subjects}, ${values.note})
+          ${values.extra_photo_ids}::uuid[], ${values.photo_credit}, ${values.subjects}, ${values.note})
         returning id
       `;
       id = row.id;
@@ -396,6 +419,20 @@ export async function writeQuiz(
           warnings.push(`${where}: foto "${question.photo}" niet gevonden. Upload hem in de vraageditor.`);
         }
       }
+      const extraPhotos: string[] = [];
+      if (question.extraPhotos?.length && question.kind !== "kaart") {
+        warnings.push(`${where}: extra foto's horen alleen bij een kaartvraag. Ik heb ze overgeslagen.`);
+      }
+      for (const name of photo && question.kind === "kaart" ? (question.extraPhotos ?? []).slice(0, 4) : []) {
+        let found: string | null = null;
+        if (isUuid(name)) {
+          const [upload] = await sql<{ id: string }[]>`select id from valk.uploads where id = ${name}`;
+          found = upload?.id ?? null;
+        }
+        if (!found && resolvePhoto) found = await resolvePhoto(name, sql);
+        if (found && found !== photo && !extraPhotos.includes(found)) extraPhotos.push(found);
+        else if (!found) warnings.push(`${where}: extra foto "${name}" niet gevonden. Upload hem in de vraageditor.`);
+      }
       if (question.kind === "echt_of_ai" && !photo) warnings.push(`${where}: een Echt of AI-vraag zonder foto. Upload er een in de vraageditor.`);
       if (question.kind === "wie_van_ons" && known.size > 0) {
         const unknown = (question.options ?? []).filter((name) => !known.has(nameKey(name)));
@@ -412,6 +449,7 @@ export async function writeQuiz(
         scale: question.scale,
         explanation: question.explanation,
         photo_upload_id: photo,
+        extra_photo_ids: extraPhotos,
         photo_credit: photo ? question.photoCredit : null,
         subjects: sql.json(question.subjects),
         note: question.note,
@@ -422,7 +460,8 @@ export async function writeQuiz(
           update valk.quiz_questions set round_id = ${roundId}, sort = ${values.sort}, ext_id = ${values.ext_id},
             kind = ${values.kind}, text = ${values.text}, options = ${values.options}, correct = ${values.correct},
             unit = ${values.unit}, scale = ${values.scale}, explanation = ${values.explanation},
-            photo_upload_id = ${values.photo_upload_id}, photo_credit = ${values.photo_credit},
+            photo_upload_id = ${values.photo_upload_id}, extra_photo_ids = ${values.extra_photo_ids}::uuid[],
+            photo_credit = ${values.photo_credit},
             subjects = ${values.subjects}, note = ${values.note}, updated_at = now()
           where id = ${match.id}
         `;
@@ -430,10 +469,10 @@ export async function writeQuiz(
       } else {
         const [row] = await sql<{ id: string }[]>`
           insert into valk.quiz_questions (round_id, sort, ext_id, kind, text, options, correct, unit, scale, explanation,
-            photo_upload_id, photo_credit, subjects, note)
+            photo_upload_id, extra_photo_ids, photo_credit, subjects, note)
           values (${roundId}, ${values.sort}, ${values.ext_id}, ${values.kind}, ${values.text}, ${values.options},
             ${values.correct}, ${values.unit}, ${values.scale}, ${values.explanation}, ${values.photo_upload_id},
-            ${values.photo_credit}, ${values.subjects}, ${values.note})
+            ${values.extra_photo_ids}::uuid[], ${values.photo_credit}, ${values.subjects}, ${values.note})
           returning id
         `;
         keep.add(row.id);

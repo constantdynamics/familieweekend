@@ -60,6 +60,11 @@ export const questionSchema = z
       schaal: z.enum(["nederland", "wereld"], { error: "schaal is nederland of wereld." }).optional(),
       uitleg: optionalText("uitleg", 600),
       foto: optionalText("foto", 300),
+      /** More photos of the same place, after `foto` (a map question in GeoGuessr style). */
+      fotos: z
+        .array(text("Een extra foto", 300), { error: "fotos moet een lijst met foto's zijn." })
+        .max(4, "fotos heeft meer dan 4 extra foto's.")
+        .optional(),
       foto_bron: optionalText("foto_bron", 120),
       onderwerp: z
         .array(text("Een naam bij onderwerp", 60), { error: "onderwerp moet een lijst met namen zijn." })
@@ -177,6 +182,8 @@ export type QuestionInput = {
   explanation: string | null;
   /** An upload id or a file name, as written in the file. */
   photo: string | null;
+  /** More photos after the first, as upload ids or file names (at most 4). */
+  extraPhotos?: string[];
   photoCredit: string | null;
   subjects: string[];
   note: string | null;
@@ -214,6 +221,7 @@ export function toQuestionInput(question: QuizFileQuestion): QuestionInput {
     scale: question.type === "kaart" ? (question.schaal ?? "nederland") : null,
     explanation: clean(question.uitleg),
     photo: clean(question.foto),
+    ...(question.fotos?.length ? { extraPhotos: question.fotos.map((name) => name.trim()).filter(Boolean) } : {}),
     photoCredit: clean(question.foto_bron),
     subjects: (question.onderwerp ?? []).map((name) => name.trim()).filter(Boolean),
     note: clean(question.notitie),
@@ -330,6 +338,7 @@ export function toQuizFile(content: QuizContent): QuizFile {
         }
         if (question.explanation) entry.uitleg = question.explanation;
         entry.foto = question.photoUploadId;
+        if (question.extraPhotoIds?.length) entry.fotos = question.extraPhotoIds;
         if (question.photoCredit) entry.foto_bron = question.photoCredit;
         entry.onderwerp = question.subjects;
         entry.notitie = question.note ?? "";

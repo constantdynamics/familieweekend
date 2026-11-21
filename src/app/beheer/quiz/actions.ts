@@ -19,6 +19,7 @@ import {
 } from "@/lib/server/quiz/editor";
 import { requireAdmin } from "@/lib/server/session";
 import { isUuid } from "@/lib/server/teams";
+import { isGoogleKaartHost, isKorteKaartLink, plekUitLink, type Plek } from "@/lib/shared/kaartlink";
 
 export type QuizState = {
   fout?: string;
@@ -122,6 +123,10 @@ function formFields(formData: FormData): QuestionForm {
     note: text(formData, "notitie"),
     subjects: text(formData, "onderwerp"),
     photoUploadId: text(formData, "foto"),
+    extraPhotoIds: text(formData, "extra_fotos")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean),
     photoCredit: text(formData, "fotobron"),
     extId: text(formData, "id_bestand"),
   };
@@ -170,4 +175,39 @@ export async function verplaatsVraag(formData: FormData): Promise<void> {
     logError("beheer.quiz.vraag.verplaatsen", error);
   }
   refresh();
+}
+
+const GEEN_PLEK = "Hier staat geen plek in. Plak de link uit de adresbalk van Street View, of de link die de Maps-app deelt.";
+
+/**
+ * De plek uit een Street View- of Maps-link, voor het goede antwoord van een
+ * kaartvraag. Een korte link uit de Maps-app (maps.app.goo.gl) vouwt de
+ * server open; hij volgt daarbij alleen adressen van Google.
+ */
+export async function leesKaartLink(link: string): Promise<{ plek: Plek } | { fout: string }> {
+  await beheer();
+  const invoer = String(link ?? "").trim().slice(0, 2000);
+  const direct = plekUitLink(invoer);
+  if (direct) return { plek: direct };
+  if (!isKorteKaartLink(invoer)) return { fout: GEEN_PLEK };
+  let url = new URL(invoer);
+  for (let stap = 0; stap < 6; stap += 1) {
+    let response: Response;
+    try {
+      response = await fetch(url, { redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(5000) });
+    } catch {
+      return { fout: "Die link kon ik niet openen. Plak de lange link uit de adresbalk van Street View." };
+    }
+    // Only the address matters, not the page itself.
+    void response.body?.cancel().catch(() => {});
+    const volgende = response.headers.get("location");
+    if (!volgende) break;
+    const next = new URL(volgende, url);
+    if (next.protocol !== "https:" || !isGoogleKaartHost(next.hostname)) break;
+    // Google zet de bestemming soms achter een toestemmingspagina (consent.google.com?continue=…).
+    const plek = plekUitLink(next.href) ?? plekUitLink(next.searchParams.get("continue") ?? "");
+    if (plek) return { plek };
+    url = next;
+  }
+  return { fout: GEEN_PLEK };
 }

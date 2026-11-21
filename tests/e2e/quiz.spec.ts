@@ -179,7 +179,17 @@ test("een mini-quiz met quizmaster, vier captains en twee meekijkers", async ({ 
   // Round 2: a map question in the style of GeoGuessr.
   await stap(admin, "Start ronde 2", oranje, "rondescherm");
   await stap(admin, "Toon vraag 1", oranje, "open");
-  await expect(oranje.getByRole("img", { name: "Foto bij vraag 1" })).toBeVisible();
+  // Three Street View photos of the same place, in a strip to swipe through.
+  const fotos = oranje.getByRole("img", { name: /^Foto bij vraag 1, \d van 3$/ });
+  await expect(fotos).toHaveCount(3);
+  await expect(oranje.getByText(/^3\sfoto's\svan\sdezelfde\splek/)).toBeVisible();
+  await expect(fotos.first()).toBeInViewport();
+  await expect(fotos.last()).not.toBeInViewport();
+  const strook = oranje.getByRole("list", { name: "Veeg opzij voor de volgende foto" });
+  await strook.evaluate((el) => el.scrollTo({ left: el.scrollWidth, behavior: "instant" }));
+  await expect(fotos.last()).toBeInViewport();
+  await expect(fotos.first()).not.toBeInViewport();
+  await strook.evaluate((el) => el.scrollTo({ left: 0, behavior: "instant" }));
   await expect(oranje.locator(".leaflet-tile-loaded").first()).toBeVisible({ timeout: 15_000 });
   await oranje.getByRole("button", { name: "Zet speld hier" }).click();
   await expect(oranje.getByRole("button", { name: "Verplaats je speld hierheen" })).toBeVisible();

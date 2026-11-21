@@ -248,12 +248,13 @@ export async function quizViewFor(ctx: RequestContext): Promise<QuizView> {
   const found = content ? findQuestion(content, state.questionId) : null;
   const out = content !== null && found !== null && questionIsOut(state, now);
   const sees = out && viewerSeesQuestion(state, now, viewer.role);
-  const [answers, book, photoUrl, submitters] = await Promise.all([
+  const [answers, book, photoUrl, extraPhotoUrls, submitters] = await Promise.all([
     out && found ? loadAnswers(env, found.question.id) : Promise.resolve({}),
     content && needsStandings(state) && !live.lockClosed ? loadAnswerBook(env, content.id) : Promise.resolve(null),
     sees && found?.question.photoUploadId
       ? signedPhotoUrl(found.question.displayPhotoId ?? found.question.photoUploadId, PHOTO_TTL_S)
       : Promise.resolve(null),
+    sees && found?.question.photoUploadId ? signExtraPhotos(found.question.extraPhotoIds) : Promise.resolve([]),
     sees && found?.question.kind === "echt_of_ai" && found.question.photoUploadId
       ? loadSubmitters(env, [found.question.photoUploadId])
       : Promise.resolve({} as Record<string, Submitter>),
@@ -271,8 +272,15 @@ export async function quizViewFor(ctx: RequestContext): Promise<QuizView> {
     standings: content && book ? quizStandings(content, book, jokers, teams.map((team) => team.id)) : null,
     viewer,
     photoUrl,
+    extraPhotoUrls,
     submitter: found?.question.photoUploadId ? submitterLabel(submitters[found.question.photoUploadId]) : null,
   });
+}
+
+/** Signed links to the extra photos of a question, in their order. */
+async function signExtraPhotos(ids: readonly string[] | undefined): Promise<string[]> {
+  if (!ids || ids.length === 0) return [];
+  return Promise.all(ids.map((id) => signedPhotoUrl(id, PHOTO_TTL_S)));
 }
 
 /** A quiz that is not running anymore and was never started, for the console's start card. */
@@ -308,6 +316,7 @@ export async function consoleViewFor(env: Env, reviewId: string | null): Promise
     found?.question.photoUploadId && questionIsOut(state, now)
       ? await signedPhotoUrl(found.question.displayPhotoId ?? found.question.photoUploadId, PHOTO_TTL_S)
       : null;
+  const extraPhotoUrls = photoUrl ? await signExtraPhotos(found?.question.extraPhotoIds) : [];
   const fairness = content
     ? fairnessFor(
         content,
@@ -330,6 +339,7 @@ export async function consoleViewFor(env: Env, reviewId: string | null): Promise
     fairnessLines: fairness?.roundLines ?? {},
     submitters: labels(submitters),
     photoUrl,
+    extraPhotoUrls,
     reviewId: reviewId && isUuid(reviewId) ? reviewId : null,
     canRestart: env === "test",
     botsAllowed: env === "test",

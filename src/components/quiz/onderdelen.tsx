@@ -25,6 +25,42 @@ export function QuizFoto({ src, onderschrift, alt }: { src: string; onderschrift
   );
 }
 
+/**
+ * The photos of a question. One photo is a postcard as before; several
+ * photos of the same place (a map question in GeoGuessr style) are a strip
+ * of postcards to swipe through, the next one peeking in from the side.
+ */
+export function QuizFotos({ srcs, onderschrift, alt }: { srcs: string[]; onderschrift: string | null; alt: string }) {
+  if (srcs.length === 0) return null;
+  if (srcs.length === 1) return <QuizFoto src={srcs[0]} onderschrift={onderschrift} alt={alt} />;
+  return (
+    <section aria-label={`${alt}: ${srcs.length} foto's van dezelfde plek`} className="flex flex-col gap-2">
+      <ul
+        tabIndex={0}
+        aria-label="Veeg opzij voor de volgende foto"
+        className="m-0 flex list-none snap-x snap-mandatory gap-3 overflow-x-auto p-0 pt-1 pb-2 focus-visible:outline-3 focus-visible:outline-mosterd"
+      >
+        {srcs.map((src, index) => (
+          <li key={src} className="w-[86%] flex-none snap-center">
+            <figure
+              className={`m-0 flex flex-col gap-2 rounded-[10px] bg-beeldbuis p-3 text-studio shadow-kaart ${index % 2 === 0 ? "-rotate-[1deg]" : "rotate-[1deg]"}`}
+            >
+              {/* A signed link that expires in minutes: next/image would keep a copy longer than allowed. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt={`${alt}, ${index + 1} van ${srcs.length}`} className="aspect-[10/7] w-full rounded-[4px] bg-papier-streep object-contain" />
+              <figcaption className="text-[13px] leading-none font-bold">{`${index + 1} van ${srcs.length}`}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+      <p className="m-0 text-label leading-[1.35] text-zand">
+        {bijElkaar(`${srcs.length} foto's van dezelfde plek. Veeg opzij om ze allemaal te zien.`)}
+      </p>
+      {onderschrift ? <p className="m-0 text-[14px] leading-[1.35] font-semibold text-zand">{bijElkaar(onderschrift)}</p> : null}
+    </section>
+  );
+}
+
 /** "Luister goed" with a moving equalizer (listening mode for meekijkers). */
 export function LuisterGoed() {
   const balken = ["bg-mosterd", "bg-oranje", "bg-avocado-licht", "bg-petrol-licht", "bg-mosterd"];

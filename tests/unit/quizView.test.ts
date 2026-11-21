@@ -91,6 +91,16 @@ describe("geheimhouding per fase", () => {
     expect(JSON.stringify(revealed)).not.toContain("Geheime notitie");
   });
 
+  it("geeft extra foto's alleen samen met de eerste foto, dus nooit voor open", () => {
+    const extra = { photoUrl: "/api/foto/een?t=1&s=x", extraPhotoUrls: ["/api/foto/twee?t=1&s=y", "/api/foto/drie?t=1&s=z"] };
+    const open = view(state({ type: "toon" }), MEEKIJKER, extra);
+    expect(open.question).toMatchObject({ photoUrl: extra.photoUrl, extraPhotoUrls: extra.extraPhotoUrls });
+    // The caller signs nothing before open; even if it passed extra links, they don't go out without the first photo.
+    const zonderEerste = view(state({ type: "toon" }), MEEKIJKER, { photoUrl: null, extraPhotoUrls: extra.extraPhotoUrls });
+    expect(zonderEerste.question?.extraPhotoUrls).toEqual([]);
+    expect(JSON.stringify(view(state(), CAPTAIN, extra))).not.toContain("/api/foto/twee");
+  });
+
   it("geeft de captain zijn eigen antwoord, en laat hem alleen kiezen terwijl de vraag open is", () => {
     const open = view(state({ type: "toon" }), CAPTAIN);
     expect(open.me).toMatchObject({ role: "captain", answer: { choice: 2 }, canAnswer: true });

@@ -15,7 +15,7 @@ import type { Answer, QuizView, TeamColor, ViewTeam } from "@/lib/server/quiz/ty
 import { formatPoints } from "@/lib/shared/scoring";
 import { bijElkaar } from "@/lib/shared/tekst";
 import { abonneerGeluid, bewaarGeluid, geluid, leesGeluid, stuur, useWakeLock } from "./hulp";
-import { JokerStrook, korteNaam, LuisterGoed, QuizFoto, StandLijst } from "./onderdelen";
+import { JokerStrook, korteNaam, LuisterGoed, QuizFotos, StandLijst } from "./onderdelen";
 import type { Speld, TeamSpeld } from "./QuizKaart";
 import { tegelKey, Tegels, tegelsVoor, type Tegel } from "./Tegels";
 import { Toetsenbord, toonGetal } from "./Toetsenbord";
@@ -414,8 +414,8 @@ function VraagScherm({
       {resterend !== null && view.phase === "open" ? <Aftellen ms={resterend} /> : null}
       {jokerHier ? <JokerStrook>Joker ingezet: deze ronde telt dubbel</JokerStrook> : null}
       {vraag.photoUrl ? (
-        <QuizFoto
-          src={vraag.photoUrl}
+        <QuizFotos
+          srcs={[vraag.photoUrl, ...(vraag.extraPhotoUrls ?? [])]}
           alt={`Foto bij vraag ${vraag.number}`}
           onderschrift={vraag.submitter ? `Ingezonden door ${vraag.submitter}` : vraag.photoCredit}
         />

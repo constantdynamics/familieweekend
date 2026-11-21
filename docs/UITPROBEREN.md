@@ -47,6 +47,19 @@ Wat nog niet uit te proberen is, staat onderaan en in de afvinklijst (Beheer →
 
 Voor de echte quiz in april: Beheer → Quiz → **Maak de vijf rondes**, of lees een JSON-bestand in. Conceptvragen uit de fun facts zet je erin met **Neem over**.
 
+In de proef heeft de kaartvraag over de Valkenburgerstraat drie foto's van dezelfde plek: veeg opzij om ze allemaal te zien.
+
+### Zelf een kaartvraag maken met Street View
+
+1. Open de plek in Google Maps en ga naar Street View. Kijk rond en maak een screenshot. Meer beelden van dezelfde plek mag ook, tot vijf.
+2. Snijd het adresvak weg (linksboven op de computer, bovenaan in de app), anders verklapt de foto het antwoord.
+3. Kopieer de link: uit de adresbalk op de computer, of in de Maps-app met **Delen** → **Link kopiëren**.
+4. Beheer → **Quiz** → de ronde **Waar ligt Valkenburg?** → **Voeg een vraag toe** → soort **Kaart**.
+5. Plak de link bij **Street View-link** en tik **Zet de plek uit de link**. Breedtegraad en lengtegraad vullen zich vanzelf.
+6. Tik **Kies een of meer foto's** en kies je screenshots in één keer. De teams zien ze in deze volgorde; met de prullenbak haal je er een weg.
+7. Zet bij **Bron van de foto**: Google Street View.
+8. Zet de makkelijkste plek als eerste vraag van de ronde en de moeilijkste als laatste.
+
 ## 6. Zeskamp, scorebord en spelleiders
 
 - Open **/score** en **/zeskamp** (typ het achter het adres; tijdens het weekend staan ze als tegel op Thuis). In de proef zie je voorbeeldpunten: vrijdagpunten, spel 1 en 2 gespeeld met een joker, en een losse punt.
