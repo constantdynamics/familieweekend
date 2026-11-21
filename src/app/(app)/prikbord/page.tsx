@@ -36,7 +36,7 @@ export default function PrikbordPage({ searchParams }: PageProps<"/prikbord">) {
 
 function Laden() {
   return (
-    <div aria-busy="true" className="flex flex-col gap-4 pr-10">
+    <div aria-busy="true" className="flex flex-col gap-4">
       <span className="sr-only">Het prikbord laden…</span>
       <div className="h-9 w-44 rounded-tegel bg-studio-licht" />
       <div className="h-5 w-64 max-w-full rounded-pil bg-studio-licht" />

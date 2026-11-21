@@ -185,7 +185,7 @@ function Kop({ view, rol }: { view: StaffGameView; rol: "beheerder" | "spelleide
         <IconPijlTerug size={20} />
         Alle spellen
       </Link>
-      <div className="flex flex-col gap-1.5 pr-10">
+      <div className="flex flex-col gap-1.5">
         <Chip>{rol === "beheerder" ? "Beheerder" : "Spelleider"}</Chip>
         <p className="m-0 text-[14px] text-zand">
           Spel {game.number} van {game.total}

@@ -4,7 +4,7 @@ De PWA voor het familieweekend van de familie Valkenburg: Hemelvaart, do 6 t/m z
 
 **Live:** https://valkenburger-spelen.vercel.app
 
-**Stand:** fase 1 (teaser) is af: welkomstscherm met familiecode, Thuis met aftelklok, installatie-uitleg, PWA, beheer met instellingen, familiecode, PIN en logboek. Zie [`docs/PLAN-fase-1.md`](docs/PLAN-fase-1.md).
+**Stand:** alles uit de SPEC is gebouwd (fase 1 t/m 4): welkom, Thuis vóór, tijdens en na het weekend, Wie ben jij?, fun facts, prikbord, programma met weer, teams, quiz met kaartvragen en intermezzo, zeskamp met spelleiders en spelhulp, scorebord met slot, prijsuitreiking, proefmodus, afvinklijst en beheer. De familie ziet het nieuwe deel pas als de beheerder "Nieuwe app voor de familie" aanzet. Uitproberen: [`docs/UITPROBEREN.md`](docs/UITPROBEREN.md). Wat er nog moet gebeuren: [`docs/AFVINKLIJST.md`](docs/AFVINKLIJST.md). Zie ook [`docs/PLAN-fase-1.md`](docs/PLAN-fase-1.md) en [`docs/PLAN-fase-2-4.md`](docs/PLAN-fase-2-4.md).
 
 ## Stack
 
@@ -117,14 +117,16 @@ Zonder deze regel werkt alles ook: telefoons vragen dan zelf om de paar seconden
 
 ## Importeren en testmodus
 
-- **Proefmodus:** Beheer → Proefmodus → "Zet de proef klaar". Dat maakt vier proefteams met team-PIN's, twaalf testnamen, de onderdelen en de demo-quiz. Met "Ga de proef in" zit je telefoon een dag in de proef. Een andere telefoon nodig je uit met de uitnodigingslink, en met "Bekijk als…" zie je de app als familielid, captain, meekijker of spelleider. "Maak de proef leeg" ruimt alles van de proef op; de echte Spelen raak je nooit.
+- **Proefmodus:** Beheer → Proefmodus → "Zet de proef klaar". Dat maakt vier proefteams met team-PIN's, twaalf testnamen, de onderdelen, voorbeeldantwoorden voor de fun facts, de demoquiz en voorbeeldpunten. Met "Ga de proef in" zit je telefoon een dag in de proef. Een andere telefoon nodig je uit met de uitnodigingslink, en met "Bekijk als…" zie je de app als familielid, captain, meekijker of spelleider. "Maak de proef leeg" ruimt alles van de proef op; de echte Spelen raak je nooit.
 - **Quiz importeren:** in Beheer → Quiz (bestand uploaden), of:
 
   ```bash
   MIGRATION_DATABASE_URL='postgres://…' npm run import:quiz -- pad/naar/quiz.json
   ```
 
-  Het formaat staat in SPEC §9.2. Exporteren als backup kan in Beheer → Quiz.
+  Het formaat staat in SPEC §9.2. Exporteren als backup kan in Beheer → Quiz. Een "foto" met een bestandsnaam wordt naast het quizbestand en in `content/fotos/` gezocht.
+
+- **Belastingtest:** `scripts/belasting.ts` speelt een quizronde met 50 telefoons tegen een lokale productieserver en controleert dat elke stap binnen een seconde overal is. Hoe je hem draait, staat bovenin het bestand. Nooit tegen productie.
 
 - **De nieuwe app voor de familie:** Beheer → Instellingen → "Nieuwe app voor de familie". Uit: de familie ziet alleen de aftelklok. Aan: het menu met Prikbord, "Wie ben jij?", de fun facts vanaf de opening en wat je vrijgegeven hebt.
 

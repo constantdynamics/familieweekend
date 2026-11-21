@@ -31,6 +31,9 @@ const neverCache = ({ url, request }: { url: URL; request: Request }) =>
   url.origin !== self.location.origin ||
   url.pathname.startsWith("/api/") ||
   url.pathname.startsWith("/beheer") ||
+  // SPEC §4: quiz questions are never cached, and the quiz page holds the open question.
+  url.pathname === "/quiz" ||
+  url.pathname.startsWith("/quiz/") ||
   request.method !== "GET";
 
 const serwist = new Serwist({

@@ -2,7 +2,7 @@
 
 Wat de beheerder wanneer doet, de paklijst en de noodplannen. Wat er vóór het weekend moet gebeuren, staat in `docs/AFVINKLIJST.md` (en in de app: Beheer → Afvinklijst).
 
-Alles in dit draaiboek kun je vooraf oefenen in **Beheer → Proefmodus**: proefteams, testnamen, de demo-quiz met nepteams die vanzelf antwoorden, en "Bekijk als…" om te zien wat een captain of meekijker ziet.
+Alles in dit draaiboek kun je vooraf oefenen in **Beheer → Proefmodus**: proefteams, testnamen, de demoquiz met nepteams die vanzelf antwoorden, voorbeeldpunten, en "Bekijk als…" om te zien wat een captain of meekijker ziet. Stap voor stap: `docs/UITPROBEREN.md`.
 
 ## Vóór het weekend
 
@@ -22,25 +22,25 @@ Alles in dit draaiboek kun je vooraf oefenen in **Beheer → Proefmodus**: proef
 | 14:00 | Iedereen komt aan. Thuis laat nu "Nu bezig" en "Straks" zien. Help wie de app nog niet op het beginscherm heeft. |
 | 19:45 | **Captains laten inloggen.** Elke captain opent de tegel Quiz op Thuis (of Inloggen → Captain) en vult de team-PIN in. Die telefoon is het teamtoestel. |
 | 19:55 | Zet je eigen telefoon aan de bluetoothspeaker, scherm aan, geluid aan. Open Beheer → Quiz → Quizmaster-console. |
-| 20:00 | **Start de quiz.** Alle telefoons gaan vanzelf naar de quiz. Per ronde: rondescherm (captains kunnen hier hun joker inzetten), dan per vraag **Toon vraag → Sluit de vraag → Onthul het antwoord → Volgende vraag**. Wacht op alle teams, of gebruik "Nog 10 seconden!". |
-| Na ronde 3 | **Intermezzo:** steen, papier, schaar. Start het in de console, tik "Loot de eerste twee", en daarna steeds "Loot de volgende uitdager". Iemand zonder telefoon? "In het echt spelen". Klaar? "Stop de duels" en terug naar de quiz. |
-| 22:30 | Uitslag van de quiz: de tussenstand na de laatste ronde. |
+| 20:00 | **Start de quiz.** Alle telefoons gaan vanzelf naar de quiz. Per ronde: rondescherm (captains kunnen hier hun joker inzetten), dan **Toon vraag 1**, en per vraag **Sluit de vraag → Onthul het antwoord → Volgende vraag** (die opent meteen de volgende vraag). Tijdens het onthullen zie je wat er hierna komt, met je notitie (bijvoorbeeld het Spotify-nummer). Wacht op alle teams, of gebruik "Nog 10 seconden!". Na de laatste vraag van een ronde: **Naar de tussenstand**. |
+| Na ronde 3 | **Intermezzo:** steen, papier, schaar. Tik in de console **Start het intermezzo**, dan **Loot de eerste twee**, en daarna steeds **Loot de volgende uitdager**. Iemand zonder telefoon? **In het echt spelen**. Klaar? **Stop de duels** en **Terug naar de quiz**. |
+| 22:30 | Uitslag van de quiz: **Naar de eindstand**, daarna **Sluit de quiz af**. |
 
 ## Vrijdag 7 mei
 
 | Wanneer | Wat |
 |---|---|
 | 14:00 | **Spelletjesmiddag.** Spelleiders loggen in (Inloggen → Spelleider) en gebruiken de Spelhulp: kaartjesmachine, timer en teller. |
-| Na afloop | Vul de vrije punten per team in (Beheer → Zeskamp → Spelletjesmiddag). Bij "omgekeerd uitbeelden" rekent de app de plaatsen zelf uit en stelt punten voor; jij bevestigt. |
+| Na afloop | Vul de vrije punten per team in (Beheer → Zeskamp, bij vrijdag) en tik **Bewaar punten van vrijdag**. Bij "omgekeerd uitbeelden" rekent de app de plaatsen zelf uit en stelt punten voor; jij bevestigt. |
 
 ## Zaterdag 8 mei
 
 | Wanneer | Wat |
 |---|---|
 | 10:15 | Spelleiders loggen in. Captains zetten eventueel hun zeskamp-joker in (op de tegel Zeskamp, vóór de start van het spel). |
-| 10:25 | **Eerste zeskampspel starten** (door een spelleider of jou). **Het scorebord gaat dan op slot** tot de prijsuitreiking: iedereen ziet de stand van dat moment. Wil je zelf ook verrast worden? Zet dat aan bij Beheer → Scorebord. |
+| 10:25 | **Eerste zeskampspel starten** (door een spelleider of jou). **Het scorebord gaat dan op slot** tot de prijsuitreiking: iedereen ziet de stand van dat moment. Wil je zelf ook verrast worden? Zet dat aan bij Beheer → Scorebord en punten; dat geldt dan voor jouw telefoon. |
 | De hele dag | Spelleiders klokken en tellen op hun telefoon en tikken **Verstuur uitslag**. Zonder internet onthoudt de telefoon de uitslag en verstuurt hij hem later ("Wacht op verbinding…"). |
-| 20:30 | **Prijsuitreiking.** Telefoon aan de speaker, Beheer → Prijsuitreiking → start. Alle telefoons gaan mee. Tik door: plaats 4, 3, 2, tromgeroffel, de winnaar. Daarna het podium en de medaillespiegel. |
+| 20:30 | **Prijsuitreiking.** Telefoon aan de speaker, Beheer → Prijsuitreiking → **Start de prijsuitreiking**. Alle telefoons gaan mee. Tik door: plaats 4, 3, 2, tromgeroffel, de winnaar met podium en confetti (dan gaat het slot open), en het slotscherm. Een stap terug kan. |
 
 ## Zondag 9 mei
 

@@ -69,7 +69,7 @@ function ProgrammaLijst({ view, isAdmin, renderedAt }: { view: ProgramView; isAd
       <div
         role="tablist"
         aria-label="Kies een dag"
-        className="mt-4 grid gap-2 pr-[30px]"
+        className="mt-4 grid gap-2"
         style={{ gridTemplateColumns: `repeat(${days.length}, minmax(0, 1fr))` }}
       >
         {days.map((day, index) => {

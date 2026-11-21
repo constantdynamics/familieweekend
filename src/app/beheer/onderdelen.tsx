@@ -6,7 +6,7 @@ import { Chip } from "@/components/ui/Kaart";
 /** Header for the admin screens: chip, title, subtitle and a way back. */
 export function BeheerKop({ titel, sub, terug }: { titel: string; sub?: ReactNode; terug?: { href: string; label: string } }) {
   return (
-    <div className="flex flex-col gap-2 pr-10">
+    <div className="flex flex-col gap-2">
       {terug ? (
         <Link
           href={terug.href}

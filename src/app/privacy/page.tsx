@@ -21,6 +21,13 @@ const BLOKKEN = [
     ],
   },
   {
+    titel: "Het prikbord",
+    tekst: [
+      "Wat je op het prikbord zet, met je naam en je foto's, ziet de hele familie die de code heeft. Je eigen berichten kun je altijd weer verwijderen; de organisatie kan berichten verbergen of weghalen.",
+      "Het prikbord blijft staan voor volgend jaar.",
+    ],
+  },
+  {
     titel: "Cookies",
     tekst: [
       "Je telefoon krijgt een cookie zodat je niet steeds de familiecode hoeft in te vullen, en een cookie die onthoudt dat het dezelfde telefoon is.",
@@ -31,7 +38,7 @@ const BLOKKEN = [
     titel: "Wanneer het weg gaat",
     tekst: [
       "Na het weekend wist de organisatie met één knop alle fun facts, foto's en koppelingen tussen namen en telefoons.",
-      "Wat blijft is de uitslag van de Spelen.",
+      "Wat blijft zijn de uitslag van de Spelen en het prikbord.",
     ],
   },
 ];

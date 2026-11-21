@@ -136,7 +136,7 @@ export function Board({ initial, renderedAt }: { initial: ChannelFeed; renderedA
 
   return (
     <BoardContext value={context}>
-      <div className="flex flex-col pr-10">
+      <div className="flex flex-col">
         <Link
           href="/prikbord"
           className="-ml-1 inline-flex min-h-11 items-center gap-1 self-start pr-2 text-[15px] font-bold text-zand no-underline hover:text-beeldbuis"

@@ -139,7 +139,7 @@ export function Ceremonie({ initial, beheerder }: { initial: CeremonyView; behee
       <style href="valk-trom" precedence="default">
         {TROM_CSS}
       </style>
-      <header className="flex items-center gap-3 pr-10">
+      <header className="flex items-center gap-3">
         <Embleem size={72} className="flex-none" />
         <div className="flex min-w-0 flex-col gap-0.5">
           <h1 className="m-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">Prijsuitreiking</h1>

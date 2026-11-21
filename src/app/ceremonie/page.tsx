@@ -26,7 +26,7 @@ export default function CeremoniePage() {
 function Laden() {
   return (
     <div aria-busy="true" className="flex flex-col gap-4">
-      <div className="flex items-center gap-3 pr-10">
+      <div className="flex items-center gap-3">
         <Embleem size={72} />
         <p className="m-0 font-display text-[30px] leading-[1.1] schaduw-oranje">Prijsuitreiking</p>
       </div>
@@ -41,7 +41,7 @@ async function Inhoud() {
   if (!settings.fase2Live && !ctx.isAdmin) {
     return (
       <>
-        <div className="flex items-center gap-3 pr-10">
+        <div className="flex items-center gap-3">
           <Embleem size={72} />
           <h1 className="m-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">Prijsuitreiking</h1>
         </div>

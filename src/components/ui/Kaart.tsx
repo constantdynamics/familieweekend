@@ -29,7 +29,7 @@ export function Chip({ children, className }: { children: ReactNode; className?:
 /** Screen title in the display letter with the hard orange shadow. */
 export function SchermTitel({ children, sub, chip }: { children: ReactNode; sub?: ReactNode; chip?: ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5 pr-10">
+    <div className="flex flex-col gap-1.5">
       {chip}
       <h1 className="m-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">{children}</h1>
       {sub ? <p className="m-0 text-[15px] text-zand">{sub}</p> : null}

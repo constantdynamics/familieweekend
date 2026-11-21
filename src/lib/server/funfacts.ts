@@ -14,6 +14,8 @@ import {
   type FunfactValue,
   type QuestionShape,
 } from "@/lib/shared/funfacts";
+import { DEFAULT_ROUNDS, ensureMainQuiz } from "./quiz/content";
+import { refreshMaxPoints } from "./quiz/editor";
 import { logAudit, type Actor } from "./audit";
 import { db } from "./db";
 import { SETTINGS_TAG } from "./settings";
@@ -659,17 +661,6 @@ export async function setQuizVariant(env: Env, originalId: string, variant: "ech
 /* The main quiz: drafts go into a round with one tap                        */
 /* ------------------------------------------------------------------------ */
 
-export const MAIN_QUIZ_TITLE = "De Grote Valkenburger Quiz";
-
-/** The rounds of SPEC §9.2 ("Rondes (voorstel)"). */
-export const MAIN_QUIZ_ROUNDS = [
-  { number: 1, title: "Familie in cijfers", listening: false, intermezzoAfter: false },
-  { number: 2, title: "Waar ligt Valkenburg?", listening: false, intermezzoAfter: false },
-  { number: 3, title: "Muziek", listening: true, intermezzoAfter: true },
-  { number: 4, title: "Hemelvaart, lente en de Dommel", listening: false, intermezzoAfter: false },
-  { number: 5, title: "Echt of AI?", listening: false, intermezzoAfter: false },
-] as const;
-
 export type QuizRoundOverview = { number: number; title: string; texts: string[] };
 
 /** The rounds of the main quiz with their question texts (or the proposal, when there is no quiz yet). */
@@ -685,23 +676,7 @@ export async function mainQuizRounds(): Promise<QuizRoundOverview[]> {
     order by r.number
   `;
   if (rows.length > 0) return rows.map((r) => ({ number: r.number, title: r.title, texts: r.texts }));
-  return MAIN_QUIZ_ROUNDS.map((r) => ({ number: r.number, title: r.title, texts: [] }));
-}
-
-async function ensureMainQuiz(sql: TransactionSql): Promise<string> {
-  await sql`select pg_advisory_xact_lock(hashtext('valk.main_quiz'))`;
-  const [quiz] = await sql<{ id: string }[]>`select id from valk.quizzes where not is_demo order by created_at limit 1`;
-  if (quiz) return quiz.id;
-  const [created] = await sql<{ id: string }[]>`
-    insert into valk.quizzes (title, is_demo) values (${MAIN_QUIZ_TITLE}, false) returning id
-  `;
-  for (const round of MAIN_QUIZ_ROUNDS) {
-    await sql`
-      insert into valk.quiz_rounds (quiz_id, number, title, listening, intermezzo_after)
-      values (${created.id}, ${round.number}, ${round.title}, ${round.listening}, ${round.intermezzoAfter})
-    `;
-  }
-  return created.id;
+  return DEFAULT_ROUNDS.map((r) => ({ number: r.number, title: r.title, texts: [] }));
 }
 
 /**
@@ -734,6 +709,7 @@ export async function adoptConcept(
         '[]'::jsonb
       )
     `;
+    await refreshMaxPoints(sql, [round.id]);
     await logAudit(
       actor,
       {

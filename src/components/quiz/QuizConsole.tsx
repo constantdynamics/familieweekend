@@ -66,7 +66,7 @@ export function QuizConsole({ initial }: { initial: ConsoleView }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 pr-10">
+      <div className="flex flex-col gap-2">
         <Link
           href="/beheer/quiz"
           className="-ml-1 inline-flex min-h-11 items-center gap-1 self-start pr-2 text-[15px] font-bold text-zand no-underline hover:text-beeldbuis"

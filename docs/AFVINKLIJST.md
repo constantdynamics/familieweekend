@@ -2,7 +2,7 @@
 
 Dezelfde lijst staat in de app, in **Beheer → Afvinklijst** (en voor spelleiders bij **Inloggen → Spelleider → Afvinklijst**). Daar zet de app zelf een vinkje bij wat hij kan zien, zoals de deelnemerslijst of de team-PIN's. De andere punten vink je zelf af, en iedereen van de spelleiding kan er notities bij zetten.
 
-Wil je iets eerst uitproberen? Dat kan alles in **Beheer → Proefmodus**. Daar zet je proefteams klaar met testnamen, je speelt de demo-quiz met nepteams die vanzelf antwoorden, en je bekijkt de app als captain, meekijker of spelleider. De echte Spelen raak je daar niet.
+Wil je iets eerst uitproberen? Dat kan alles in **Beheer → Proefmodus**. Daar zet je proefteams klaar met testnamen, je speelt de demoquiz met nepteams die vanzelf antwoorden, en je bekijkt de app als captain, meekijker of spelleider. De echte Spelen raak je daar niet. Stap voor stap: `docs/UITPROBEREN.md`.
 
 ## Nu (november en december)
 
@@ -10,6 +10,7 @@ Wil je iets eerst uitproberen? Dat kan alles in **Beheer → Proefmodus**. Daar 
 - [ ] **Je eigen beheerders-PIN wijzigen.** Beheer → Mijn PIN. *(De app ziet dit zelf.)*
 - [ ] **Logo laten maken en sturen.** Met de logoprompt uit de SPEC (Bijlage A), en "zoals Sansita Swashed" voor de letters. Stuur het embleem zonder tekst als SVG of als PNG van minstens 1024×1024; dan worden alle iconen en opstartschermen er automatisch van gemaakt.
 - [ ] **Deelnemerslijst invoeren.** Beheer → Deelnemers en teams → Namen plakken, één naam per regel. Daarna kiest iedereen in de app zijn eigen naam. Elke naam kan maar door één telefoon gekozen worden. *(De app ziet dit zelf.)*
+- [ ] **Prikbord nalopen.** Beheer → Prikbord: de vijf kanalen staan klaar. Pas de titels aan als je wilt, en zet er een welkomstbericht in als De spelleiding.
 - [ ] **Nieuwe app aanzetten voor de familie.** Beheer → Instellingen → "Nieuwe app voor de familie". Dan zien ze het menu met Prikbord en "Wie ben jij?".
 
 ## Januari tot en met maart

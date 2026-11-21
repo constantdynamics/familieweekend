@@ -13,7 +13,7 @@ export function PinLogin() {
   const klaar = useGehydrateerd();
   return (
     <>
-      <div className="flex flex-col gap-2 pr-10">
+      <div className="flex flex-col gap-2">
         <h1 className="m-0 font-display text-[30px] leading-[1.1] font-normal schaduw-oranje">Beheer</h1>
         <p className="m-0 text-[15px] leading-[1.4] text-zand">Alleen voor de organisatie van de Spelen.</p>
       </div>

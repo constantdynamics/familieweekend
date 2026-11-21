@@ -280,7 +280,7 @@ export function Invullen({ persoon, anderen, vragen, antwoorden: begin, klaar: k
         {/* The bar below replaces the menu while you answer, as in the design. */}
         <style>{`nav[aria-label="Hoofdmenu"]{display:none}`}</style>
         <div className="flex flex-col gap-3.5">
-          <div className="flex items-center gap-3 pr-[30px]">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => gaNaar({ soort: "start" })}
@@ -622,7 +622,7 @@ function Overzicht(props: OverzichtProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5 pr-10">
+      <div className="flex flex-col gap-1.5">
         <h1 ref={kopRef} tabIndex={-1} className="m-0 font-display text-[30px] leading-[1.1] font-normal outline-none schaduw-oranje">
           Je fun facts
         </h1>

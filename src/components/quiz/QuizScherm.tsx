@@ -167,7 +167,7 @@ function Kop({ view }: { view: QuizView }) {
     : null;
   const titel = view.status === "intermezzo" ? "Intermezzo" : view.phase === "einde" ? "Einde van de quiz" : (view.round?.title ?? view.title ?? "De quiz");
   return (
-    <div className="flex flex-col gap-1.5 pr-10">
+    <div className="flex flex-col gap-1.5">
       <span className="inline-flex items-center gap-2 self-start rounded-pil bg-studio-licht py-1 pr-3 pl-1.5 text-label font-bold">
         {view.me.team ? <TeamVlak kleur={view.me.team.color} /> : <IconPersoon size={18} className="text-mosterd" />}
         {bijElkaar(rolTekst(view))}

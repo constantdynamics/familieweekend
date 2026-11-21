@@ -75,6 +75,8 @@ export default defineConfig({
       DATABASE_SSL: "disable",
       APP_SECRET: E2E.appSecret,
       CRON_SECRET: E2E.cronSecret,
+      // No Realtime in the tests: a second phone asks every 2.5 s, also when nothing runs live.
+      VALK_POLL_CALM_MS: "2500",
     },
   },
 });

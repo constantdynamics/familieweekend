@@ -232,7 +232,7 @@ export async function updatePointTables(
     if (!row) throw new Error("De instellingen ontbreken in de database.");
     await sql`
       update valk.settings set
-        zeskamp_points = ${sql.array(input.zeskampPoints)},
+        zeskamp_points = ${input.zeskampPoints}::int[],
         intermezzo_points = ${input.intermezzoPoints},
         intermezzo_max_duels = ${input.intermezzoMaxDuels},
         updated_at = now(),

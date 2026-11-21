@@ -51,6 +51,79 @@ De eigenaar wilde alles wat in beheer als "Binnenkort" stond nu al, in één opl
 | Alles opruimen | Verwijdert de antwoorden en foto's van de fun facts (met de AI-versies) en welke naam bij welke telefoon hoort. Het prikbord, de deelnemers, de teams, de uitslagen en het logboek blijven staan. Eerst "Ik wil alles opruimen", daarna OPRUIMEN typen. | SPEC §4.11 en §8, plus de wens van de eigenaar om het prikbord te bewaren voor volgend jaar. |
 | Geen losse woorden | Chrome's `text-wrap: pretty` lost twee regels met één los woord niet op. Teksten uit de database krijgen daarom `bijElkaar()`, en de controle per scherm telt een woord dat bij een koppelteken afbreekt, mee op de regel waar het eindigt. | De wens van de eigenaar uit de ontwerpronde. |
 
+### Fun facts
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Opbouw | `/funfacts` opent met een overzicht: beginnen of verdergaan, de privacyzin, de deadline, andere namen op deze telefoon en je eigen antwoorden. Daarna één vraag per scherm, met voortgangsbalk, Vorige, Sla over en Volgende. Tijdens de vragen verdwijnt het menu. | Je ziet altijd waar je bent, en je kunt je antwoorden terugzien en wijzigen. |
+| Opslaan | Elk antwoord gaat meteen naar de server; getypte tekst ook als de telefoon naar de achtergrond gaat. | Niemand raakt werk kwijt als de telefoon gaat. |
+| Overslaan en klaar | Volgende zonder antwoord telt als overgeslagen; Sla over wist een eerder antwoord. Je bent klaar als elke actieve vraag een antwoord of een overslaan heeft. Later toegevoegde vragen maken "klaar" niet ongedaan. | De teller op Thuis moet eerlijk blijven. |
+| Getalvragen | Het veld blijft leeg tot je het aanraakt; + en − beginnen bij het minimum. Bij een bereik groter dan 50 kun je het getal ook typen. | Geen per ongeluk ingevulde nul. |
+| Foto's | Een vervangen of overgeslagen foto wordt meteen verwijderd, samen met de AI-versie. | Privacy: niets blijft hangen. |
+| Thuis | Vóór de opening de aankondiging, tijdens de periode "Vul je fun facts in" met de deadline en "32 van de 45 familieleden zijn klaar", na de deadline een bedankje. De teller telt alleen de echte Spelen. | De Thuispagina is voor iedereen dezelfde (gecachet), ook in de proef. |
+| Proef | Vragen en de quiz zijn gedeeld met de echte Spelen; in de proef kun je ze bekijken maar niet wijzigen. Antwoorden, statistieken, exports en foto's gebruiken de testnamen. | Oefenen zonder de echte vragen te raken. |
+| Conceptvragen | Per vraag rekent de app een meerkeuzevraag uit (ja/nee: aantal of percentage; getal: record, gemiddelde, minste of som, afhankelijk van de vraagtekst; keuze: de winnaar of een aantal). De drie foute opties liggen evenredig rond het echte antwoord. De uitleg noemt nooit iemand, en een gelijke stand wordt gemeld. "Neem over" rekent opnieuw met de antwoorden van nu en zet de vraag in de gekozen ronde van de hoofdquiz. | Snel een eerlijke quiz maken in april. |
+| Export | CSV met puntkomma's en een UTF-8-BOM (Nederlandse Excel), formules geblokkeerd; JSON met Nederlandse sleutels; de foto's als zip in delen van hoogstens 4 MB, met namen als `24-sanne-valkenburg.jpg`. | Een Vercel-antwoord mag hoogstens 4,5 MB zijn. |
+| Vragen bewerken | Het type ligt vast zodra iemand heeft geantwoord. Een optie hernoemen op dezelfde plek neemt de antwoorden mee. Een vraag met antwoorden kan alleen uit, niet weg. | Antwoorden blijven kloppen. |
+
+### Prikbord
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Opbouw | Kanalen (vastgezette eerst), daarin berichten met één niveau reacties, nieuwste of populairste eerst. Tekst en hoogstens 4 foto's per bericht. Kanaal-adres: `/prikbord?kanaal=…`. | De wens van de eigenaar (4ade, 5a). |
+| Wie plaatst | Iedereen met een gekozen naam, als die naam. In de proef en bij "Bekijk als" lees je alleen mee. De beheerder plaatst in elk kanaal als "De spelleiding", ook antwoorden in "Vraag het de organisatie". | Anders komen testnamen op het echte bord. |
+| Hartjes en duimpjes | Eén van elk per naam, ook op reacties. In het kanaal van de spelleiding reageert de familie alleen met hartjes en duimpjes. Populair is hartjes plus duimpjes plus reacties. | Eenvoudig en leuk. |
+| Beheer | Kanalen maken, hernoemen, ordenen, vastzetten, alleen-lezen of alleen-spelleiding maken; weghalen alleen als ze leeg zijn. Berichten verbergen (terug te draaien), bewerken ("bewerkt door de spelleiding") en verwijderen (met de reacties en foto's; de tekst gaat naar het logboek). | De wens van de eigenaar (8abc). |
+| Veiligheid | Tekst blijft tekst; alleen http(s)- en www-links worden links. Hoogstens 1000 tekens en 40 regels, en per naam 10 berichten per 5 minuten. Onzichtbare stuurtekens worden weggehaald, emoji blijven. Fotolinks zijn 1 uur geldig. | Geen misbruik, geen rommel. |
+| Live | Het bord heeft een eigen versienummer (triggers in de database). Telefoons halen een kanaal alleen opnieuw op als het bord echt veranderde. | Het seintje gaat ook bij elke quizstap; dan hoeft het bord niet mee. |
+| Blijft staan | Het prikbord is niet per omgeving en "Alles opruimen" laat het staan. | De wens van de eigenaar (9a). |
+
+### Programma, Thuis en weer
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Programma | Dagtabs do t/m zo (vandaag open), grote tijden, "Nu" bij het huidige onderdeel, wat voorbij is gedimd. Moederdag met een bloem. Quiz, zeskamp en prijsuitreiking linken naar hun scherm. Een eindtijd vóór de begintijd (voor 06:00) is de volgende nacht. Zonder eindtijd loopt een onderdeel tot het volgende, maar nooit over middernacht. | SPEC §4. |
+| Zichtbaar | De familie ziet het programma en de teams pas als ze vrijgegeven zijn én de nieuwe app aan staat; de beheerder ziet ze altijd, met een notitie. | De keuze van de eigenaar (5ab). |
+| Thuis tijdens het weekend | De klok van de telefoon kiest het scherm, de pagina zelf blijft gecachet. Titel is de datum ("Het is zover!" op dag 1, "Fijne Moederdag!" op zondag), met Nu bezig, Straks, een livebalk, de tegels, het weer, je team met de jokerstand en de slotzin. Daarna "Tot de volgende Spelen!". | Snel, ook met slecht bereik; offline toont hij de laatst bekende gegevens. |
+| Tegels | Quiz op de dag van de quiz of zolang hij loopt, Zeskamp op de dag van de zeskamp, Score zodra de Spelen begonnen zijn. | De keuze van de eigenaar. |
+| Weer | Open-Meteo via de server, 30 minuten bewaard. Zichtbaar vanaf 14 dagen voor de aftrap ("rond 22 april"); valt Open-Meteo weg, dan het laatst bekende bericht met de tijd erbij. | Gratis, zonder sleutel. |
+
+### Scorebord, zeskamp, spelleiders en prijsuitreiking
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Slot | Gaat automatisch dicht bij de start van het eerste zeskampspel (of de eerste uitslag) en zet zich dan uit: handmatig openen blijft open tot de beheerder het slot weer aanzet. Opnieuw sluiten maakt een nieuwe momentopname. | SPEC §4.8. |
+| Wat je op slot ziet | De stand, medailles en opbouw van de momentopname, de status per onderdeel en jokers die vastliggen. Een geplande zeskampjoker blijft verborgen tot het spel begint. Geen enkele openbare route geeft een punt van na het slot prijs. | Spanning tot de prijsuitreiking. |
+| Verrassingsstand | Een cookie op één toestel: dan komen er helemaal geen cijfers binnen, ook niet op de zeskamp- en spelleiderschermen. | Ook de beheerder kan verrast worden. |
+| Spelleiders | Zien plaatsen en punten alleen van spellen die ze zelf invoerden (of als het slot open is). Een tweede, andere uitslag voor hetzelfde spel wordt geweigerd; de beheerder corrigeert. Tijden in honderdsten, invoer blijft per spel op de telefoon bewaard, met "Herstel" voor de laatste stop. Zonder internet wordt de uitslag later verstuurd. | Eerlijk en bestand tegen slecht bereik op het veld. |
+| Omgekeerd uitbeelden | Wie het minst raadt, wint; de app stelt punten voor volgens de zeskamptabel, de beheerder bevestigt. | SPEC §5. |
+| Quizpunten | De quiz uit de live-status, anders de quiz met de meeste antwoorden in die omgeving. De demoquiz telt nooit mee in de echte Spelen. | Robuust als de quiz opnieuw begint. |
+| Prijsuitreiking | Intro, dan elke plaats van onder naar boven (gedeelde plaatsen samen), tromgeroffel, de winnaar met podium, confetti en fanfare (dan gaat het slot open), en een slotscherm. Elke tik draagt de stap mee die hij zag, dus een dubbele tik slaat niets over. De beheerder kan een stap terug. | SPEC §4.10. |
+| Geluid | Standaard alleen aan op de telefoon van de beheerder, per telefoon te wijzigen. | Geen zaal vol piepende telefoons. |
+
+### Quiz
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Volgende vraag | Opent de volgende vraag meteen; tijdens het onthullen toont de console wat hierna komt, met de notitie (bijvoorbeeld voor Spotify). | Eén tik minder per vraag. |
+| Terug | "Ga terug" zet de vorige vraag weer op onthuld; terug naar het rondescherm van een begonnen ronde kan niet. | Jokers liggen vast zodra vraag 1 open is. |
+| Nog 10 seconden | De server bewaakt de tijd; te laat telt niet, en de console sluit de vraag zelf bij nul. | Eerlijk, ook met een trage telefoon. |
+| Correcties | Vervangen de punten van die vraag voor dat team; de joker verdubbelt nog steeds. "Terug naar berekend" kan altijd, en alles staat in het logboek. | Herstel op de avond zonder rekenwerk. |
+| Kaartvragen | Vaste speld in het midden, de kaart schuift eronder (OpenStreetMap). Meekijkers zien de speld pas bij het onthullen. Een kaartvraag is 3 punten waard, de rest 1. | Werkt met één duim en verklapt niets. |
+| Meekijkers | Zien dát de captain koos, niet wat, tot het onthullen. In luistermodus zien meekijkers en bezoekers "Luister goed!". | Niets lekt via een meekijker; SPEC §4.6. |
+| Starten | In de proef begint de quiz altijd opnieuw; live maar één keer, daarna "Ga verder met de quiz". Pauze bewaart de plek. Importeren vervangt de hoofdquiz, maar niet tijdens de quiz of als er al echte antwoorden zijn. | De echte avond mag nooit per ongeluk opnieuw beginnen. |
+| Demoquiz en nepteams | 5 rondes, 12 vragen, alle soorten, met getekende ansichtkaarten. In de proef kunnen teams zonder telefoon vanzelf antwoorden (na 2–9 seconden). | Oefenen met de console zonder echte familiefoto's. |
+| Tussenstand | Verborgen als het scorebord op slot is. | Het slot geldt ook hier. |
+| Belasting | Getest met 50 telefoons en de quizmaster: van een stap van de quizmaster tot alle telefoons hoogstens 0,7 seconde. | SPEC §7.2 vraagt minder dan 1 seconde. |
+
+### Samenvoegen
+
+| Onderwerp | Keuze | Waarom |
+|---|---|---|
+| Service worker | Neemt de allereerste service worker het over, dan herlaadt de pagina niet meer (dat kon een halfgetypte code wissen). De quizpagina komt nooit in de cache. | Gevonden bij het testen; SPEC §4: quizvragen worden nooit gecachet. |
+| Formulieren in tests | Inlogformulieren zetten `data-klaar` zodra React luistert; de e2e-tests typen pas dan. | Op een drukke machine ging getypte tekst anders soms verloren. |
+| Fun facts naar de quiz | "Neem over" gebruikt de hoofdquiz en de puntentelling van de quizmodule. | Eén plek voor de quizregels. |
+
 ## Ontwerp met meer ademruimte (20 november 2026)
 
 De eigenaar wilde een mooier ontwerp dat meer ademt. Uit vier statische varianten koos de eigenaar **B · Spotlights**.

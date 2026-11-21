@@ -18,7 +18,7 @@ export function ThuisNa({ weekend }: { weekend: WeekendInfo }) {
   const end = new Date(weekend.endAt);
   return (
     <Scherm spots="zacht">
-      <div className="flex items-center gap-3.5 pr-9">
+      <div className="flex items-center gap-3.5">
         <Embleem size={96} label="Voorlopig embleem: een valk in een lauwerkrans" className="flex-none" />
         <div className="flex min-w-0 flex-col items-start gap-1">
           <Chip>Hemelvaart</Chip>

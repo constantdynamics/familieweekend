@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 
 type Realtime = { url: string; key: string } | null;
-type Versie = { env: "live" | "test"; v: number; live: boolean; realtime: Realtime };
+type Versie = { env: "live" | "test"; v: number; live: boolean; realtime: Realtime; calm?: number };
 type Listener = (version: number) => void;
 
 /* Without Realtime: fast while something runs live, calm otherwise. */
@@ -27,6 +27,7 @@ class Doorbell {
   private realtimeKey = "";
   private connected = false;
   private liveNow = false;
+  private calmMs = CALM_MS;
   private timer: ReturnType<typeof setTimeout> | null = null;
   private disconnect: (() => void) | null = null;
   private polling = false;
@@ -71,7 +72,7 @@ class Doorbell {
   private schedule() {
     if (this.timer) clearTimeout(this.timer);
     if (this.listeners.size === 0) return;
-    this.timer = setTimeout(() => void this.poll(), this.connected ? SLOW_MS : this.liveNow ? FAST_MS : CALM_MS);
+    this.timer = setTimeout(() => void this.poll(), this.connected ? SLOW_MS : this.liveNow ? FAST_MS : this.calmMs);
   }
 
   private async poll() {
@@ -91,6 +92,7 @@ class Doorbell {
           this.connected = false;
         }
         this.liveNow = data.live;
+        if (typeof data.calm === "number" && data.calm >= 500) this.calmMs = data.calm;
         this.connect(data.realtime);
         this.update(data.v);
       }

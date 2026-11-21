@@ -29,9 +29,14 @@ async function check(page: Page, info: TestInfo, name: string) {
   await page.evaluate(() => document.fonts.ready);
   // After a server action the metadata streams in again; wait until the page has settled.
   await expect(page).toHaveTitle(/Valkenburger Spelen/);
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
-    .analyze();
+  const analyze = () =>
+    new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+  let results = await analyze();
+  if (results.violations.some((v) => v.id === "document-title")) {
+    // The title can be gone for a moment while it streams in again; then measure once more.
+    await expect(page).toHaveTitle(/Valkenburger Spelen/);
+    results = await analyze();
+  }
   const problems = results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`);
   expect(problems, `toegankelijkheid op ${name}`).toEqual([]);
   expect(await losseWoorden(page), `losse woorden op ${name}`).toEqual([]);
