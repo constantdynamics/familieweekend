@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import type postgres from "postgres";
 import { describe, expect, it, vi } from "vitest";
+import { parseOpenMeteo } from "@/lib/server/open-meteo";
 import { getWeatherReport, WEATHER_CACHE_MS } from "@/lib/server/weather";
 import type { Settings } from "@/lib/server/settings";
 import {
@@ -11,7 +12,6 @@ import {
   forWeekend,
   hoursToday,
   openMeteoUrl,
-  parseOpenMeteo,
   rainText,
   weatherDescription,
   weatherIcon,

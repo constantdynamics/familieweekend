@@ -13,7 +13,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Browser, type BrowserContext, type Page, type TestInfo } from "@playwright/test";
 import type postgres from "postgres";
 import { E2E } from "../../playwright.config";
-import { forWeekend, parseOpenMeteo, type WeatherReport } from "../../src/lib/shared/weather";
+import { parseOpenMeteo } from "../../src/lib/server/open-meteo";
+import { forWeekend, type WeatherReport } from "../../src/lib/shared/weather";
 import { db, loggedIn, loginAdmin, losseWoorden, resetState } from "./helpers";
 
 // No service worker: it would hide the phone's requests from page.route.

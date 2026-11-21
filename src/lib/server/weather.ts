@@ -5,12 +5,12 @@ import {
   announceDate,
   forWeekend,
   openMeteoUrl,
-  parseOpenMeteo,
   weatherWindow,
   type Forecast,
   type WeatherReport,
 } from "@/lib/shared/weather";
 import { db } from "./db";
+import { parseOpenMeteo } from "./open-meteo";
 import { logError } from "./log";
 import type { Settings } from "./settings";
 
