@@ -5,6 +5,7 @@ import { db } from "./db";
 import { seedTestFunfacts } from "./funfacts";
 import { hashSecret } from "./hashing";
 import { generatePin } from "./pins";
+import { seedSampleScores } from "./scoreboard";
 
 /**
  * The test environment (SPEC §3 "Testmodus"): own teams, PINs, names and
@@ -29,7 +30,7 @@ type Sql = TransactionSql;
  * transaction, after the test teams and names exist.
  */
 type Stap = (sql: Sql) => Promise<void>;
-const STAPPEN: Stap[] = [seedTestFunfacts];
+const STAPPEN: Stap[] = [seedTestFunfacts, seedSampleScores];
 
 /** Fresh test teams with new PINs (returned once), test names and a copy of the events. */
 export async function setUpTestEnvironment(actor: Actor): Promise<ProefPin[]> {
