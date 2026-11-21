@@ -42,9 +42,10 @@ async function main() {
   const emblemUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
   const fonts =
     (await fontFace("sansita-swashed-latin-800.woff2", "Sansita Swashed", "100 900")) +
-    (await fontFace("nunito-latin-variable.woff2", "Nunito", "200 1000"));
-  /** "De Valkenburger / Spelen [2027]", as the Woordmerk component in the app. */
-  const woordmerk = (size: number, shadow: number) => `<div style="font-family:'Sansita Swashed';font-size:${size}px;line-height:1.06;white-space:nowrap;color:#FCEBD0;text-shadow:${shadow}px ${shadow}px 0 #F06A1F">De Valkenburger<br/><span style="display:inline-flex;align-items:center;gap:${Math.round(size * 0.3)}px">Spelen<span style="font-family:Nunito;text-shadow:none;background:#F5AE1B;color:${BROWN};font-weight:800;font-size:${Math.round(size * 0.42)}px;line-height:1;padding:${Math.round(size * 0.15)}px ${Math.round(size * 0.36)}px;border-radius:999px">2027</span></span></div>`;
+    (await fontFace("nunito-latin-variable.woff2", "Nunito", "200 1000")) +
+    (await fontFace("yellowtail-cijfers.woff2", "Yellowtail", "400"));
+  /** "De Valkenburger / Spelen 2027" with the year in mustard script, as the Woordmerk component in the app. */
+  const woordmerk = (size: number, shadow: number) => `<div style="font-family:'Sansita Swashed';font-size:${size}px;line-height:1.06;white-space:nowrap;color:#FCEBD0;text-shadow:${shadow}px ${shadow}px 0 #F06A1F">De Valkenburger<br/><span style="display:inline-flex;align-items:baseline;gap:.28em">Spelen<span style="display:inline-block;font-family:Yellowtail;font-size:1.5em;line-height:.7;color:#F5AE1B;text-shadow:${shadow}px ${shadow}px 0 #B4441A;transform:translateY(.06em) rotate(-6deg);transform-origin:left bottom">2027</span></span></div>`;
 
   await mkdir(out("icons"), { recursive: true });
   await mkdir(out("splash"), { recursive: true });
@@ -96,9 +97,12 @@ async function main() {
         <div style="position:absolute;left:820px;top:-120px;width:420px;height:760px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,106,31,.3),rgba(240,106,31,.12) 45%,rgba(240,106,31,0))"></div>
         <div style="position:absolute;left:100px;top:470px;width:1000px;height:360px;border-radius:50%;background:radial-gradient(closest-side,rgba(180,68,26,.42),rgba(180,68,26,.18) 45%,rgba(180,68,26,0))"></div>
         <svg width="1200" height="630" viewBox="0 0 1200 630" style="position:absolute;inset:0">
-          <path d="M-10 26 H1092 A82 82 0 0 1 1174 108 V640" fill="none" stroke="#F5AE1B" stroke-width="12" stroke-linecap="round"/>
-          <path d="M-10 44 H1092 A64 64 0 0 1 1156 108 V640" fill="none" stroke="#F06A1F" stroke-width="12" stroke-linecap="round"/>
-          <path d="M-10 62 H1092 A46 46 0 0 1 1138 108 V640" fill="none" stroke="#B4441A" stroke-width="12" stroke-linecap="round"/>
+          <path d="M-10 20 H1090 A90 90 0 0 1 1180 110 V640" fill="none" stroke="#F2C14E" stroke-width="8" stroke-linecap="round"/>
+          <path d="M-10 30 H1090 A80 80 0 0 1 1170 110 V640" fill="none" stroke="#F5AE1B" stroke-width="8" stroke-linecap="round"/>
+          <path d="M-10 40 H1090 A70 70 0 0 1 1160 110 V640" fill="none" stroke="#F06A1F" stroke-width="8" stroke-linecap="round"/>
+          <path d="M-10 50 H1090 A60 60 0 0 1 1150 110 V640" fill="none" stroke="#B4441A" stroke-width="8" stroke-linecap="round"/>
+          <path d="M-10 60 H1090 A50 50 0 0 1 1140 110 V640" fill="none" stroke="#4FA3A5" stroke-width="8" stroke-linecap="round"/>
+          <path d="M-10 70 H1090 A40 40 0 0 1 1130 110 V640" fill="none" stroke="#A7B43A" stroke-width="8" stroke-linecap="round"/>
         </svg>
         <div style="position:absolute;left:84px;top:118px;right:140px;display:flex;align-items:center;gap:48px">
           <img src="${emblemUri}" style="width:340px;height:340px;flex:none" />

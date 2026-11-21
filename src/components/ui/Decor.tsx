@@ -1,45 +1,26 @@
-/**
- * The studio set: the "zeskampbocht" (three lanes that bend down at the top
- * right) and the subtle sun rays behind the start screen and the ceremony.
- */
-
-type BochtProps = {
-  /** How far the lanes run down along the right edge, in px from the top. */
-  drop?: number;
-};
+import { type AantalBanen, BOCHT_KLEUREN, KNIK, SVG_BREEDTE, baan, bochtPad, dikte, startKleur } from "./bocht";
 
 /**
- * Three 7 px lanes in mustard, orange and rust. They run in from the left and
- * bend down with radii 62, 52 and 42 px, 10 px from the right edge. The svg
- * is anchored to the right and draws its horizontal part outside its own box,
- * so the curve keeps its true shape at every screen width.
+ * The studio set: the "zeskampbocht" (lanes that run along the top, bend
+ * down at the top right and run to the bottom of the screen) and the
+ * subtle sun rays behind the start screen and the ceremony.
  */
-export function Bocht({ drop = 140 }: BochtProps) {
-  const lanes = [
-    { y: 10, r: 62, color: "#F5AE1B" },
-    { y: 20, r: 52, color: "#F06A1F" },
-    { y: 30, r: 42, color: "#B4441A" },
-  ];
+
+/** The still zeskampbocht, for every screen without the spotlights. The shape lives in bocht.ts. */
+export function Bocht({ banen = 1 }: { banen?: AantalBanen }) {
   return (
     <svg
       aria-hidden="true"
-      width="80"
-      height={drop + 10}
-      viewBox={`0 0 80 ${drop + 10}`}
-      className="pointer-events-none absolute top-0 right-0 overflow-visible"
+      width={SVG_BREEDTE}
+      className="pointer-events-none absolute top-0 right-0 h-full overflow-visible"
     >
-      {lanes.map(({ y, r, color }, i) => {
-        const right = 70 - i * 10;
-        const startArc = right - r;
+      {Array.from({ length: banen }, (_, i) => {
+        const { x } = baan(i);
         return (
-          <path
-            key={color}
-            d={`M-3000 ${y} H${startArc} A${r} ${r} 0 0 1 ${right} ${y + r} V${drop}`}
-            fill="none"
-            stroke={color}
-            strokeWidth="7"
-            strokeLinecap="round"
-          />
+          <g key={i} fill="none" stroke={BOCHT_KLEUREN[startKleur(banen, i)]} strokeWidth={dikte(banen)}>
+            <path d={bochtPad(i)} strokeLinecap="round" />
+            <line x1={x} y1={KNIK} x2={x} y2="100%" />
+          </g>
         );
       })}
     </svg>

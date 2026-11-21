@@ -26,9 +26,9 @@ export function ThuisVoor({ settings, renderedAt }: Props) {
   const end = new Date(settings.endAt);
 
   return (
-    <Scherm spots="zacht" bocht={150}>
+    <Scherm spots="zacht">
       <Bijgewerkt at={renderedAt} />
-      <div className="flex items-center gap-3.5 pr-9">
+      <div className="flex items-center gap-3.5">
         <Embleem size={96} label="Voorlopig embleem: een valk in een lauwerkrans" className="flex-none" />
         <div className="flex min-w-0 flex-col items-start gap-1">
           <Chip>Hemelvaart</Chip>

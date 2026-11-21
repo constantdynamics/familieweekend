@@ -21,8 +21,8 @@ export function Opruimen() {
         <li>welke naam bij welke telefoon hoort.</li>
       </ul>
       <p className="m-0 text-[15px] leading-[1.45]">
-        Het prikbord, de deelnemerslijst, de teams, de uitslagen en het logboek blijven staan. Dit kun je niet
-        terugdraaien.
+        Het prikbord, de deelnemerslijst, de teams, de uitslagen en het logboek blijven staan.{" "}
+        {bijElkaar("Dit kun je niet terugdraaien.")}
       </p>
       {stap === 1 ? (
         <Knop type="button" className="self-start" onClick={() => setStap(2)}>

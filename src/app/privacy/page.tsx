@@ -53,7 +53,7 @@ export default function PrivacyPage() {
         ))}
       </div>
       <p className="mt-5 mb-0 text-[15px] leading-[1.45] text-zand">
-        Vragen of iets laten weghalen? Stuur de organisatie een berichtje in de familie-app.
+        Vragen of iets laten weghalen? Stuur de organisatie een berichtje in de <span className="whitespace-nowrap">familie-app</span>.
       </p>
       <KnopLink href="/" variant="secundair" className="mt-5 self-start">
         Terug naar thuis

@@ -12,7 +12,7 @@ import { Scherm } from "@/components/ui/Scherm";
  */
 export function WelkomScherm() {
   return (
-    <Scherm spots="sterk" bocht={150} metTabBalk={false} boven={58}>
+    <Scherm spots="sterk" banen={6} metTabBalk={false} boven={58}>
       <div className="flex flex-col items-center text-center">
         <Embleem size={168} label="Voorlopig embleem: een valk in een lauwerkrans" />
         <Woordmerk jaar={2027} groot className="mt-3" />
@@ -23,7 +23,7 @@ export function WelkomScherm() {
           Kom binnen
         </h2>
         <p className="m-0 text-[15px] leading-[1.45]">
-          Vul de familiecode in die je in de familie-app kreeg. Je hoeft dat op deze telefoon maar één keer te doen.
+          Vul de familiecode in die je in de <span className="whitespace-nowrap">familie-app</span> kreeg. Je hoeft dat op deze telefoon maar één keer te doen.
         </p>
         <CodeFormulier />
       </Kaart>

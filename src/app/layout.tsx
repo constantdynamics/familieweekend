@@ -29,6 +29,20 @@ const nunito = localFont({
   fallback: ["system-ui", "-apple-system", "Segoe UI", "sans-serif"],
 });
 
+/**
+ * The year in the wordmark: Yellowtail, as a subset with only the digits
+ * (2 kB). "block", because a year in a fallback letter would look odd and
+ * the file is there almost at once.
+ */
+const yellowtail = localFont({
+  src: "./fonts/yellowtail-cijfers.woff2",
+  weight: "400",
+  display: "block",
+  variable: "--font-yellowtail",
+  fallback: ["cursive"],
+  adjustFontFallback: false,
+});
+
 const NAME = "De Valkenburger Spelen 2027";
 const DESCRIPTION = "Het familieweekend vol spelletjes: quiz, zeskamp en prijsuitreiking. Hemelvaart 2027.";
 
@@ -71,7 +85,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl" className={`${sansitaSwashed.variable} ${nunito.variable}`}>
+    <html lang="nl" className={`${sansitaSwashed.variable} ${nunito.variable} ${yellowtail.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: INSTALL_CAPTURE_SCRIPT }} />
       </head>

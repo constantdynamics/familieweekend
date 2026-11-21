@@ -8,8 +8,9 @@ type Props = {
 
 /**
  * The name as the screen title: "De Valkenburger", and below it "Spelen"
- * with the year as a mustard label beside it. The label fills the second
- * line, so "Spelen" never stands alone.
+ * with the year beside it in mustard script letters, slanting upwards like
+ * a signature. The year fills the second line, so "Spelen" never stands
+ * alone.
  */
 export function Woordmerk({ jaar, groot = false, className }: Props) {
   return (
@@ -20,9 +21,9 @@ export function Woordmerk({ jaar, groot = false, className }: Props) {
     >
       De Valkenburger
       <br />
-      <span className="inline-flex items-center gap-3">
+      <span className="inline-flex items-baseline gap-[0.28em]">
         Spelen
-        <span className="rounded-pil bg-mosterd px-3.5 py-1.5 font-sans text-[17px] leading-none font-extrabold text-studio [text-shadow:none]">
+        <span className="inline-block origin-bottom-left translate-y-[0.06em] -rotate-6 font-script text-[1.5em] leading-[0.7] text-mosterd schaduw-roest">
           {jaar}
         </span>
       </span>

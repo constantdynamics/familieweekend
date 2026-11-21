@@ -17,7 +17,7 @@ export async function controleerFamiliecode(_previous: CodeState, formData: Form
   const typed = String(formData.get("code") ?? "").slice(0, 64);
   const code = normalizeFamilyCode(typed);
   if (!code) {
-    return { fout: "Vul de familiecode in. Je vindt hem in het bericht in de familie-app." };
+    return { fout: "Vul de familiecode in. Je vindt hem in het bericht in de familie-\u2060app." };
   }
 
   let nextStep = false;
@@ -33,7 +33,7 @@ export async function controleerFamiliecode(_previous: CodeState, formData: Form
     const ok = await checkFamilyCode(code);
     await recordAttempt("familiecode", subject, ok);
     if (!ok) {
-      return { fout: "Die code klopt niet. Kijk nog eens in het bericht in de familie-app.", code: typed };
+      return { fout: "Die code klopt niet. Kijk nog eens in het bericht in de familie-\u2060app.", code: typed };
     }
     const session = await startFamilySession();
     // Once the names are in, the next step is "Wie ben jij?" (SPEC §3).

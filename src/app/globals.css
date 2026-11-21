@@ -37,6 +37,8 @@
   /* Chosen by the owner instead of Shrikhand and Rubik (docs/BESLISSINGEN.md). */
   --font-display: var(--font-sansita), "Arial Black", serif;
   --font-sans: var(--font-nunito), system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Only for the year in the wordmark (digits only). */
+  --font-script: var(--font-yellowtail), cursive;
 
   --text-label: 14px;
   --text-label--line-height: 1.35;
@@ -246,7 +248,7 @@
  * colour, slowly; this wins over the 1 ms rule below.
  */
 .bocht-vervaag {
-  transition: stroke 4.5s linear !important;
+  transition: stroke 6s linear !important;
 }
 
 /* Install hints disappear once the app runs from the home screen. */

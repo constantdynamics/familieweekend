@@ -27,7 +27,7 @@ async function Inhoud() {
       />
       <FamiliecodeFormulier />
       <p className="mt-5 mb-0 text-label leading-[1.4] text-zand">
-        De code wordt alleen versleuteld bewaard. Schrijf hem dus op voordat je hem in de familie-app zet; ook de
+        De code wordt alleen versleuteld bewaard. Schrijf hem dus op voordat je hem in de <span className="whitespace-nowrap">familie-app</span> zet; ook de
         beheerder kan hem later niet meer teruglezen.
       </p>
     </>
