@@ -1,64 +1,60 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { IconBloem, IconProgramma } from "@/components/ui/icons";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { SchermTitel } from "@/components/ui/Kaart";
-import { LegeStaat } from "@/components/ui/LegeStaat";
 import { Scherm } from "@/components/ui/Scherm";
+import { getRequestContext } from "@/lib/server/context";
+import { programView } from "@/lib/server/program";
 import { getSettings, SETTINGS_TAG } from "@/lib/server/settings";
 import { formatDateRangePlain } from "@/lib/shared/time";
+import { ProgrammaWeergave } from "./ProgrammaWeergave";
 
 export const metadata: Metadata = { title: "Programma" };
 
-const HOOGTEPUNTEN = [
-  { dag: "do", wanneer: "'s Avonds", titel: "De Grote Valkenburger Quiz", sub: "Vijf rondes van tien vragen, met een intermezzo" },
-  { dag: "vr", wanneer: "'s Middags", titel: "Spelletjesmiddag", sub: "Telt mee voor de Spelen" },
-  { dag: "za", wanneer: "De hele dag", titel: "Zeskamp", sub: "Zes spellen op het grasveld" },
-  { dag: "za", wanneer: "'s Avonds", titel: "Prijsuitreiking", sub: "Wie wint De Valkenburger Spelen?" },
-  { dag: "zo", wanneer: "'s Ochtends", titel: "Moederdagontbijt", sub: "Alle moeders blijven lekker zitten", moederdag: true },
-];
+/**
+ * Programma (SPEC §4.3). The title is part of the static shell; the program
+ * itself depends on who looks (the admin always sees it, the family once it
+ * is released) and stays live through the doorbell.
+ */
+export default function ProgrammaPage() {
+  return (
+    <Scherm>
+      <Kop />
+      <Suspense fallback={<Laden />}>
+        <Inhoud />
+      </Suspense>
+    </Scherm>
+  );
+}
 
-export default async function ProgrammaPage() {
+async function Kop() {
   "use cache";
   cacheTag(SETTINGS_TAG);
   cacheLife("days");
   const settings = await getSettings();
   const range = formatDateRangePlain(new Date(settings.startAt), new Date(settings.endAt));
+  return <SchermTitel sub={`Hemelvaart, ${range}`}>Programma</SchermTitel>;
+}
 
+/** The moment of this request; the phone's clock takes over after the first paint. */
+function renderMoment(): number {
+  return Date.now();
+}
+
+async function Inhoud() {
+  await connection();
+  const [ctx, settings] = await Promise.all([getRequestContext(), getSettings()]);
+  const view = await programView(ctx, settings);
+  return <ProgrammaWeergave initial={view} isAdmin={ctx.isAdmin} renderedAt={renderMoment()} />;
+}
+
+function Laden() {
   return (
-    <Scherm>
-      <SchermTitel sub={`Hemelvaart, ${range}`}>Programma</SchermTitel>
-
-      <div className="mt-4">
-        <LegeStaat icon={<IconProgramma size={34} />} titel="Het programma volgt">
-          <p className="m-0">
-            In het voorjaar staat hier het hele programma, met tijden en plekken. Tijdens het weekend zie je hier
-            ook wat er nu bezig is.
-          </p>
-        </LegeStaat>
-      </div>
-
-      <h2 className="mt-7 mb-2 text-[15px] font-bold text-zand">Dit staat al vast</h2>
-      <ol className="m-0 flex list-none flex-col gap-2 p-0">
-        {HOOGTEPUNTEN.map((item) => (
-          <li
-            key={item.titel}
-            className={`grid grid-cols-[52px_minmax(0,1fr)] items-baseline gap-3 rounded-[18px] px-3.5 py-3 ${
-              item.moederdag ? "bg-studio-licht" : ""
-            }`}
-          >
-            <span className="font-display text-[22px] leading-[1.1] text-mosterd">{item.dag}</span>
-            <div className="flex flex-col gap-0.5">
-              <div className="flex flex-wrap items-center gap-2">
-                {item.moederdag ? <IconBloem size={20} /> : null}
-                <span className="text-[17px] leading-tight font-bold">{item.titel}</span>
-              </div>
-              <span className="text-label text-zand">
-                {item.wanneer}. {item.sub}
-              </span>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </Scherm>
+    <div aria-busy="true" className="mt-4 flex flex-col gap-3">
+      <span className="sr-only">Programma laden…</span>
+      <div className="h-14 rounded-[16px] bg-studio-licht" />
+      <div className="h-40 rounded-kaart bg-studio-licht" />
+    </div>
   );
 }
