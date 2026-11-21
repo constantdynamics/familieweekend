@@ -1,0 +1,140 @@
+/*
+ * The quiz moments of SPEC §2 and §6.5, with transform and opacity only:
+ * the answer tile that pops, the joker banner, the reveal and the
+ * equalizer of listening mode. The global rule for reduced motion
+ * (globals.css) shortens all of these to one frame.
+ */
+
+@keyframes quiz-plof {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes quiz-banier {
+  0% {
+    transform: translateY(-14px) scale(0.94);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes quiz-equalizer {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.quiz-plof {
+  animation: quiz-plof 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quiz-banier {
+  animation: quiz-banier 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* A tile: chosen grows a little, the reveal dims the colour of the wrong ones. */
+.quiz-tegel {
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quiz-tegel[data-gekozen="true"] {
+  transform: scale(1.03);
+}
+
+.quiz-tegel-vlak {
+  transition: opacity 320ms ease-out;
+}
+
+.quiz-tegel-vlak[data-fout="true"] {
+  opacity: 0.35;
+}
+
+.quiz-equalizer span {
+  transform-origin: bottom;
+  animation: quiz-equalizer 900ms ease-in-out infinite;
+}
+
+.quiz-equalizer span:nth-child(2) {
+  animation-delay: -300ms;
+  animation-duration: 760ms;
+}
+
+.quiz-equalizer span:nth-child(3) {
+  animation-delay: -520ms;
+  animation-duration: 1040ms;
+}
+
+.quiz-equalizer span:nth-child(4) {
+  animation-delay: -150ms;
+  animation-duration: 680ms;
+}
+
+.quiz-equalizer span:nth-child(5) {
+  animation-delay: -700ms;
+  animation-duration: 880ms;
+}
+
+/* Reduced motion: the bars stand still at different heights. */
+@media (prefers-reduced-motion: reduce) {
+  .quiz-equalizer span {
+    animation: none !important;
+  }
+  .quiz-equalizer span:nth-child(odd) {
+    transform: scaleY(0.7);
+  }
+  .quiz-equalizer span:nth-child(even) {
+    transform: scaleY(0.4);
+  }
+}
+
+/* The map (Leaflet): thumb-sized controls and the attribution in the app's colours. */
+.quiz-kaart .leaflet-container {
+  font-family: var(--font-nunito), system-ui, sans-serif;
+  background: #cfe3e6;
+}
+
+.quiz-kaart .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 42px;
+  font-size: 24px;
+  color: #2b1810;
+  background: #fcebd0;
+}
+
+.quiz-kaart .leaflet-control-attribution {
+  background: #fcebd0;
+  color: #2b1810;
+  font-size: 13px;
+  line-height: 1.35;
+  padding: 2px 8px;
+}
+
+.quiz-kaart .leaflet-control-attribution a {
+  color: #2b1810;
+  text-decoration: underline;
+}
+
+.quiz-kaart .leaflet-div-icon {
+  background: transparent;
+  border: 0;
+}

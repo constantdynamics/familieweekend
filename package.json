@@ -13,6 +13,7 @@
     "test:e2e": "tsx tests/e2e/prepare.ts && playwright test --trace off",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "db:seed": "tsx --env-file-if-exists=.env.local --conditions=react-server scripts/seed-local.ts",
+    "import:quiz": "tsx --env-file-if-exists=.env.local --conditions=react-server scripts/import-quiz.ts",
     "icons": "tsx scripts/generate-icons.ts",
     "design:png": "tsx scripts/render-design.ts",
     "lighthouse": "tsx scripts/lighthouse.ts",

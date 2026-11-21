@@ -48,6 +48,8 @@ const LABELS: Record<string, string> = {
   "spelhulp.kaartjes": "Spelhulp: kaartjes bewaard",
   "spelhulp.verwijderd": "Spelhulp: kaartjes verwijderd",
   "quiz.geimporteerd": "Quiz geïmporteerd",
+  "quiz.aangemaakt": "Quiz aangemaakt",
+  "quiz.ronde": "Quizronde gewijzigd",
   "quiz.vraag": "Quizvraag gewijzigd",
   "quiz.stap": "Quiz bediend",
   "quiz.correctie": "Quizpunten gecorrigeerd",
