@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { IconAfvinklijst, IconKaartjes, IconPijlVerder, IconStopwatch } from "@/components/ui/icons";
+import { IconAfvinklijst, IconKaartjes, IconPijlVerder, IconSpelen, IconStopwatch } from "@/components/ui/icons";
 import { Chip, SchermTitel } from "@/components/ui/Kaart";
 import { Knop } from "@/components/ui/Knop";
 import { Scherm } from "@/components/ui/Scherm";
@@ -29,6 +29,7 @@ const TEGELS = [
     Icon: IconStopwatch,
   },
   { href: "/spelleider/spelhulp", titel: "Spelhulp", tekst: "Kaartjesmachine, timer en teller", Icon: IconKaartjes },
+  { href: "/quiz/oefenen", titel: "Quiz oefenen", tekst: "Speel de quiz alleen, zoals een captain", Icon: IconSpelen },
   {
     href: "/spelleider/afvinklijst",
     titel: "Afvinklijst",

@@ -4,7 +4,7 @@ De PWA voor het familieweekend van de familie Valkenburg: Hemelvaart, do 6 t/m z
 
 **Live:** https://valkenburger-spelen.vercel.app
 
-**Stand:** alles uit de SPEC is gebouwd (fase 1 t/m 4): welkom, Thuis vóór, tijdens en na het weekend, Wie ben jij?, fun facts, prikbord, programma met weer, teams, quiz met kaartvragen en intermezzo, zeskamp met spelleiders en spelhulp, scorebord met slot, prijsuitreiking, proefmodus, afvinklijst en beheer. De familie ziet het nieuwe deel pas als de beheerder "Nieuwe app voor de familie" aanzet. Uitproberen: [`docs/UITPROBEREN.md`](docs/UITPROBEREN.md). Wat er nog moet gebeuren: [`docs/AFVINKLIJST.md`](docs/AFVINKLIJST.md). Zie ook [`docs/PLAN-fase-1.md`](docs/PLAN-fase-1.md) en [`docs/PLAN-fase-2-4.md`](docs/PLAN-fase-2-4.md).
+**Stand:** alles uit de SPEC is gebouwd (fase 1 t/m 4): welkom, Thuis vóór, tijdens en na het weekend, Wie ben jij?, fun facts, prikbord, programma met weer, teams, quiz met kaartvragen, intermezzo en een oefenmodus, zeskamp met spelleiders en spelhulp, scorebord met slot, prijsuitreiking, proefmodus, afvinklijst en beheer. De familie ziet het nieuwe deel pas als de beheerder "Nieuwe app voor de familie" aanzet. Uitproberen: [`docs/UITPROBEREN.md`](docs/UITPROBEREN.md). Wat er nog moet gebeuren: [`docs/AFVINKLIJST.md`](docs/AFVINKLIJST.md). Zie ook [`docs/PLAN-fase-1.md`](docs/PLAN-fase-1.md) en [`docs/PLAN-fase-2-4.md`](docs/PLAN-fase-2-4.md).
 
 ## Stack
 

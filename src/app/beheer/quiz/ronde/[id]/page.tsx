@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { SOORT_LABEL } from "@/components/quiz/soorten";
-import { IconFoto, IconMuzieknoot, IconPijlOmhoog, IconPijlOmlaag, IconPotlood } from "@/components/ui/icons";
+import { IconFoto, IconMuzieknoot, IconPijlOmhoog, IconPijlOmlaag, IconPotlood, IconSpelen } from "@/components/ui/icons";
 import { IconWeegschaal } from "@/components/ui/icons-quiz";
 import { KnopLink } from "@/components/ui/Knop";
 import { getRequestContext } from "@/lib/server/context";
@@ -65,6 +65,12 @@ async function Inhoud({ params }: { params: PageProps<"/beheer/quiz/ronde/[id]">
           <h2 id="vragen-titel" className="m-0 font-display text-[24px] font-normal schaduw-oranje">
             Vragen
           </h2>
+          {ronde.questions.length > 0 ? (
+            <KnopLink href={`/quiz/oefenen?ronde=${ronde.id}`} size="klein" variant="secundair" className="self-start">
+              <IconSpelen size={18} />
+              Speel deze ronde
+            </KnopLink>
+          ) : null}
           {ronde.questions.length === 0 ? (
             <p className="m-0 rounded-[16px] bg-studio-licht px-4 py-3 text-[15px] leading-[1.4] text-zand">
               {bijElkaar("Nog geen vragen in deze ronde. Voeg er een toe, of lees een quizbestand in.")}

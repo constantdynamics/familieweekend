@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { SOORT_LABEL } from "@/components/quiz/soorten";
-import { IconDownload, IconLuister, IconPijlVerder, IconQuiz } from "@/components/ui/icons";
+import { IconDownload, IconLuister, IconPijlVerder, IconQuiz, IconSpelen } from "@/components/ui/icons";
 import { IconWeegschaal } from "@/components/ui/icons-quiz";
 import { Kaart, Melding } from "@/components/ui/Kaart";
 import { KnopLink } from "@/components/ui/Knop";
@@ -64,6 +64,21 @@ async function Inhoud({ searchParams }: { searchParams: PageProps<"/beheer/quiz"
           Open de console
         </KnopLink>
       </Kaart>
+
+      {overview && vragen > 0 ? (
+        <Kaart className="mt-4 flex flex-col gap-3">
+          <h2 className="m-0 flex items-center gap-2.5 text-[20px] font-extrabold">
+            <IconSpelen size={24} />
+            Oefenen
+          </h2>
+          <p className="m-0 text-[15px] leading-[1.45]">
+            {bijElkaar("Speel de quiz alleen, precies zoals een captain hem ziet. Er wordt niets bewaard. Spelleiders kunnen dit ook, vanaf hun eigen scherm.")}
+          </p>
+          <KnopLink href={`/quiz/oefenen?quiz=${overview.content.id}`} className="self-start">
+            Speel de hele quiz alleen
+          </KnopLink>
+        </Kaart>
+      ) : null}
 
       {demoId ? (
         <nav aria-label="Welke quiz" className="mt-5 flex flex-wrap gap-2">

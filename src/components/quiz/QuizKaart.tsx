@@ -11,8 +11,12 @@ import { Knop } from "@/components/ui/Knop";
  * slides the map until the big pin in the middle sits where the photo was
  * taken, and taps "Zet speld hier". Leaflet with OpenStreetMap tiles and
  * their attribution. At the reveal: every team's pin, the real place, and a
- * dashed line between them.
+ * dashed line between them; when practising also the rings for 3, 2 and 1
+ * point around the real place.
  */
+
+/** The ring colours for 3, 2 and 1 point, also used in the legend under the map. */
+export const RING_KLEUREN = ["#A7B43A", "#F5AE1B", "#B4441A"] as const;
 
 export type Speld = { lat: number; lng: number };
 export type TeamSpeld = Speld & { id: string; naam: string; kleur: string; licht: boolean };
@@ -45,9 +49,11 @@ type Props = {
   bezig?: boolean;
   spelden?: TeamSpeld[];
   goed?: Speld | null;
+  /** At the reveal: rings around the real place, in km (3, 2 and 1 point). */
+  ringen?: readonly number[];
 };
 
-export default function QuizKaart({ schaal, modus, mijnSpeld, onZet, bezig = false, spelden = [], goed = null }: Props) {
+export default function QuizKaart({ schaal, modus, mijnSpeld, onZet, bezig = false, spelden = [], goed = null, ringen }: Props) {
   const houder = useRef<HTMLDivElement>(null);
   const kaart = useRef<LeafletMap | null>(null);
   const laag = useRef<LayerGroup | null>(null);
@@ -119,12 +125,23 @@ export default function QuizKaart({ schaal, modus, mijnSpeld, onZet, bezig = fal
         marker(goed, STER, [40, 40], [20, 20]);
         punten.push([goed.lat, goed.lng]);
       }
-      if (punten.length > 1) map.fitBounds(L.latLngBounds(punten), { padding: [36, 36], maxZoom: schaal === "nederland" ? 11 : 6 });
+      const bounds = punten.length > 0 ? L.latLngBounds(punten) : null;
+      if (goed && ringen && bounds) {
+        // Largest first, so the smaller rings lie on top. The whole outer ring stays in view.
+        [...ringen]
+          .map((km, index) => ({ km, kleur: RING_KLEUREN[index] ?? RING_KLEUREN[RING_KLEUREN.length - 1] }))
+          .reverse()
+          .forEach(({ km, kleur }) => {
+            const ring = L.circle([goed.lat, goed.lng], { radius: km * 1000, color: kleur, weight: 3, dashArray: "8 6", fillColor: kleur, fillOpacity: 0.07, interactive: false }).addTo(group);
+            bounds.extend(ring.getBounds());
+          });
+      }
+      if (bounds && (punten.length > 1 || (goed && ringen))) map.fitBounds(bounds, { padding: [36, 36], maxZoom: schaal === "nederland" ? 11 : 6 });
       else if (punten.length === 1) map.setView(punten[0], BEGIN[schaal].pinZoom);
       return;
     }
     if (mijnSpeld) marker(mijnSpeld, MIJN, [40, 48], [20, 46]);
-  }, [klaar, modus, mijnSpeld, spelden, goed, schaal]);
+  }, [klaar, modus, mijnSpeld, spelden, goed, schaal, ringen]);
 
   // Start at the captain's pin when there is one.
   const eersteSpeld = useRef(false);
@@ -138,7 +155,9 @@ export default function QuizKaart({ schaal, modus, mijnSpeld, onZet, bezig = fal
     modus === "kies"
       ? "Kaart. Schuif de kaart tot de speld in het midden op de goede plek staat, en tik dan op Zet speld hier."
       : modus === "onthul"
-        ? "Kaart met de spelden van alle teams en de echte plek."
+        ? ringen
+          ? "Kaart met de speld, de echte plek en de ringen voor 3, 2 en 1 punt."
+          : "Kaart met de spelden van alle teams en de echte plek."
         : "Kaart om mee te zoeken. Alleen de captain zet de speld.";
 
   return (

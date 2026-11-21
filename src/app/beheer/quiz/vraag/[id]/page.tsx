@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { IconSpelen } from "@/components/ui/icons";
+import { KnopLink } from "@/components/ui/Knop";
 import { getRequestContext } from "@/lib/server/context";
 import { db } from "@/lib/server/db";
 import { readCorrect } from "@/lib/server/quiz/answers";
@@ -9,6 +11,7 @@ import { loadSubmitters, toQuestion } from "@/lib/server/quiz/store";
 import { requireAdmin } from "@/lib/server/session";
 import { isUuid } from "@/lib/server/teams";
 import { signedPhotoUrl } from "@/lib/server/uploads";
+import { bijElkaar } from "@/lib/shared/tekst";
 import { BeheerKop, BeheerLaden, ProefMelding } from "../../../onderdelen";
 import { VraagEditor, type FotoKeuze, type VraagWaarden } from "./VraagEditor";
 
@@ -143,6 +146,15 @@ async function Inhoud({
         terug={{ href: `/beheer/quiz/ronde/${rondeId}`, label: `Ronde ${ronde.number}` }}
       />
       {ctx.env === "test" ? <ProefMelding /> : null}
+      {questionId ? (
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <KnopLink href={`/quiz/oefenen?vraag=${questionId}`} size="klein" variant="secundair">
+            <IconSpelen size={18} />
+            Speel deze vraag
+          </KnopLink>
+          <span className="text-label text-zand">{bijElkaar("Als captain, met de bewaarde versie.")}</span>
+        </div>
+      ) : null}
       <div className="mt-5">
         <VraagEditor ronde={rondeId} id={questionId} begin={waarden} automatisch={automatisch} fotoKeuzes={fotoKeuzes} />
       </div>

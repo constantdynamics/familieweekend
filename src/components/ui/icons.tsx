@@ -311,6 +311,14 @@ export const IconOogDicht = (p: IconProps) => (
   </Line>
 );
 
+/** Play: start practising a question, a round or the quiz. */
+export const IconSpelen = (p: IconProps) => (
+  <Line {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M10 8.6v6.8l5.6-3.4z" />
+  </Line>
+);
+
 export const IconSpeld = (p: IconProps) => (
   <Line {...p}>
     <path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z" />

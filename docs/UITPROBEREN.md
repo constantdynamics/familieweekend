@@ -60,6 +60,17 @@ In de proef heeft de kaartvraag over de Valkenburgerstraat drie foto's van dezel
 7. Zet bij **Bron van de foto**: Google Street View.
 8. Zet de makkelijkste plek als eerste vraag van de ronde en de moeilijkste als laatste.
 
+### Een vraag zelf spelen (oefenen)
+
+Speel je vragen alleen, precies zoals een captain ze ziet. Er wordt niets bewaard, en het werkt ook buiten de proef.
+
+- **Eén vraag:** open de vraag in Beheer → Quiz en tik **Speel deze vraag** (je speelt de bewaarde versie).
+- **Een ronde:** open de ronde en tik **Speel deze ronde**.
+- **De hele quiz:** Beheer → Quiz → **Speel de hele quiz alleen**.
+- **Spelleiders:** op hun eigen scherm staat de tegel **Quiz oefenen**.
+
+Je bent dan ook de quizmaster: tik **Onthul het antwoord** als je klaar bent. Bij een kaartvraag zie je daarna de goede plek, je speld, de afstand en je punten, met ringen voor 3, 2 en 1 punt. Aan het eind van een ronde of de quiz zie je je score. Er is geen timer en geen joker; het intermezzo sla je over. **Stop** brengt je terug.
+
 ## 6. Zeskamp, scorebord en spelleiders
 
 - Open **/score** en **/zeskamp** (typ het achter het adres; tijdens het weekend staan ze als tegel op Thuis). In de proef zie je voorbeeldpunten: vrijdagpunten, spel 1 en 2 gespeeld met een joker, en een losse punt.

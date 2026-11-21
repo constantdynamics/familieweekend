@@ -12,11 +12,12 @@ import { Kaart, Melding } from "@/components/ui/Kaart";
 import { Knop, KnopLink } from "@/components/ui/Knop";
 import { useLive } from "@/lib/client/live";
 import type { Answer, QuizView, TeamColor, ViewTeam } from "@/lib/server/quiz/types";
+import { MAP_BANDS } from "@/lib/shared/geo";
 import { formatPoints } from "@/lib/shared/scoring";
 import { bijElkaar } from "@/lib/shared/tekst";
 import { abonneerGeluid, bewaarGeluid, geluid, leesGeluid, stuur, useWakeLock } from "./hulp";
 import { JokerStrook, korteNaam, LuisterGoed, QuizFotos, StandLijst } from "./onderdelen";
-import type { Speld, TeamSpeld } from "./QuizKaart";
+import { RING_KLEUREN, type Speld, type TeamSpeld } from "./QuizKaart";
 import { tegelKey, Tegels, tegelsVoor, type Tegel } from "./Tegels";
 import { Toetsenbord, toonGetal } from "./Toetsenbord";
 
@@ -37,7 +38,7 @@ const HEX: Record<TeamColor, { kleur: string; licht: boolean }> = {
  * a page that was left mounted but hidden (display: none on its top), so
  * the rule only holds while the quiz screen itself is on show.
  */
-const OVERNAME_CSS =
+export const OVERNAME_CSS =
   'html:has([data-quiz-overname]):not(:has([style*="display: none"] [data-quiz-overname])) nav[aria-label="Hoofdmenu"]{display:none}';
 
 /* A clock that ticks four times a second, only while "Nog 10 seconden!" runs. */
@@ -162,7 +163,7 @@ function rolTekst(view: QuizView): string {
   return "Je kijkt mee";
 }
 
-function Kop({ view }: { view: QuizView }) {
+export function Kop({ view }: { view: QuizView }) {
   const positie = view.round
     ? `Ronde ${view.round.index} van ${view.round.total}${view.questionAt ? `, vraag ${view.questionAt.number} van ${view.questionAt.count}` : ""}`
     : null;
@@ -180,7 +181,7 @@ function Kop({ view }: { view: QuizView }) {
 }
 
 /** One sentence for screen readers whenever the quiz moves on (aria-live). */
-function Aankondiging({ view }: { view: QuizView }) {
+export function Aankondiging({ view }: { view: QuizView }) {
   let tekst = "";
   if (view.status === "intermezzo") tekst = "Het intermezzo begint: steen, papier, schaar.";
   else if (view.phase === "rondescherm" && view.round) tekst = zin(`Ronde ${view.round.index}: ${view.round.title}`);
@@ -248,7 +249,7 @@ function JokerBanier({ nieuw }: { nieuw: QuizView["jokers"] }) {
 /* Round screen: title, story, and the joker.                                */
 /* ------------------------------------------------------------------------ */
 
-function RondeScherm({ view, onKlaar }: { view: QuizView; onKlaar: () => void }) {
+export function RondeScherm({ view, onKlaar }: { view: QuizView; onKlaar: () => void }) {
   const round = view.round;
   const [zeker, setZeker] = useState(false);
   const [bezig, setBezig] = useState(false);
@@ -334,16 +335,22 @@ function RondeScherm({ view, onKlaar }: { view: QuizView; onKlaar: () => void })
 /* A question: open, closed and revealed.                                    */
 /* ------------------------------------------------------------------------ */
 
-function VraagScherm({
+export function VraagScherm({
   view,
   ontvangen,
   geluidAan,
   onKlaar,
+  onAntwoord,
+  ringen = false,
 }: {
   view: QuizView;
   ontvangen: number | null;
   geluidAan: boolean;
   onKlaar: () => void;
+  /** Practising: the answer stays on this phone instead of going to the quiz. */
+  onAntwoord?: (antwoord: Answer) => Promise<{ ok: true } | { ok: false; fout: string }>;
+  /** Practising: the rings for 3, 2 and 1 point at the reveal of a map question. */
+  ringen?: boolean;
 }) {
   const vraag = view.question;
   const [lokaal, setLokaal] = useState<Answer | null>(null);
@@ -382,7 +389,7 @@ function VraagScherm({
     setLokaal(nieuw);
     setBezig(true);
     setFout(null);
-    const result = await stuur("/api/quiz/antwoord", { vraag: vraag?.id, antwoord: nieuw });
+    const result = onAntwoord ? await onAntwoord(nieuw) : await stuur("/api/quiz/antwoord", { vraag: vraag?.id, antwoord: nieuw });
     setBezig(false);
     if (!result.ok) {
       setLokaal(null);
@@ -451,7 +458,7 @@ function VraagScherm({
       ) : vraag.kind === "schatting" ? (
         <Schatting view={view} antwoord={antwoord} kiezen={kiezen} bezig={bezig} onVerstuur={(value) => void verstuur({ number: value })} />
       ) : vraag.kind === "kaart" ? (
-        <KaartVraag view={view} antwoord={antwoord} kiezen={kiezen} bezig={bezig} onZet={(speld) => void verstuur(speld)} />
+        <KaartVraag view={view} antwoord={antwoord} kiezen={kiezen} bezig={bezig} ringen={ringen} onZet={(speld) => void verstuur(speld)} />
       ) : null}
 
       {fout ? <Melding tone="fout">{bijElkaar(fout)}</Melding> : null}
@@ -573,12 +580,14 @@ function KaartVraag({
   antwoord,
   kiezen,
   bezig,
+  ringen,
   onZet,
 }: {
   view: QuizView;
   antwoord: Answer | null;
   kiezen: boolean;
   bezig: boolean;
+  ringen: boolean;
   onZet: (speld: Speld) => void;
 }) {
   const vraag = view.question!;
@@ -593,7 +602,8 @@ function KaartVraag({
     const goed = vraag.correct && typeof vraag.correct === "object" ? (vraag.correct as Speld) : null;
     return (
       <>
-        <QuizKaart schaal={schaal} modus="onthul" mijnSpeld={null} spelden={spelden} goed={goed} />
+        <QuizKaart schaal={schaal} modus="onthul" mijnSpeld={null} spelden={spelden} goed={goed} ringen={ringen ? MAP_BANDS[schaal] : undefined} />
+        {ringen ? <RingUitleg schaal={schaal} /> : null}
         <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label="Spelden van de teams">
           {view.teams.map((team) => (
             <li key={team.id} className="flex items-center gap-3 rounded-[16px] bg-studio-licht px-4 py-2.5">
@@ -617,6 +627,27 @@ function KaartVraag({
         <p className="m-0 text-[15px] text-zand">{bijElkaar("Jullie speld staat op de kaart.")}</p>
       ) : null}
     </>
+  );
+}
+
+/** The legend of the practice rings: which ring is worth how many points. */
+function RingUitleg({ schaal }: { schaal: "nederland" | "wereld" }) {
+  const [drie, twee, een] = MAP_BANDS[schaal];
+  const km = (value: number) => new Intl.NumberFormat("nl-NL").format(value);
+  const rijen = [
+    { tekst: `3 punten tot ${km(drie)} km`, kleur: RING_KLEUREN[0] },
+    { tekst: `2 punten tot ${km(twee)} km`, kleur: RING_KLEUREN[1] },
+    { tekst: `1 punt tot ${km(een)} km`, kleur: RING_KLEUREN[2] },
+  ];
+  return (
+    <ul className="m-0 flex list-none flex-wrap gap-x-4 gap-y-1.5 p-0" aria-label="Ringen op de kaart">
+      {rijen.map((rij) => (
+        <li key={rij.tekst} className="flex items-center gap-2 text-[15px] font-semibold">
+          <span aria-hidden="true" className="h-4 w-4 flex-none rounded-pil border-[3px] border-dashed" style={{ borderColor: rij.kleur }} />
+          {bijElkaar(rij.tekst)}
+        </li>
+      ))}
+    </ul>
   );
 }
 
