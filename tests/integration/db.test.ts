@@ -3,12 +3,10 @@
  * without queries it starts fresh, because on Vercel the instance may have
  * been frozen and its connections may be dead without anyone noticing.
  */
-import { readFileSync } from "node:fs";
 import { afterAll, describe, expect, it } from "vitest";
+import { appUrl } from "./testDatabase";
 
-const adminUrl = process.env.TEST_ADMIN_DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/valk_test";
-const appPassword = /^VALK_APP_PASSWORD=(.+)$/m.exec(readFileSync(".env.local", "utf8"))?.[1]?.trim() ?? "";
-process.env.DATABASE_URL = adminUrl.replace("postgres:postgres@", `valk_app:${appPassword}@`);
+process.env.DATABASE_URL = appUrl;
 process.env.DATABASE_SSL = "disable";
 process.env.CRON_SECRET = "test-cron-geheim-0123456789";
 

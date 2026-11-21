@@ -4,13 +4,11 @@
  * winner staying on.
  */
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { adminUrl, appUrl } from "./testDatabase";
 
-const adminUrl = process.env.TEST_ADMIN_DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/valk_test";
-const appPassword = /^VALK_APP_PASSWORD=(.+)$/m.exec(readFileSync(".env.local", "utf8"))?.[1]?.trim() ?? "";
-process.env.DATABASE_URL = adminUrl.replace("postgres:postgres@", `valk_app:${appPassword}@`);
+process.env.DATABASE_URL = appUrl;
 process.env.DATABASE_SSL = "disable";
 process.env.CRON_SECRET = "test-cron-geheim-0123456789";
 
