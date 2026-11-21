@@ -245,7 +245,7 @@
 /*
  * The flowing zeskampbocht moves with a short transition per hand-over
  * (StromendeBocht.tsx). With "reduce motion" it only fades to the next
- * colour, slowly; this wins over the 1 ms rule below.
+ * colour, slowly; this wins over the reduce-motion rule below.
  */
 .bocht-vervaag {
   transition: stroke 6s linear !important;
@@ -258,13 +258,19 @@
   }
 }
 
+/*
+ * Reduce motion: animations last 1 ms, transitions do not run at all. Not
+ * 1 ms for transitions too: transition-property is "all" by default, so that
+ * would add a transition to every colour change of every element, and an
+ * inherited colour would lag behind its parent (seen by axe in CI).
+ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
+    transition-duration: 0s !important;
     scroll-behavior: auto !important;
   }
 }

@@ -238,6 +238,8 @@ test("tijdens het weekend opent vandaag, met Nu, gedimde onderdelen en links naa
   await expect(paneel.getByText(/Licht bewolkt, 10 tot 19°, 10% kans op\sregen/)).toBeVisible();
   await check(page, info, "53-programma-zaterdag");
 
+  // With reduced motion nothing transitions: a colour must not lag behind a click (axe saw that in CI).
+  await expect(dagen.getByRole("tab", { name: /Zo/ })).toHaveCSS("transition-duration", "0s");
   // Moederdag on Sunday: the flower and its own colour.
   await dagen.getByRole("tab", { name: /Zo/ }).click();
   const moederdag = paneel.getByRole("listitem").filter({ hasText: "Moederdagontbijt" });

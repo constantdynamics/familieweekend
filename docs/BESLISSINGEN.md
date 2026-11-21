@@ -127,6 +127,7 @@ De eigenaar wilde alles wat in beheer als "Binnenkort" stond nu al, in één opl
 | Service worker | Neemt de allereerste service worker het over, dan herlaadt de pagina niet meer (dat kon een halfgetypte code wissen). De quizpagina komt nooit in de cache. | Gevonden bij het testen; SPEC §4: quizvragen worden nooit gecachet. |
 | Formulieren in tests | Inlogformulieren zetten `data-klaar` zodra React luistert; de e2e-tests typen pas dan. | Op een drukke machine ging getypte tekst anders soms verloren. |
 | Fun facts naar de quiz | "Neem over" gebruikt de hoofdquiz en de puntentelling van de quizmodule. | Eén plek voor de quizregels. |
+| Beweging beperken | Met "beweging beperken" duren animaties 1 ms en lopen overgangen helemaal niet (0 s). | Met 1 ms ook voor overgangen kreeg elk element een overgang op elke eigenschap: in CI bleef de tekstkleur van een dagknop even achter op de achtergrond, en axe zag te weinig contrast. |
 
 ## Ontwerp met meer ademruimte (20 november 2026)
 
