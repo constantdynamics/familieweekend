@@ -139,3 +139,25 @@ test("een spelleider oefent vanaf het spelleidersscherm; de familie komt er niet
   expect(api).toEqual({ status: 403, body: { fout: "Oefenen is alleen voor de beheerder en de spelleiders." } });
   await familie.context.close();
 });
+
+test.describe("met de service worker aan", () => {
+  // The other tests block the service worker; this one needs it, like a real phone.
+  test.use({ serviceWorkers: "allow" });
+
+  test("de kaart laadt zijn tegels, ook als de service worker de pagina beheert", async ({ page }) => {
+    test.setTimeout(90_000);
+    await nepTegels(page.context());
+    await adminInDeProef(page);
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+    });
+    await zetProefKlaar(page);
+    await page.goto("/beheer/quiz?quiz=demo");
+    await page.getByRole("link", { name: /Waar ligt\sValkenburg\?/ }).click();
+    await page.getByRole("link", { name: "Speel deze ronde" }).filter({ visible: true }).click();
+    await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
+    await oefenKnop(page, "Naar de eerste vraag");
+    // Tiles of another site must not go through the worker: its connect-src would block them.
+    await expect(page.locator(".leaflet-tile-loaded").first()).toBeVisible({ timeout: 15_000 });
+  });
+});

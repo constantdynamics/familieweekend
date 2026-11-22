@@ -27,14 +27,22 @@ const noRedirects: SerwistPlugin = {
   cacheWillUpdate: async ({ response }) => (response.redirected || response.status !== 200 ? null : response),
 };
 
+/**
+ * Only requests to the app itself go through the service worker. Others,
+ * such as the map tiles of OpenStreetMap, go straight to the network: a
+ * fetch by the worker falls under its own connect-src, which does not list
+ * those hosts, so the map stayed empty.
+ */
+const eigen = (url: URL) => url.origin === self.location.origin;
+
 const neverCache = ({ url, request }: { url: URL; request: Request }) =>
-  url.origin !== self.location.origin ||
-  url.pathname.startsWith("/api/") ||
-  url.pathname.startsWith("/beheer") ||
-  // SPEC §4: quiz questions are never cached, and the quiz page holds the open question.
-  url.pathname === "/quiz" ||
-  url.pathname.startsWith("/quiz/") ||
-  request.method !== "GET";
+  eigen(url) &&
+  (url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/beheer") ||
+    // SPEC §4: quiz questions are never cached, and the quiz page holds the open question.
+    url.pathname === "/quiz" ||
+    url.pathname.startsWith("/quiz/") ||
+    request.method !== "GET");
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -45,7 +53,7 @@ const serwist = new Serwist({
     { matcher: neverCache, handler: new NetworkOnly() },
     {
       // Pages: always try the network first, fall back to the last copy.
-      matcher: ({ request }) => request.mode === "navigate",
+      matcher: ({ url, request }) => eigen(url) && request.mode === "navigate",
       handler: new NetworkFirst({
         cacheName: "paginas",
         networkTimeoutSeconds: 4,
@@ -54,7 +62,7 @@ const serwist = new Serwist({
     },
     {
       // Hashed build files never change.
-      matcher: ({ url }) => url.pathname.startsWith("/_next/static/"),
+      matcher: ({ url }) => eigen(url) && url.pathname.startsWith("/_next/static/"),
       handler: new CacheFirst({
         cacheName: "app-bestanden",
         plugins: [
@@ -64,7 +72,7 @@ const serwist = new Serwist({
       }),
     },
     {
-      matcher: ({ request }) => request.destination === "image" || request.destination === "font",
+      matcher: ({ url, request }) => eigen(url) && (request.destination === "image" || request.destination === "font"),
       handler: new StaleWhileRevalidate({
         cacheName: "beelden",
         plugins: [
